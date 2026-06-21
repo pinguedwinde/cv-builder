@@ -1,0 +1,265 @@
+{
+  "basics": {
+    "name": "SORE Zenatou",
+    "label": "Ingénieure Électrique",
+    "image": "",
+    "email": "zenatou.sore@email.com",
+    "phone": "+33 6 45 67 89 01",
+    "url": "",
+    "summary": "Ingénieure Électrique avec plus de 7 ans d'expérience dans la conception, la mise en service et la maintenance d'installations électriques complexes. Expertise reconnue dans les Infrastructures de Recharge pour Véhicules Électriques (IRVE), l'industrie, le bâtiment tertiaire et résidentiel, ainsi que la métrologie au LNE. Rigoureuse et polyvalente, je maîtrise les normes électriques en vigueur (NF C 15-100, NF C 14-100) et les protocoles de qualification métrologique.",
+    "location": {
+      "address": "",
+      "postalCode": "",
+      "city": "Paris",
+      "countryCode": "FR",
+      "region": "Île-de-France"
+    },
+    "profiles": [
+      {
+        "network": "LinkedIn",
+        "username": "zenatou-sore",
+        "url": "https://linkedin.com/in/zenatou-sore"
+      }
+    ]
+  },
+  "work": [
+    {
+      "name": "LNE — Laboratoire national de métrologie et d'essais",
+      "location": "Paris, France",
+      "description": "Laboratoire national de référence en métrologie scientifique et industrielle",
+      "position": "Ingénieure Métrologie Électrique",
+      "url": "https://www.lne.fr",
+      "startDate": "2022-04",
+      "endDate": "",
+      "summary": "Responsable de la qualification métrologique des équipements de mesure électrique et de la traçabilité des étalonnages pour les grandeurs électriques (tension, courant, résistance, puissance).",
+      "highlights": [
+        "Pilotage de campagnes d'étalonnage sur des bancs de référence en tension continue et alternative (incertitudes < 10 ppm)",
+        "Rédaction de certificats d'étalonnage COFRAC selon la norme ISO/CEI 17025",
+        "Participation à des comparaisons inter-laboratoires européennes (EURAMET) en métrologie électrique",
+        "Développement de procédures de validation et d'incertitude de mesure sous LabVIEW et Python",
+        "Formation interne de techniciens aux bonnes pratiques de métrologie électrique"
+      ]
+    },
+    {
+      "name": "Schneider Electric",
+      "location": "Grenoble, France",
+      "description": "Leader mondial de la gestion de l'énergie et de l'automatisation",
+      "position": "Ingénieure Projets IRVE",
+      "url": "https://www.se.com",
+      "startDate": "2020-01",
+      "endDate": "2022-03",
+      "summary": "Conception et déploiement de solutions de recharge pour véhicules électriques (bornes AC et DC) pour des clients industriels et tertiaires.",
+      "highlights": [
+        "Dimensionnement et installation de 50+ bornes de recharge (7 kW à 150 kW) sur sites industriels et parkings d'entreprise",
+        "Études de raccordement au réseau Enedis avec calcul de puissance souscrite et gestion de la puissance réactive",
+        "Supervision des chantiers IRVE : coordination avec les installateurs, contrôle de conformité et mise en service",
+        "Intégration de systèmes de supervision et de gestion de flotte de bornes (OCPP 1.6 / 2.0)",
+        "Réalisation d'audits énergétiques pour optimiser la consommation des infrastructures de recharge"
+      ]
+    },
+    {
+      "name": "Bureau Veritas",
+      "location": "Lyon, France",
+      "description": "Organisme de contrôle et de certification",
+      "position": "Ingénieure Électricité — Bâtiment & Industrie",
+      "url": "https://www.bureauveritas.fr",
+      "startDate": "2018-09",
+      "endDate": "2019-12",
+      "summary": "Contrôles techniques et vérifications réglementaires d'installations électriques dans le bâtiment (ERP, IGH, logements) et en milieu industriel.",
+      "highlights": [
+        "Réalisation de plus de 200 vérifications initiales et périodiques d'installations électriques (NF C 15-100, NF C 14-100)",
+        "Audits de conformité électrique pour des sites industriels classés ICPE",
+        "Rédaction de rapports de contrôle technique et suivi des non-conformités avec les maîtres d'ouvrage",
+        "Vérification des installations de mise à la terre, paratonnerres et systèmes de sécurité incendie (SSI)",
+        "Assistance technique lors de réceptions de chantiers électriques HTA/BT"
+      ]
+    },
+    {
+      "name": "Vinci Energies",
+      "location": "Nantes, France",
+      "description": "Groupe spécialisé dans les travaux d'infrastructures énergétiques",
+      "position": "Chargée d'affaires Électricité",
+      "url": "https://www.vinci-energies.com",
+      "startDate": "2017-03",
+      "endDate": "2018-08",
+      "summary": "Gestion d'affaires en électricité courants forts et courants faibles pour des projets de construction et de rénovation tertiaire.",
+      "highlights": [
+        "Suivi de chantiers d'électricité CFO/CFA de 500 k€ à 2 M€ (bureaux, hôpitaux, écoles)",
+        "Élaboration de devis, planning et CCTP en collaboration avec les bureaux d'études",
+        "Coordination avec les lots techniques (CVC, plomberie) et validation des plans d'exécution",
+        "Mise en service et opérations de réception avec les maîtres d'ouvrage"
+      ]
+    }
+  ],
+  "volunteer": [
+    {
+      "organization": "Elles Bougent",
+      "position": "Marraine",
+      "url": "https://www.ellesbougent.com",
+      "startDate": "2021-09",
+      "endDate": "",
+      "summary": "Promotion des métiers de l'ingénierie électrique auprès des jeunes filles et sensibilisation à la mobilité électrique.",
+      "highlights": [
+        "Interventions dans 10+ collèges et lycées sur les métiers de l'électricité et de l'IRVE",
+        "Mentorat de 5 étudiantes en école d'ingénieurs"
+      ]
+    }
+  ],
+  "education": [
+    {
+      "institution": "INSA Lyon",
+      "url": "https://www.insa-lyon.fr",
+      "area": "Génie Électrique",
+      "studyType": "Diplôme d'ingénieur",
+      "startDate": "2014-09",
+      "endDate": "2017-06",
+      "score": "",
+      "courses": [
+        "Électrotechnique et machines électriques",
+        "Électronique de puissance",
+        "Automatique et régulation",
+        "Réseaux électriques et smart grids",
+        "Compatibilité électromagnétique (CEM)",
+        "Instrumentation et mesure"
+      ]
+    },
+    {
+      "institution": "Université de Lomé",
+      "url": "https://www.univ-lome.tg",
+      "area": "Physique — Électricité",
+      "studyType": "Licence",
+      "startDate": "2011-09",
+      "endDate": "2014-06",
+      "score": "Mention Bien",
+      "courses": []
+    }
+  ],
+  "awards": [],
+  "certificates": [
+    {
+      "name": "Qualification IRVE — Niveau 2 (Conception et installation)",
+      "date": "2021-06",
+      "url": "",
+      "issuer": "Qualifelec"
+    },
+    {
+      "name": "Habilitation électrique H0/B0/H1V/B1V/BR/BC",
+      "date": "2023-01",
+      "url": "",
+      "issuer": "Organisme de formation agréé"
+    },
+    {
+      "name": "Certification Consuel — Vérificateur installations électriques",
+      "date": "2019-03",
+      "url": "",
+      "issuer": "Consuel"
+    },
+    {
+      "name": "Formation Métrologie et Incertitudes de mesure",
+      "date": "2022-09",
+      "url": "",
+      "issuer": "LNE Formation"
+    }
+  ],
+  "publications": [],
+  "skills": [
+    {
+      "name": "Électricité & Normes",
+      "level": "Expert",
+      "keywords": ["NF C 15-100", "NF C 14-100", "IEC 61851", "Schémas unifilaires", "Bilans de puissance", "Sélectivité et filiation"]
+    },
+    {
+      "name": "IRVE — Recharge VE",
+      "level": "Expert",
+      "keywords": ["Bornes AC/DC", "OCPP", "Dimensionnement", "Gestion de charge", "Raccordement Enedis", "Supervision"]
+    },
+    {
+      "name": "Métrologie",
+      "level": "Avancé",
+      "keywords": ["Étalonnage", "ISO/CEI 17025", "Calcul d'incertitudes", "Traçabilité métrologique", "COFRAC", "Comparaisons inter-laboratoires"]
+    },
+    {
+      "name": "Outils & Logiciels",
+      "level": "Avancé",
+      "keywords": ["AutoCAD Electrical", "Caneco BT", "Dialux", "LabVIEW", "Python", "ETAP", "MS Project"]
+    },
+    {
+      "name": "Gestion de projet",
+      "level": "Avancé",
+      "keywords": ["Suivi de chantier", "CCTP", "Coordination SPS", "Planification", "Gestion budgétaire"]
+    }
+  ],
+  "languages": [
+    {
+      "language": "Français",
+      "fluency": "Courant (C2)"
+    },
+    {
+      "language": "Anglais",
+      "fluency": "Professionnel (B2)"
+    },
+    {
+      "language": "Mooré",
+      "fluency": "Natif"
+    }
+  ],
+  "interests": [
+    {
+      "name": "Mobilité durable",
+      "keywords": ["Veille technologique IRVE", "Smart charging", "Vehicle-to-Grid (V2G)"]
+    },
+    {
+      "name": "Énergie renouvelable",
+      "keywords": ["Autoconsommation photovoltaïque", "Stockage d'énergie"]
+    },
+    {
+      "name": "Course à pied",
+      "keywords": ["Semi-marathon", "Trail urbain"]
+    }
+  ],
+  "references": [
+    {
+      "name": "Dr. Philippe Laurent",
+      "reference": "Zenatou est une ingénieure rigoureuse et autonome. Sa double compétence en électricité de terrain et en métrologie scientifique est rare. Elle a su mener à bien des projets complexes d'étalonnage avec une grande autonomie et un souci constant de la qualité."
+    }
+  ],
+  "projects": [
+    {
+      "name": "Déploiement IRVE — Campus industriel Renault",
+      "description": "Conception et pilotage du déploiement de 30 bornes de recharge (AC 22 kW et DC 50 kW) sur un site industriel de 15 hectares.",
+      "highlights": [
+        "Étude de dimensionnement avec gestion dynamique de la puissance",
+        "Intégration d'un système de supervision avec reporting temps réel",
+        "Projet livré avec 2 semaines d'avance et 5% sous budget"
+      ],
+      "keywords": ["IRVE", "Supervision", "OCPP", "Gestion de puissance"],
+      "startDate": "2021-02",
+      "endDate": "2021-11",
+      "url": "",
+      "roles": ["Cheffe de projet IRVE"],
+      "entity": "Schneider Electric",
+      "type": "professional"
+    },
+    {
+      "name": "Banc d'étalonnage multifonction — LNE",
+      "description": "Développement d'un banc automatisé d'étalonnage pour multimètres et pinces ampèremétriques couvrant les gammes DC/AC jusqu'à 1000 V et 20 A.",
+      "highlights": [
+        "Automatisation sous LabVIEW avec acquisition de données et génération automatique de certificats",
+        "Incertitude de mesure validée à 5 ppm en tension continue",
+        "Banc utilisé pour 500+ étalonnages annuels"
+      ],
+      "keywords": ["Métrologie", "LabVIEW", "Automatisation", "ISO 17025"],
+      "startDate": "2022-06",
+      "endDate": "2023-02",
+      "url": "",
+      "roles": ["Ingénieure projet métrologie"],
+      "entity": "LNE",
+      "type": "professional"
+    }
+  ],
+  "meta": {
+    "canonical": "",
+    "version": "1.0.0",
+    "lastModified": "2025-06-21T10:00:00"
+  }
+}

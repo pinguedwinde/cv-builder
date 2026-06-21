@@ -1,0 +1,216 @@
+{
+  "basics": {
+    "name": "Marie Dupont",
+    "label": "Full Stack Developer",
+    "image": "",
+    "email": "marie.dupont@email.com",
+    "phone": "+33 6 12 34 56 78",
+    "url": "https://mariedupont.dev",
+    "summary": "Développeuse Full Stack passionnée avec 5 ans d'expérience dans la conception et le développement d'applications web modernes. Spécialisée en React, Node.js et architectures cloud. Forte capacité à travailler en équipe agile et à mener des projets de A à Z.",
+    "location": {
+      "address": "12 Rue de la Paix",
+      "postalCode": "75002",
+      "city": "Paris",
+      "countryCode": "FR",
+      "region": "Île-de-France"
+    },
+    "profiles": [
+      {
+        "network": "LinkedIn",
+        "username": "mariedupont",
+        "url": "https://linkedin.com/in/mariedupont"
+      },
+      {
+        "network": "GitHub",
+        "username": "mariedupont",
+        "url": "https://github.com/mariedupont"
+      }
+    ]
+  },
+  "work": [
+    {
+      "name": "TechCorp",
+      "location": "Paris, France",
+      "description": "Entreprise de services numériques",
+      "position": "Lead Developer",
+      "url": "https://techcorp.com",
+      "startDate": "2022-03",
+      "endDate": "",
+      "summary": "Direction technique d'une équipe de 5 développeurs sur une plateforme SaaS B2B servant 50 000+ utilisateurs.",
+      "highlights": [
+        "Augmentation de la performance de l'application de 40% via optimisation du caching et refactoring des requêtes DB",
+        "Mise en place de CI/CD réduisant le temps de déploiement de 2h à 15 minutes",
+        "Migration réussie de l'architecture monolithique vers des microservices (Node.js, Docker, Kubernetes)",
+        "Mentorat de 3 développeurs juniors, tous promus en moins de 18 mois"
+      ]
+    },
+    {
+      "name": "StartupXYZ",
+      "location": "Lyon, France",
+      "description": "Startup fintech",
+      "position": "Développeuse Full Stack",
+      "url": "https://startupxyz.com",
+      "startDate": "2020-06",
+      "endDate": "2022-02",
+      "summary": "Développement d'une application de gestion financière pour PME avec React et Node.js.",
+      "highlights": [
+        "Conception et implémentation du module de reporting financier utilisé par 200+ entreprises",
+        "Intégration d'APIs bancaires (DSP2) avec gestion sécurisée des données sensibles",
+        "Réduction du taux d'erreur de saisie de 60% grâce à un système de validation intelligent"
+      ]
+    },
+    {
+      "name": "WebAgency",
+      "location": "Lyon, France",
+      "description": "Agence web",
+      "position": "Développeuse Frontend",
+      "startDate": "2019-09",
+      "endDate": "2020-05",
+      "summary": "Développement d'interfaces utilisateur pour des clients variés (e-commerce, corporate, SaaS).",
+      "highlights": [
+        "Livraison de 12 projets clients dans les délais avec un taux de satisfaction de 95%",
+        "Création d'une bibliothèque de composants réutilisables réduisant le temps de dev de 30%"
+      ]
+    }
+  ],
+  "volunteer": [
+    {
+      "organization": "Women Who Code Paris",
+      "position": "Mentor",
+      "url": "https://womenwhocode.com/paris",
+      "startDate": "2021-01",
+      "endDate": "",
+      "summary": "Mentorat de femmes en reconversion vers les métiers du développement web.",
+      "highlights": [
+        "Accompagnement de 15 mentees dont 10 ont trouvé un emploi dans la tech",
+        "Organisation de 6 ateliers techniques (React, TypeScript, System Design)"
+      ]
+    }
+  ],
+  "education": [
+    {
+      "institution": "École 42",
+      "url": "https://42.fr",
+      "area": "Informatique",
+      "studyType": "Diplôme d'ingénieur",
+      "startDate": "2016-09",
+      "endDate": "2019-06",
+      "score": "",
+      "courses": [
+        "Algorithmes et structures de données",
+        "Programmation système (C/C++)",
+        "Réseaux et sécurité",
+        "Développement web full stack",
+        "Intelligence artificielle"
+      ]
+    },
+    {
+      "institution": "Université Claude Bernard Lyon 1",
+      "url": "https://univ-lyon1.fr",
+      "area": "Mathématiques et Informatique",
+      "studyType": "Licence",
+      "startDate": "2013-09",
+      "endDate": "2016-06",
+      "score": "Mention Bien",
+      "courses": []
+    }
+  ],
+  "awards": [
+    {
+      "title": "Hackathon France Tech 2023 - 1er prix",
+      "date": "2023-06-15",
+      "awarder": "France Tech",
+      "summary": "Solution d'accessibilité web basée sur l'IA, développée en 48h avec une équipe de 4 personnes."
+    }
+  ],
+  "certificates": [
+    {
+      "name": "AWS Solutions Architect Associate",
+      "date": "2023-03",
+      "url": "https://aws.amazon.com/certification/",
+      "issuer": "Amazon Web Services"
+    },
+    {
+      "name": "Google Cloud Professional Developer",
+      "date": "2022-11",
+      "url": "https://cloud.google.com/certification",
+      "issuer": "Google Cloud"
+    }
+  ],
+  "publications": [],
+  "skills": [
+    {
+      "name": "Frontend",
+      "level": "Expert",
+      "keywords": ["React", "Next.js", "TypeScript", "TailwindCSS", "Vue.js", "HTML5", "CSS3"]
+    },
+    {
+      "name": "Backend",
+      "level": "Avancé",
+      "keywords": ["Node.js", "Express", "NestJS", "Python", "PostgreSQL", "MongoDB", "Redis"]
+    },
+    {
+      "name": "DevOps & Cloud",
+      "level": "Avancé",
+      "keywords": ["Docker", "Kubernetes", "AWS", "GCP", "CI/CD", "Terraform", "GitHub Actions"]
+    },
+    {
+      "name": "Méthodologies",
+      "level": "Avancé",
+      "keywords": ["Agile/Scrum", "TDD", "Code Review", "Pair Programming", "Architecture logicielle"]
+    }
+  ],
+  "languages": [
+    {
+      "language": "Français",
+      "fluency": "Natif"
+    },
+    {
+      "language": "Anglais",
+      "fluency": "Courant (C1)"
+    },
+    {
+      "language": "Espagnol",
+      "fluency": "Intermédiaire (B1)"
+    }
+  ],
+  "interests": [
+    {
+      "name": "Open Source",
+      "keywords": ["Contribution à des projets React", "Mainteneur de lib npm"]
+    },
+    {
+      "name": "Tech Community",
+      "keywords": ["Speaker à ReactConf FR", "Blog technique (500+ abonnés)"]
+    },
+    {
+      "name": "Escalade",
+      "keywords": ["Pratique en salle et en falaise", "Niveau 6b"]
+    }
+  ],
+  "references": [
+    {
+      "name": "Jean-Pierre Martin",
+      "reference": "Marie est une développeuse exceptionnelle. Sa capacité à résoudre des problèmes complexes et à fédérer l'équipe autour d'objectifs communs est remarquable. Elle a transformé notre approche technique chez TechCorp."
+    }
+  ],
+  "projects": [
+    {
+      "name": "OpenResume",
+      "description": "Outil open-source de création de CV en React/TypeScript avec export PDF",
+      "highlights": ["1200+ étoiles GitHub", "Utilisé par 5000+ personnes"],
+      "keywords": ["React", "TypeScript", "PDF", "Open Source"],
+      "startDate": "2023-01",
+      "endDate": "",
+      "url": "https://github.com/mariedupont/openresume",
+      "roles": ["Créatrice", "Mainteneur principal"],
+      "entity": "",
+      "type": "application"
+    }
+  ],
+  "meta": {
+    "canonical": "",
+    "version": "1.0.0",
+    "lastModified": "2024-01-15T10:30:00"
+  }
+}
