@@ -144,31 +144,31 @@ const s = {
     marginRight: "6px",
     marginBottom: "4px",
   } as React.CSSProperties,
-  accentBadge: {
-    display: "inline-block",
-    fontSize: "10px",
-    fontWeight: 600,
-    backgroundColor: colors.accentLight,
-    color: colors.accent,
-    padding: "3px 10px",
-    borderRadius: "20px",
-    marginRight: "6px",
-    marginBottom: "4px",
+  timelineItem: {
+    display: "flex",
+    alignItems: "stretch",
+    marginBottom: "16px",
   } as React.CSSProperties,
-  timeline: {
-    position: "relative" as const,
-    paddingLeft: "20px",
-    borderLeft: `2px solid ${colors.badgeBg}`,
+  timelineAxis: {
+    width: "24px",
+    display: "flex",
+    flexDirection: "column" as const,
+    alignItems: "center",
+    flexShrink: 0,
   } as React.CSSProperties,
   timelineDot: {
-    position: "absolute" as const,
-    left: "-7px",
-    top: "4px",
     width: "12px",
     height: "12px",
     borderRadius: "50%",
     background: `linear-gradient(135deg, ${colors.gradientStart}, ${colors.gradientEnd})`,
     border: `2px solid ${colors.white}`,
+    flexShrink: 0,
+  } as React.CSSProperties,
+  timelineLine: {
+    flex: 1,
+    width: "2px",
+    backgroundColor: colors.badgeBg,
+    marginTop: "4px",
   } as React.CSSProperties,
   highlight: {
     fontSize: "12px",
@@ -224,23 +224,28 @@ export function CreativeTheme({ resume }: { resume: Resume }) {
             <div style={s.sectionTitle}>
               <span style={s.sectionDot} /> Expérience
             </div>
-            <div style={s.timeline}>
+            <div>
               {resume.work.map((w, i) => (
-                <div key={i} style={{ marginBottom: "16px", position: "relative" }}>
-                  <div style={s.timelineDot} />
-                  <div style={s.card}>
-                    <div style={s.cardTitle}>{w.position}</div>
-                    <div style={s.cardMeta}>
-                      {w.name}{w.location ? ` · ${w.location}` : ""} — {dateRange(w.startDate, w.endDate)}
+                <div key={i} style={s.timelineItem}>
+                  <div style={s.timelineAxis}>
+                    <div style={s.timelineDot} />
+                    {i < resume.work!.length - 1 && <div style={s.timelineLine} />}
+                  </div>
+                  <div style={{ flex: 1, paddingLeft: "12px" }}>
+                    <div style={s.card}>
+                      <div style={s.cardTitle}>{w.position}</div>
+                      <div style={s.cardMeta}>
+                        {w.name}{w.location ? ` · ${w.location}` : ""} — {dateRange(w.startDate, w.endDate)}
+                      </div>
+                      {w.summary && <p style={s.cardText}>{w.summary}</p>}
+                      {w.highlights && w.highlights.length > 0 && (
+                        <ul style={{ margin: "6px 0 0", padding: 0 }}>
+                          {w.highlights.map((h, j) => (
+                            <li key={j} style={s.highlight}>{h}</li>
+                          ))}
+                        </ul>
+                      )}
                     </div>
-                    {w.summary && <p style={s.cardText}>{w.summary}</p>}
-                    {w.highlights && w.highlights.length > 0 && (
-                      <ul style={{ margin: "6px 0 0", padding: 0 }}>
-                        {w.highlights.map((h, j) => (
-                          <li key={j} style={s.highlight}>{h}</li>
-                        ))}
-                      </ul>
-                    )}
                   </div>
                 </div>
               ))}
@@ -297,7 +302,7 @@ export function CreativeTheme({ resume }: { resume: Resume }) {
                 {p.keywords && p.keywords.length > 0 && (
                   <div style={{ marginTop: "6px", display: "flex", flexWrap: "wrap" }}>
                     {p.keywords.map((kw, j) => (
-                      <span key={j} style={s.accentBadge}>{kw}</span>
+                      <span key={j} style={s.badge}>{kw}</span>
                     ))}
                   </div>
                 )}
@@ -363,6 +368,23 @@ export function CreativeTheme({ resume }: { resume: Resume }) {
           </>
         )}
 
+        {resume.publications && resume.publications.length > 0 && (
+          <>
+            <div style={s.sectionTitle}>
+              <span style={s.sectionDot} /> Publications
+            </div>
+            {resume.publications.map((p, i) => (
+              <div key={i} style={{ ...s.card, borderLeftColor: colors.accent }}>
+                <div style={s.cardTitle}>{p.name}</div>
+                <div style={s.cardMeta}>
+                  {p.publisher ? `${p.publisher} · ` : ""}{formatDate(p.releaseDate)}
+                </div>
+                {p.summary && <p style={s.cardText}>{p.summary}</p>}
+              </div>
+            ))}
+          </>
+        )}
+
         {resume.interests && resume.interests.length > 0 && (
           <>
             <div style={s.sectionTitle}>
@@ -370,7 +392,7 @@ export function CreativeTheme({ resume }: { resume: Resume }) {
             </div>
             <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
               {resume.interests.map((item, i) => (
-                <span key={i} style={s.accentBadge}>{item.name}</span>
+                <span key={i} style={s.badge}>{item.name}</span>
               ))}
             </div>
           </>
