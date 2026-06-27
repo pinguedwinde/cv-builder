@@ -201,6 +201,7 @@ export function ModernTheme({ resume }: { resume: Resume }) {
 
   return (
     <div style={pdfMode ? s.pagePdf : s.page}>
+      {pdfMode && <div className="cv-sidebar-bg" />}
       <aside className={pdfMode ? "cv-running-sidebar" : undefined} style={pdfMode ? s.sidebarPdf : s.sidebar}>
         {b.name && <div style={s.sidebarName}>{b.name}</div>}
         {b.label && <div style={s.sidebarLabel}>{b.label}</div>}

@@ -196,6 +196,7 @@ export function SwissTheme({ resume }: { resume: Resume }) {
 
   return (
     <div style={pdfMode ? s.pagePdf : s.page}>
+      {pdfMode && <div className="cv-sidebar-bg" />}
       <div className={pdfMode ? "cv-running-sidebar" : undefined} style={pdfMode ? s.sidebarPdf : s.sidebar}>
         {b.name && (
           <div style={s.name}>

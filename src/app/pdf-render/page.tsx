@@ -13,6 +13,11 @@ const SIDEBAR_WIDTHS: Record<string, string> = {
   swiss: "53mm",
 };
 
+const SIDEBAR_BGS: Record<string, string> = {
+  modern: "#1e293b",
+  swiss: "#111111",
+};
+
 function buildBodyResetCss(): string {
   return `
     html { height: auto !important; background: white !important; }
@@ -31,6 +36,7 @@ function buildBodyResetCss(): string {
 
 function buildPagedCss(themeId: string): string {
   const sidebarWidth = SIDEBAR_WIDTHS[themeId];
+  const sidebarBg = SIDEBAR_BGS[themeId];
 
   const base = `
     *, *::before, *::after {
@@ -48,6 +54,12 @@ function buildPagedCss(themeId: string): string {
         size: A4 portrait;
         margin: 0 0 0 ${sidebarWidth};
         @left-top {
+          content: element(cv-sidebar-bg);
+          height: 297mm;
+        }
+      }
+      @page :first {
+        @left-top {
           content: element(cv-sidebar);
           height: 297mm;
         }
@@ -56,6 +68,12 @@ function buildPagedCss(themeId: string): string {
         position: running(cv-sidebar);
         width: ${sidebarWidth};
         min-height: 297mm;
+      }
+      .cv-sidebar-bg {
+        position: running(cv-sidebar-bg);
+        width: ${sidebarWidth};
+        min-height: 297mm;
+        background-color: ${sidebarBg};
       }
       #cv-content {
         width: calc(210mm - ${sidebarWidth}) !important;
