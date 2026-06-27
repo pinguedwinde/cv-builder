@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { ThemeRenderer } from "@/components/themes/ThemeRenderer";
 import { PdfModeProvider } from "@/lib/pdf-context";
@@ -8,88 +8,157 @@ import type { Resume } from "@/lib/schemas/resume";
 import type { ThemeId } from "@/themes";
 import { Suspense } from "react";
 
-const PRINT_CSS = `
-  @page {
-    size: A4 portrait;
-    margin: 0;
+const SIDEBAR_WIDTHS: Record<string, string> = {
+  modern: "74mm",
+  swiss: "53mm",
+};
+
+function buildBodyResetCss(): string {
+  return `
+    html { height: auto !important; background: white !important; }
+    body {
+      margin: 0 !important;
+      padding: 0 !important;
+      background: white !important;
+      display: block !important;
+      flex-direction: unset !important;
+      min-height: unset !important;
+      height: auto !important;
+      color: initial !important;
+    }
+  `;
+}
+
+function buildPagedCss(themeId: string): string {
+  const sidebarWidth = SIDEBAR_WIDTHS[themeId];
+
+  const base = `
+    *, *::before, *::after {
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+    }
+    #cv-content > * { min-height: 297mm; }
+    .cv-entry { break-inside: avoid; page-break-inside: avoid; }
+    .cv-section-title { break-after: avoid; page-break-after: avoid; }
+  `;
+
+  if (sidebarWidth) {
+    return `
+      @page {
+        size: A4 portrait;
+        margin: 0 0 0 ${sidebarWidth};
+        @left-top {
+          content: element(cv-sidebar);
+          height: 297mm;
+        }
+      }
+      .cv-running-sidebar {
+        position: running(cv-sidebar);
+        width: ${sidebarWidth};
+        min-height: 297mm;
+      }
+      #cv-content {
+        width: calc(210mm - ${sidebarWidth}) !important;
+        max-width: calc(210mm - ${sidebarWidth}) !important;
+      }
+      ${base}
+    `;
   }
 
-  *, *::before, *::after {
-    -webkit-print-color-adjust: exact !important;
-    print-color-adjust: exact !important;
-  }
-
-  html, body {
-    margin: 0;
-    padding: 0;
-    background: white;
-  }
-
-  .cv-entry {
-    break-inside: avoid;
-    page-break-inside: avoid;
-  }
-
-  .cv-section-title {
-    break-after: avoid;
-    page-break-after: avoid;
-  }
-
-  .cv-sidebar-fixed {
-    position: fixed !important;
-    top: 0 !important;
-    left: 0 !important;
-    height: 297mm !important;
-    overflow: hidden !important;
-    z-index: 10;
-  }
-`;
+  return `
+    @page {
+      size: A4 portrait;
+      margin: 0;
+    }
+    ${base}
+  `;
+}
 
 function PdfRenderContent() {
   const searchParams = useSearchParams();
   const themeId = searchParams.get("theme") || "modern";
   const [resume, setResume] = useState<Resume | null>(null);
+  const pdfDone = useRef(false);
 
   useEffect(() => {
     const handler = () => {
       const data = (window as unknown as Record<string, { resume: Resume }>).__RESUME_DATA__;
-      if (data?.resume) {
-        setResume(data.resume);
-      }
+      if (data?.resume) setResume(data.resume);
     };
-
     window.addEventListener("resume-data-ready", handler);
     handler();
-
     return () => window.removeEventListener("resume-data-ready", handler);
   }, []);
 
   useEffect(() => {
-    if (!resume) return;
-    // Two rAF calls ensure the DOM is fully painted before signalling ready
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        (window as unknown as Record<string, unknown>).__PDF_READY__ = true;
-        window.dispatchEvent(new CustomEvent("pdf-render-ready"));
-      });
-    });
-  }, [resume]);
+    if (!resume || pdfDone.current) return;
+
+    let cancelled = false;
+
+    const run = async () => {
+      await new Promise<void>(r => requestAnimationFrame(() => r()));
+      if (cancelled) return;
+      await new Promise<void>(r => requestAnimationFrame(() => r()));
+      if (cancelled) return;
+
+      // Body reset stays active throughout — pagedjs must not remove it
+      const bodyResetEl = document.createElement("style");
+      bodyResetEl.setAttribute("data-pagedjs-ignore", "true");
+      bodyResetEl.textContent = buildBodyResetCss();
+      document.head.appendChild(bodyResetEl);
+
+      // Paged media CSS — pagedjs will collect, process, and apply this
+      const pagedEl = document.createElement("style");
+      pagedEl.textContent = buildPagedCss(themeId);
+      document.head.appendChild(pagedEl);
+
+      const bodyContent = document.body.innerHTML;
+      document.body.innerHTML = "";
+
+      const { Previewer } = await import("pagedjs");
+      if (cancelled) return;
+
+      pdfDone.current = true;
+      const previewer = new Previewer();
+      // null triggers removeStyles() so pagedjs collects our injected CSS
+      await previewer.preview(bodyContent, null, document.body);
+
+      // Propagate the theme's background color to all pagedjs pages so the
+      // empty area at the bottom of the last page doesn't show as white.
+      const themeRoot = document.querySelector("#cv-content > *") as HTMLElement | null;
+      if (themeRoot) {
+        const bg = window.getComputedStyle(themeRoot).backgroundColor;
+        const isTransparent = !bg || bg === "rgba(0, 0, 0, 0)" || bg === "transparent";
+        if (!isTransparent) {
+          const bgStyle = document.createElement("style");
+          bgStyle.setAttribute("data-pagedjs-ignore", "true");
+          bgStyle.textContent = `.pagedjs_page { background-color: ${bg} !important; }`;
+          document.head.appendChild(bgStyle);
+        }
+      }
+
+      await document.fonts.ready;
+      (window as unknown as Record<string, unknown>).__PDF_READY__ = true;
+      window.dispatchEvent(new CustomEvent("pdf-render-ready"));
+    };
+
+    run().catch(console.error);
+
+    return () => { cancelled = true; };
+  }, [resume, themeId]);
 
   return (
-    <>
-      <style dangerouslySetInnerHTML={{ __html: PRINT_CSS }} />
-      <div style={{ width: "210mm", backgroundColor: "white" }}>
-        <PdfModeProvider value={true}>
-          {resume ? (
-            <ThemeRenderer resume={resume} themeId={themeId as ThemeId} />
-          ) : (
-            <div style={{ padding: "40px", textAlign: "center", color: "#999" }}>
-              Loading resume data...
-            </div>
-          )}
-        </PdfModeProvider>
-      </div>
-    </>
+    <div id="cv-content" style={{ width: "210mm", backgroundColor: "white" }}>
+      <PdfModeProvider value={true}>
+        {resume ? (
+          <ThemeRenderer resume={resume} themeId={themeId as ThemeId} />
+        ) : (
+          <div style={{ padding: "40px", textAlign: "center", color: "#999" }}>
+            Loading resume data...
+          </div>
+        )}
+      </PdfModeProvider>
+    </div>
   );
 }
 

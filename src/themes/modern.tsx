@@ -60,16 +60,12 @@ const s = {
     padding: "40px 24px",
   } as React.CSSProperties,
   sidebarPdf: {
-    position: "fixed" as const,
-    top: 0,
-    left: 0,
     width: SIDEBAR_W_PDF,
-    height: "297mm",
     backgroundColor: colors.sidebarBg,
     color: colors.sidebarText,
     padding: "40px 24px",
-    overflow: "hidden",
     boxSizing: "border-box" as const,
+    minHeight: "297mm",
   } as React.CSSProperties,
   main: {
     flex: 1,
@@ -77,7 +73,6 @@ const s = {
     backgroundColor: colors.mainBg,
   } as React.CSSProperties,
   mainPdf: {
-    marginLeft: SIDEBAR_W_PDF,
     padding: "40px 32px",
     backgroundColor: colors.mainBg,
     boxSizing: "border-box" as const,
@@ -206,7 +201,7 @@ export function ModernTheme({ resume }: { resume: Resume }) {
 
   return (
     <div style={pdfMode ? s.pagePdf : s.page}>
-      <aside style={pdfMode ? s.sidebarPdf : s.sidebar}>
+      <aside className={pdfMode ? "cv-running-sidebar" : undefined} style={pdfMode ? s.sidebarPdf : s.sidebar}>
         {b.name && <div style={s.sidebarName}>{b.name}</div>}
         {b.label && <div style={s.sidebarLabel}>{b.label}</div>}
 
