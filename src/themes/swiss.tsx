@@ -76,7 +76,7 @@ const s = {
   } as React.CSSProperties,
   name: {
     fontFamily: "'Barlow Condensed', 'Arial Narrow', Arial, sans-serif",
-    fontSize: "28px",
+    fontSize: "22px",
     fontWeight: 800,
     textTransform: "uppercase" as const,
     color: WHITE,
@@ -87,7 +87,7 @@ const s = {
   sideLabel: {
     fontSize: "11px",
     color: "#AAAAAA",
-    marginBottom: "14px",
+    marginBottom: "8px",
     lineHeight: 1.4,
   } as React.CSSProperties,
   sideSectionTitle: {
@@ -97,8 +97,8 @@ const s = {
     textTransform: "uppercase" as const,
     letterSpacing: "2px",
     color: RED,
-    marginBottom: "8px",
-    marginTop: "24px",
+    marginBottom: "6px",
+    marginTop: "14px",
   } as React.CSSProperties,
   sideContactItem: {
     fontSize: "11px",
@@ -260,7 +260,7 @@ export function SwissTheme({ resume }: { resume: Resume }) {
           <>
             <div className="cv-section-title" style={s.sectionBand}>Experience</div>
             {resume.work.map((w, i) => (
-              <div key={i} className="cv-entry" style={{ marginBottom: "18px" }}>
+              <div key={i} className="cv-entry" style={{ marginBottom: "10px" }}>
                 <div style={s.entryTitle}>{w.position}</div>
                 <div style={s.entryDate}>{dateRange(w.startDate, w.endDate)}</div>
                 <div style={s.entryMeta}>{w.name}{w.location ? ` - ${w.location}` : ""}</div>

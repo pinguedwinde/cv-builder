@@ -29,7 +29,7 @@ const s = {
     fontFamily: "'Raleway', 'Gill Sans', 'Gill Sans MT', Calibri, sans-serif",
     color: DARK,
     borderLeft: `4px solid ${DARK}`,
-    padding: "28px 44px",
+    padding: "22px 36px",
     maxWidth: "210mm",
     lineHeight: 1.45,
     fontSize: "13px",
@@ -38,7 +38,7 @@ const s = {
   } as React.CSSProperties,
   name: {
     fontFamily: "'Playfair Display', Georgia, 'Times New Roman', serif",
-    fontSize: "36px",
+    fontSize: "26px",
     fontWeight: 700,
     color: DARK,
     letterSpacing: "1px",
@@ -75,7 +75,7 @@ const s = {
     fontStyle: "italic" as const,
     borderLeft: `3px solid ${GOLD}`,
     paddingLeft: "16px",
-    marginBottom: "20px",
+    marginBottom: "12px",
   } as React.CSSProperties,
   sectionTitle: {
     fontFamily: "'Playfair Display', Georgia, serif",
@@ -141,7 +141,7 @@ const s = {
   skillBadge: {
     backgroundColor: GOLD_LIGHT,
     color: DARK,
-    padding: "3px 10px",
+    padding: "2px 6px",
     borderRadius: "2px",
     fontSize: "12px",
     fontWeight: 500,
@@ -171,7 +171,7 @@ export function ExecutiveTheme({ resume }: { resume: Resume }) {
         <>
           <h2 className="cv-section-title" style={s.sectionTitle}>Experience Professionnelle</h2>
           {resume.work.map((w, i) => (
-            <div key={i} className="cv-entry" style={{ marginBottom: "20px" }}>
+            <div key={i} className="cv-entry" style={{ marginBottom: "12px" }}>
               <div style={s.entryRow}>
                 <div style={s.entryTitle}>{w.position}</div>
                 <div style={s.entryDate}>{dateRange(w.startDate, w.endDate)}</div>
@@ -192,7 +192,7 @@ export function ExecutiveTheme({ resume }: { resume: Resume }) {
         <>
           <h2 className="cv-section-title" style={s.sectionTitle}>Formation</h2>
           {resume.education.map((e, i) => (
-            <div key={i} className="cv-entry" style={{ marginBottom: "14px" }}>
+            <div key={i} className="cv-entry" style={{ marginBottom: "8px" }}>
               <div style={s.entryRow}>
                 <div style={s.entryTitle}>{e.studyType}{e.area ? ` en ${e.area}` : ""}</div>
                 <div style={s.entryDate}>{dateRange(e.startDate, e.endDate)}</div>

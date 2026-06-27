@@ -56,7 +56,7 @@ const s = {
   } as React.CSSProperties,
   name: {
     fontFamily: "'Cormorant Garamond', 'Garamond', 'Georgia', serif",
-    fontSize: "40px",
+    fontSize: "30px",
     fontWeight: 300,
     color: TEXT,
     letterSpacing: "3px",
@@ -65,10 +65,10 @@ const s = {
   } as React.CSSProperties,
   headerLabel: {
     fontFamily: "'Cormorant Garamond', 'Garamond', Georgia, serif",
-    fontSize: "15px",
+    fontSize: "13px",
     fontStyle: "italic" as const,
     color: ROSE,
-    marginBottom: "14px",
+    marginBottom: "10px",
   } as React.CSSProperties,
   ornament: {
     color: ROSE,
@@ -87,15 +87,15 @@ const s = {
   sectionTitle: {
     fontFamily: "'Cormorant Garamond', 'Garamond', Georgia, serif",
     fontVariant: "small-caps" as const,
-    fontSize: "15px",
+    fontSize: "13px",
     fontWeight: 600,
     color: ROSE,
     letterSpacing: "3px",
     textTransform: "uppercase" as const,
     borderBottom: `1px solid ${BLUSH_BORDER}`,
     paddingBottom: "6px",
-    marginBottom: "16px",
-    marginTop: "14px",
+    marginBottom: "10px",
+    marginTop: "12px",
   } as React.CSSProperties,
   entryRow: {
     display: "flex",
@@ -227,7 +227,7 @@ export function ElegantTheme({ resume }: { resume: Resume }) {
         <>
           <h2 className="cv-section-title" style={s.sectionTitle}>Experience Professionnelle</h2>
           {resume.work.map((w, i) => (
-            <div key={i} className="cv-entry" style={{ marginBottom: "20px" }}>
+            <div key={i} className="cv-entry" style={{ marginBottom: "12px" }}>
               <div style={s.entryRow}>
                 <div style={s.entryTitle}>
                   <span style={s.entryTitleBullet}>{"◆"}</span>
@@ -251,7 +251,7 @@ export function ElegantTheme({ resume }: { resume: Resume }) {
         <>
           <h2 className="cv-section-title" style={s.sectionTitle}>Formation</h2>
           {resume.education.map((e, i) => (
-            <div key={i} className="cv-entry" style={{ marginBottom: "16px" }}>
+            <div key={i} className="cv-entry" style={{ marginBottom: "8px" }}>
               <div style={s.entryRow}>
                 <div style={s.entryTitle}>
                   <span style={s.entryTitleBullet}>{"◆"}</span>

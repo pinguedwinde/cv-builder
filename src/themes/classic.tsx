@@ -32,11 +32,11 @@ const styles = {
   header: {
     textAlign: "center" as const,
     borderBottom: "3px solid #1a1a2e",
-    paddingBottom: "24px",
+    paddingBottom: "16px",
     marginBottom: "14px",
   } as React.CSSProperties,
   name: {
-    fontSize: "32px",
+    fontSize: "24px",
     fontWeight: 700,
     letterSpacing: "2px",
     textTransform: "uppercase" as const,
@@ -44,7 +44,7 @@ const styles = {
     color: "#1a1a2e",
   } as React.CSSProperties,
   label: {
-    fontSize: "16px",
+    fontSize: "13px",
     color: "#4a4a6a",
     fontStyle: "italic" as const,
     marginBottom: "12px",
@@ -58,15 +58,15 @@ const styles = {
     gap: "16px",
   } as React.CSSProperties,
   sectionTitle: {
-    fontSize: "16px",
+    fontSize: "13px",
     fontWeight: 700,
     textTransform: "uppercase" as const,
     letterSpacing: "1.5px",
     color: "#1a1a2e",
     borderBottom: "1px solid #ccc",
     paddingBottom: "6px",
-    marginBottom: "16px",
-    marginTop: "14px",
+    marginBottom: "10px",
+    marginTop: "12px",
   } as React.CSSProperties,
   entryTitle: {
     fontSize: "15px",
@@ -154,7 +154,7 @@ export function ClassicTheme({ resume }: { resume: Resume }) {
         <>
           <h2 className="cv-section-title" style={styles.sectionTitle}>Expérience Professionnelle</h2>
           {resume.work.map((w, i) => (
-            <div key={i} className="cv-entry" style={{ marginBottom: "18px" }}>
+            <div key={i} className="cv-entry" style={{ marginBottom: "10px" }}>
               <div style={styles.entryTitle}>{w.position} — {w.name}</div>
               <div style={styles.entryMeta}>
                 {dateRange(w.startDate, w.endDate)}{w.location ? ` | ${w.location}` : ""}
@@ -176,7 +176,7 @@ export function ClassicTheme({ resume }: { resume: Resume }) {
         <>
           <h2 className="cv-section-title" style={styles.sectionTitle}>Formation</h2>
           {resume.education.map((e, i) => (
-            <div key={i} className="cv-entry" style={{ marginBottom: "14px" }}>
+            <div key={i} className="cv-entry" style={{ marginBottom: "8px" }}>
               <div style={styles.entryTitle}>
                 {e.studyType} {e.area ? `en ${e.area}` : ""} — {e.institution}
               </div>

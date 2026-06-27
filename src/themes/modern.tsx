@@ -78,20 +78,20 @@ const s = {
     boxSizing: "border-box" as const,
   } as React.CSSProperties,
   sidebarName: {
-    fontSize: "26px",
+    fontSize: "20px",
     fontWeight: 800,
     color: "#ffffff",
     lineHeight: 1.2,
     marginBottom: "4px",
   } as React.CSSProperties,
   sidebarLabel: {
-    fontSize: "13px",
+    fontSize: "12px",
     color: colors.accent,
     fontWeight: 500,
-    marginBottom: "14px",
+    marginBottom: "10px",
   } as React.CSSProperties,
   sidebarSection: {
-    marginBottom: "24px",
+    marginBottom: "14px",
   } as React.CSSProperties,
   sidebarSectionTitle: {
     fontSize: "11px",
@@ -113,17 +113,17 @@ const s = {
     color: colors.sidebarMuted,
   } as React.CSSProperties,
   mainSection: {
-    marginBottom: "14px",
+    marginBottom: "8px",
   } as React.CSSProperties,
   mainSectionTitle: {
-    fontSize: "14px",
+    fontSize: "13px",
     fontWeight: 700,
     textTransform: "uppercase" as const,
     letterSpacing: "1px",
     color: colors.primary,
-    marginBottom: "14px",
+    marginBottom: "8px",
     borderBottom: `2px solid ${colors.primary}`,
-    paddingBottom: "6px",
+    paddingBottom: "4px",
   } as React.CSSProperties,
   entryHeader: {
     display: "flex",
@@ -295,7 +295,7 @@ export function ModernTheme({ resume }: { resume: Resume }) {
           <div style={s.mainSection}>
             <div className="cv-section-title" style={s.mainSectionTitle}>Expérience</div>
             {resume.work.map((w, i) => (
-              <div key={i} className="cv-entry" style={{ marginBottom: "18px" }}>
+              <div key={i} className="cv-entry" style={{ marginBottom: "10px" }}>
                 <div style={s.entryHeader}>
                   <div style={s.entryTitle}>{w.position}</div>
                   <div style={s.entryDate}>{dateRange(w.startDate, w.endDate)}</div>
@@ -320,7 +320,7 @@ export function ModernTheme({ resume }: { resume: Resume }) {
           <div style={s.mainSection}>
             <div className="cv-section-title" style={s.mainSectionTitle}>Formation</div>
             {resume.education.map((e, i) => (
-              <div key={i} className="cv-entry" style={{ marginBottom: "14px" }}>
+              <div key={i} className="cv-entry" style={{ marginBottom: "8px" }}>
                 <div style={s.entryHeader}>
                   <div style={s.entryTitle}>{e.institution}</div>
                   <div style={s.entryDate}>{dateRange(e.startDate, e.endDate)}</div>

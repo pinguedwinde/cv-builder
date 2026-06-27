@@ -40,7 +40,7 @@ const s = {
   } as React.CSSProperties,
   name: {
     fontFamily: "'Bebas Neue', 'Anton', 'Impact', 'Arial Black', sans-serif",
-    fontSize: "64px",
+    fontSize: "52px",
     fontWeight: 900,
     color: BLACK,
     textTransform: "uppercase" as const,
@@ -84,13 +84,13 @@ const s = {
     backgroundColor: BLACK,
     color: YELLOW,
     fontFamily: "'Bebas Neue', 'Anton', Impact, 'Arial Black', sans-serif",
-    fontSize: "18px",
+    fontSize: "15px",
     fontWeight: 700,
     letterSpacing: "3px",
     textTransform: "uppercase" as const,
-    padding: "5px 0 5px 0",
-    marginBottom: "14px",
-    marginTop: "16px",
+    padding: "4px 0 4px 0",
+    marginBottom: "10px",
+    marginTop: "10px",
     paddingLeft: "12px",
   } as React.CSSProperties,
   entryRow: {
@@ -202,7 +202,7 @@ export function BoldTheme({ resume }: { resume: Resume }) {
           <>
             <div className="cv-section-title" style={s.sectionBand}>Experience</div>
             {resume.work.map((w, i) => (
-              <div key={i} className="cv-entry" style={{ marginBottom: "20px" }}>
+              <div key={i} className="cv-entry" style={{ marginBottom: "12px" }}>
                 <div style={s.entryRow}>
                   <div style={s.entryCompany}>{w.name}</div>
                   <div style={s.entryDate}>{dateRange(w.startDate, w.endDate)}</div>
@@ -274,7 +274,7 @@ export function BoldTheme({ resume }: { resume: Resume }) {
             <div className="cv-section-title" style={s.sectionBand}>Langues</div>
             <div style={{ display: "flex", gap: "12px", flexWrap: "wrap" as const }}>
               {resume.languages.map((l, i) => (
-                <div key={i} style={{ backgroundColor: "#F5F5F5", padding: "8px 16px", borderBottom: `3px solid ${YELLOW}` }}>
+                <div key={i} style={{ backgroundColor: "#F5F5F5", padding: "6px 10px", borderBottom: `3px solid ${YELLOW}` }}>
                   <div style={{ fontWeight: 900, fontSize: "13px", textTransform: "uppercase" as const }}>{l.language}</div>
                   <div style={{ fontSize: "11px", color: MUTED }}>{l.fluency}</div>
                 </div>
@@ -344,7 +344,7 @@ export function BoldTheme({ resume }: { resume: Resume }) {
             <div className="cv-section-title" style={s.sectionBand}>Interets</div>
             <div style={{ display: "flex", flexWrap: "wrap" as const, gap: "8px" }}>
               {resume.interests.map((item, i) => (
-                <span key={i} style={{ backgroundColor: YELLOW, color: BLACK, padding: "4px 12px", fontWeight: 700, fontSize: "12px", textTransform: "uppercase" as const, borderRadius: "2px" }}>
+                <span key={i} style={{ backgroundColor: YELLOW, color: BLACK, padding: "2px 6px", fontWeight: 700, fontSize: "11px", textTransform: "uppercase" as const, borderRadius: "2px" }}>
                   {item.name}
                 </span>
               ))}

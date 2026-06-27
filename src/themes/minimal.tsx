@@ -23,66 +23,73 @@ const s = {
   page: {
     fontFamily: "'JetBrains Mono', 'Fira Code', 'SF Mono', monospace",
     color: "#000000",
-    padding: "24px 28px",
+    padding: "8px 12px",
     maxWidth: "700px",
     margin: "0 auto",
     lineHeight: 1.5,
-    fontSize: "12px",
+    fontSize: "11px",
     backgroundColor: "#ffffff",
+    textAlign: "justify" as const,
   } as React.CSSProperties,
   name: {
-    fontSize: "24px",
+    fontSize: "18px",
     fontWeight: 400,
     letterSpacing: "-0.5px",
-    marginBottom: "2px",
+    marginBottom: "0px",
+    textAlign: "left" as const,
   } as React.CSSProperties,
   label: {
-    fontSize: "12px",
+    fontSize: "11px",
     color: "#666",
-    marginBottom: "8px",
+    marginBottom: "1px",
+    textAlign: "left" as const,
   } as React.CSSProperties,
   contact: {
-    fontSize: "11px",
+    fontSize: "10px",
     color: "#888",
-    marginBottom: "16px",
+    marginBottom: "3px",
     borderBottom: "1px solid #000",
-    paddingBottom: "10px",
+    paddingBottom: "2px",
+    textAlign: "left" as const,
   } as React.CSSProperties,
   sectionTitle: {
-    fontSize: "11px",
+    fontSize: "10px",
     fontWeight: 700,
     textTransform: "uppercase" as const,
     letterSpacing: "3px",
     color: "#000",
-    marginBottom: "16px",
-    marginTop: "16px",
+    marginBottom: "2px",
+    marginTop: "4px",
+    textAlign: "left" as const,
   } as React.CSSProperties,
   entryTitle: {
-    fontSize: "13px",
+    fontSize: "11px",
     fontWeight: 700,
-    marginBottom: "1px",
+    marginBottom: "0px",
+    textAlign: "left" as const,
   } as React.CSSProperties,
   entryMeta: {
-    fontSize: "11px",
+    fontSize: "10px",
     color: "#888",
-    marginBottom: "6px",
+    marginBottom: "1px",
+    textAlign: "left" as const,
   } as React.CSSProperties,
   text: {
-    fontSize: "12px",
+    fontSize: "11px",
     color: "#333",
-    marginBottom: "4px",
+    marginBottom: "1px",
   } as React.CSSProperties,
   bullet: {
-    fontSize: "12px",
+    fontSize: "11px",
     color: "#333",
-    paddingLeft: "12px",
-    marginBottom: "2px",
+    paddingLeft: "10px",
+    marginBottom: "0px",
     position: "relative" as const,
   } as React.CSSProperties,
   separator: {
     border: "none",
     borderTop: "1px solid #e0e0e0",
-    margin: "24px 0",
+    margin: "3px 0",
   } as React.CSSProperties,
 };
 
@@ -98,8 +105,8 @@ export function MinimalTheme({ resume }: { resume: Resume }) {
 
       {b.summary && (
         <>
-          <hr style={{ border: "none", borderTop: "1px solid #000", margin: "0 0 16px 0" }} />
-          <p style={{ ...s.text, lineHeight: 1.8, fontStyle: "italic" }}>{b.summary}</p>
+          <hr style={{ border: "none", borderTop: "1px solid #000", margin: "0 0 2px 0" }} />
+          <p style={{ ...s.text, lineHeight: 1.4, fontStyle: "italic" }}>{b.summary}</p>
         </>
       )}
 
@@ -107,7 +114,7 @@ export function MinimalTheme({ resume }: { resume: Resume }) {
         <>
           <div className="cv-section-title" style={s.sectionTitle}>Expérience</div>
           {resume.work.map((w, i) => (
-            <div key={i} className="cv-entry" style={{ marginBottom: "20px" }}>
+            <div key={i} className="cv-entry" style={{ marginBottom: "3px" }}>
               <div style={s.entryTitle}>{w.position}</div>
               <div style={s.entryMeta}>
                 {w.name}{w.location ? `, ${w.location}` : ""} — {dateRange(w.startDate, w.endDate)}
@@ -127,7 +134,7 @@ export function MinimalTheme({ resume }: { resume: Resume }) {
         <>
           <div className="cv-section-title" style={s.sectionTitle}>Formation</div>
           {resume.education.map((e, i) => (
-            <div key={i} className="cv-entry" style={{ marginBottom: "14px" }}>
+            <div key={i} className="cv-entry" style={{ marginBottom: "2px" }}>
               <div style={s.entryTitle}>{e.institution}</div>
               <div style={s.entryMeta}>
                 {e.studyType} {e.area ? `— ${e.area}` : ""} — {dateRange(e.startDate, e.endDate)}
@@ -141,7 +148,7 @@ export function MinimalTheme({ resume }: { resume: Resume }) {
         <>
           <div className="cv-section-title" style={s.sectionTitle}>Compétences</div>
           {resume.skills.map((sk, i) => (
-            <div key={i} style={{ marginBottom: "6px" }}>
+            <div key={i} style={{ marginBottom: "3px" }}>
               <span style={{ fontWeight: 700, fontSize: "12px" }}>{sk.name}</span>
               {sk.keywords && sk.keywords.length > 0 && (
                 <span style={{ fontSize: "12px", color: "#555" }}> — {sk.keywords.join(", ")}</span>
@@ -155,7 +162,7 @@ export function MinimalTheme({ resume }: { resume: Resume }) {
         <>
           <div className="cv-section-title" style={s.sectionTitle}>Projets</div>
           {resume.projects.map((p, i) => (
-            <div key={i} className="cv-entry" style={{ marginBottom: "14px" }}>
+            <div key={i} className="cv-entry" style={{ marginBottom: "2px" }}>
               <div style={s.entryTitle}>{p.name}</div>
               <div style={s.entryMeta}>{dateRange(p.startDate, p.endDate)}</div>
               {p.description && <p style={s.text}>{p.description}</p>}
@@ -177,7 +184,7 @@ export function MinimalTheme({ resume }: { resume: Resume }) {
         <>
           <div className="cv-section-title" style={s.sectionTitle}>Certifications</div>
           {resume.certificates.map((c, i) => (
-            <div key={i} style={{ marginBottom: "4px", fontSize: "12px" }}>
+            <div key={i} style={{ marginBottom: "2px", fontSize: "11px" }}>
               {c.name} — {c.issuer} ({formatDate(c.date)})
             </div>
           ))}
@@ -188,7 +195,7 @@ export function MinimalTheme({ resume }: { resume: Resume }) {
         <>
           <div className="cv-section-title" style={s.sectionTitle}>Récompenses</div>
           {resume.awards.map((a, i) => (
-            <div key={i} style={{ marginBottom: "4px", fontSize: "12px" }}>
+            <div key={i} style={{ marginBottom: "2px", fontSize: "11px" }}>
               {a.title} — {a.awarder} ({formatDate(a.date)})
             </div>
           ))}
@@ -199,7 +206,7 @@ export function MinimalTheme({ resume }: { resume: Resume }) {
         <>
           <div className="cv-section-title" style={s.sectionTitle}>Benevolat</div>
           {resume.volunteer.map((v, i) => (
-            <div key={i} className="cv-entry" style={{ marginBottom: "14px" }}>
+            <div key={i} className="cv-entry" style={{ marginBottom: "2px" }}>
               <div style={s.entryTitle}>{v.position} - {v.organization}</div>
               <div style={s.entryMeta}>{dateRange(v.startDate, v.endDate)}</div>
               {v.summary && <p style={s.text}>{v.summary}</p>}
@@ -217,7 +224,7 @@ export function MinimalTheme({ resume }: { resume: Resume }) {
         <>
           <div className="cv-section-title" style={s.sectionTitle}>Publications</div>
           {resume.publications.map((p, i) => (
-            <div key={i} style={{ marginBottom: "8px", fontSize: "12px" }}>
+            <div key={i} style={{ marginBottom: "2px", fontSize: "11px" }}>
               <span style={{ fontWeight: 700 }}>{p.name}</span>
               {p.publisher ? ` - ${p.publisher}` : ""}
               {p.releaseDate ? ` (${formatDate(p.releaseDate)})` : ""}
@@ -239,9 +246,9 @@ export function MinimalTheme({ resume }: { resume: Resume }) {
         <>
           <div className="cv-section-title" style={s.sectionTitle}>Références</div>
           {resume.references.map((r, i) => (
-            <div key={i} style={{ marginBottom: "10px" }}>
-              <div style={{ fontSize: "12px", fontWeight: 700 }}>{r.name}</div>
-              <p style={{ fontSize: "11px", color: "#666", fontStyle: "italic", margin: "2px 0" }}>
+            <div key={i} style={{ marginBottom: "3px" }}>
+              <div style={{ fontSize: "11px", fontWeight: 700 }}>{r.name}</div>
+              <p style={{ fontSize: "10px", color: "#666", fontStyle: "italic", margin: "1px 0" }}>
                 &ldquo;{r.reference}&rdquo;
               </p>
             </div>
