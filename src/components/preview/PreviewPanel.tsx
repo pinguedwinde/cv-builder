@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ThemeRenderer } from "@/components/themes/ThemeRenderer";
 import { themes, themeIds, type ThemeId } from "@/themes";
 import type { Resume } from "@/lib/schemas/resume";
-import { ZoomIn, ZoomOut, Maximize2, Minimize2, Download } from "lucide-react";
+import { ZoomIn, ZoomOut, Maximize2, Minimize2, Download, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -30,12 +30,16 @@ const themeAccentDots: Record<string, string> = {
   bold: "bg-yellow-400",
 };
 
+type PdfState = "idle" | "loading" | "done";
+
 export function PreviewPanel({ resume, themeId, onThemeChange, resumeId }: PreviewPanelProps) {
   const [zoom, setZoom] = useState(100);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [pdfState, setPdfState] = useState<PdfState>("idle");
 
   const handleExportPdf = async () => {
-    if (!resumeId) return;
+    if (!resumeId || pdfState !== "idle") return;
+    setPdfState("loading");
     try {
       const res = await fetch(`/api/export/pdf?id=${resumeId}&theme=${themeId}`);
       if (!res.ok) throw new Error("PDF export failed");
@@ -46,8 +50,11 @@ export function PreviewPanel({ resume, themeId, onThemeChange, resumeId }: Previ
       a.download = `${resume.basics?.name || "cv"}-${themeId}.pdf`;
       a.click();
       URL.revokeObjectURL(url);
+      setPdfState("done");
+      setTimeout(() => setPdfState("idle"), 2500);
     } catch (err) {
       console.error("PDF export error:", err);
+      setPdfState("idle");
     }
   };
 
@@ -131,10 +138,53 @@ export function PreviewPanel({ resume, themeId, onThemeChange, resumeId }: Previ
           <Button
             size="sm"
             onClick={handleExportPdf}
-            className="ml-1 h-7 px-3 text-xs"
+            disabled={pdfState !== "idle"}
+            className="ml-1 h-7 px-3 text-xs min-w-[64px]"
           >
-            <Download className="w-3 h-3" />
-            PDF
+            <AnimatePresence mode="wait" initial={false}>
+              {pdfState === "idle" && (
+                <motion.span
+                  key="idle"
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.8 }}
+                  transition={{ duration: 0.15 }}
+                  className="flex items-center gap-1"
+                >
+                  <Download className="w-3 h-3" />
+                  PDF
+                </motion.span>
+              )}
+              {pdfState === "loading" && (
+                <motion.span
+                  key="loading"
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.8 }}
+                  transition={{ duration: 0.15 }}
+                  className="flex items-center gap-1"
+                >
+                  <svg className="w-3 h-3 animate-spin" viewBox="0 0 24 24" fill="none">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4l3-3-3-3V4a10 10 0 100 20v-4l-3 3 3 3v-4a8 8 0 01-8-8z" />
+                  </svg>
+                  PDF
+                </motion.span>
+              )}
+              {pdfState === "done" && (
+                <motion.span
+                  key="done"
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.8 }}
+                  transition={{ duration: 0.15 }}
+                  className="flex items-center gap-1"
+                >
+                  <Check className="w-3 h-3" />
+                  OK
+                </motion.span>
+              )}
+            </AnimatePresence>
           </Button>
         </div>
       </div>

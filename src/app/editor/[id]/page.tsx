@@ -19,7 +19,7 @@ import type { ThemeId } from "@/themes";
 import {
   Save, Download, Plus, Trash2, Star, Target, ChevronDown,
   User, Briefcase, GraduationCap, Wrench, Globe, FolderOpen,
-  Award, FileCheck, Heart, MessageSquare, Users,
+  Award, FileCheck, Heart, MessageSquare, Users, Loader2,
 } from "lucide-react";
 
 export default function EditorPage() {
@@ -32,6 +32,7 @@ export default function EditorPage() {
   const [themeId, setThemeId] = useState<ThemeId>("modern");
   const [saving, setSaving] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [exportingPdf, setExportingPdf] = useState(false);
 
   useEffect(() => {
     async function load() {
@@ -145,6 +146,8 @@ export default function EditorPage() {
   }
 
   async function handleExport(format: string) {
+    if (format === "pdf" && exportingPdf) return;
+    if (format === "pdf") setExportingPdf(true);
     try {
       const res = await fetch(`/api/export/pdf?id=${id}&format=${format}&theme=${themeId}`);
       if (!res.ok) throw new Error("Export failed");
@@ -157,6 +160,8 @@ export default function EditorPage() {
       URL.revokeObjectURL(url);
     } catch {
       console.error("Export failed");
+    } finally {
+      if (format === "pdf") setExportingPdf(false);
     }
   }
 
@@ -197,10 +202,13 @@ export default function EditorPage() {
       </Button>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="outline" size="sm">
-            <Download className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">Exporter</span>
-            <ChevronDown className="w-3 h-3" />
+          <Button variant="outline" size="sm" disabled={exportingPdf}>
+            {exportingPdf
+              ? <Loader2 className="w-3.5 h-3.5 animate-spin" />
+              : <Download className="w-3.5 h-3.5" />
+            }
+            <span className="hidden sm:inline">{exportingPdf ? "PDF..." : "Exporter"}</span>
+            {!exportingPdf && <ChevronDown className="w-3 h-3" />}
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
@@ -214,8 +222,12 @@ export default function EditorPage() {
             <Download className="w-3.5 h-3.5" /> Markdown
           </DropdownMenuItem>
           <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={() => handleExport("pdf")}>
-            <Download className="w-3.5 h-3.5" /> PDF
+          <DropdownMenuItem onClick={() => handleExport("pdf")} disabled={exportingPdf}>
+            {exportingPdf
+              ? <Loader2 className="w-3.5 h-3.5 animate-spin" />
+              : <Download className="w-3.5 h-3.5" />
+            }
+            PDF {exportingPdf && "(génération...)"}
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
