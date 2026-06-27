@@ -29,7 +29,7 @@ const s = {
     fontFamily: "'Raleway', 'Gill Sans', 'Gill Sans MT', Calibri, sans-serif",
     color: DARK,
     borderLeft: `4px solid ${DARK}`,
-    padding: "56px 72px",
+    padding: "36px 52px",
     maxWidth: "210mm",
     lineHeight: 1.65,
     fontSize: "13px",
@@ -57,9 +57,9 @@ const s = {
     display: "flex",
     flexWrap: "wrap" as const,
     gap: "0",
-    marginBottom: "36px",
+    marginBottom: "20px",
     borderBottom: `1px solid ${GOLD}`,
-    paddingBottom: "24px",
+    paddingBottom: "14px",
   } as React.CSSProperties,
   contactItem: {
     marginRight: "12px",
@@ -75,7 +75,7 @@ const s = {
     fontStyle: "italic" as const,
     borderLeft: `3px solid ${GOLD}`,
     paddingLeft: "16px",
-    marginBottom: "32px",
+    marginBottom: "20px",
   } as React.CSSProperties,
   sectionTitle: {
     fontFamily: "'Playfair Display', Georgia, serif",
@@ -88,7 +88,7 @@ const s = {
     borderBottom: `1px solid ${GOLD}`,
     paddingBottom: "6px",
     marginBottom: "16px",
-    marginTop: "32px",
+    marginTop: "20px",
   } as React.CSSProperties,
   entryRow: {
     display: "flex",

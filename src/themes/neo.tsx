@@ -29,7 +29,7 @@ const s = {
     fontFamily: "'JetBrains Mono', 'Fira Code', 'Cascadia Code', 'Consolas', 'Courier New', monospace",
     color: TEXT,
     backgroundColor: BG,
-    padding: "32px",
+    padding: "24px",
     maxWidth: "210mm",
     // minHeight removed for multi-page PDF support
     lineHeight: 1.65,
@@ -41,7 +41,7 @@ const s = {
     border: `1px solid ${BORDER_COLOR}`,
     borderRadius: "6px",
     overflow: "hidden" as const,
-    marginBottom: "24px",
+    marginBottom: "16px",
   } as React.CSSProperties,
   titleBar: {
     height: "28px",

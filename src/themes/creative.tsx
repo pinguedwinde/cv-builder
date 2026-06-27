@@ -44,7 +44,7 @@ const s = {
   header: {
     background: `linear-gradient(135deg, ${colors.gradientStart}, ${colors.gradientEnd})`,
     color: colors.white,
-    padding: "40px 48px",
+    padding: "28px 36px",
     position: "relative" as const,
     overflow: "hidden",
   } as React.CSSProperties,
@@ -92,14 +92,14 @@ const s = {
     zIndex: 1,
   } as React.CSSProperties,
   body: {
-    padding: "32px 48px",
+    padding: "24px 36px",
   } as React.CSSProperties,
   sectionTitle: {
     fontSize: "16px",
     fontWeight: 800,
     color: colors.gradientStart,
-    marginBottom: "16px",
-    marginTop: "28px",
+    marginBottom: "12px",
+    marginTop: "20px",
     display: "flex",
     alignItems: "center",
     gap: "8px",

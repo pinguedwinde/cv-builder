@@ -57,23 +57,23 @@ const s = {
     minWidth: SIDEBAR_W_PX,
     backgroundColor: colors.sidebarBg,
     color: colors.sidebarText,
-    padding: "40px 24px",
+    padding: "32px 20px",
   } as React.CSSProperties,
   sidebarPdf: {
     width: SIDEBAR_W_PDF,
     backgroundColor: colors.sidebarBg,
     color: colors.sidebarText,
-    padding: "40px 24px",
+    padding: "32px 20px",
     boxSizing: "border-box" as const,
     minHeight: "297mm",
   } as React.CSSProperties,
   main: {
     flex: 1,
-    padding: "40px 32px",
+    padding: "32px 24px",
     backgroundColor: colors.mainBg,
   } as React.CSSProperties,
   mainPdf: {
-    padding: "40px 32px",
+    padding: "32px 24px",
     backgroundColor: colors.mainBg,
     boxSizing: "border-box" as const,
   } as React.CSSProperties,
@@ -113,7 +113,7 @@ const s = {
     color: colors.sidebarMuted,
   } as React.CSSProperties,
   mainSection: {
-    marginBottom: "28px",
+    marginBottom: "20px",
   } as React.CSSProperties,
   mainSectionTitle: {
     fontSize: "14px",

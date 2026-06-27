@@ -37,7 +37,7 @@ const s = {
     color: colors.text,
     fontSize: "11px",
     lineHeight: 1.4,
-    padding: "32px 36px",
+    padding: "24px 28px",
   } as React.CSSProperties,
   header: {
     display: "flex",
@@ -71,7 +71,7 @@ const s = {
   } as React.CSSProperties,
   columns: {
     display: "flex",
-    gap: "24px",
+    gap: "16px",
   } as React.CSSProperties,
   leftCol: {
     flex: "0 0 55%",

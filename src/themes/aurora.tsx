@@ -40,7 +40,7 @@ const s = {
   } as React.CSSProperties,
   header: {
     background: `linear-gradient(120deg, ${TEAL}, ${ACCENT}, ${PURPLE})`,
-    padding: "40px 48px 32px",
+    padding: "28px 36px 20px",
     color: "#fff",
   } as React.CSSProperties,
   name: {
@@ -68,7 +68,7 @@ const s = {
     color: "#fff",
   } as React.CSSProperties,
   body: {
-    padding: "32px 48px",
+    padding: "24px 36px",
   } as React.CSSProperties,
   sectionTitle: {
     fontSize: "13px",
@@ -78,8 +78,8 @@ const s = {
     letterSpacing: "2px",
     borderBottom: `2px solid ${ACCENT}`,
     paddingBottom: "6px",
-    marginBottom: "16px",
-    marginTop: "28px",
+    marginBottom: "12px",
+    marginTop: "20px",
   } as React.CSSProperties,
   card: {
     backgroundColor: CARD_BG,

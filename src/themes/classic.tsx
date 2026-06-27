@@ -23,7 +23,7 @@ const styles = {
   page: {
     fontFamily: "'Georgia', 'Times New Roman', serif",
     color: "#1a1a2e",
-    padding: "48px",
+    padding: "32px 40px",
     maxWidth: "800px",
     margin: "0 auto",
     lineHeight: 1.6,
@@ -33,7 +33,7 @@ const styles = {
     textAlign: "center" as const,
     borderBottom: "3px solid #1a1a2e",
     paddingBottom: "24px",
-    marginBottom: "32px",
+    marginBottom: "20px",
   } as React.CSSProperties,
   name: {
     fontSize: "32px",
@@ -66,7 +66,7 @@ const styles = {
     borderBottom: "1px solid #ccc",
     paddingBottom: "6px",
     marginBottom: "16px",
-    marginTop: "28px",
+    marginTop: "18px",
   } as React.CSSProperties,
   entryTitle: {
     fontSize: "15px",

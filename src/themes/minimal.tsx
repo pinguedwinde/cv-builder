@@ -23,7 +23,7 @@ const s = {
   page: {
     fontFamily: "'JetBrains Mono', 'Fira Code', 'SF Mono', monospace",
     color: "#000000",
-    padding: "60px 48px",
+    padding: "36px 36px",
     maxWidth: "700px",
     margin: "0 auto",
     lineHeight: 1.7,
@@ -44,9 +44,9 @@ const s = {
   contact: {
     fontSize: "11px",
     color: "#888",
-    marginBottom: "40px",
+    marginBottom: "24px",
     borderBottom: "1px solid #000",
-    paddingBottom: "20px",
+    paddingBottom: "14px",
   } as React.CSSProperties,
   sectionTitle: {
     fontSize: "11px",
@@ -55,7 +55,7 @@ const s = {
     letterSpacing: "3px",
     color: "#000",
     marginBottom: "16px",
-    marginTop: "36px",
+    marginTop: "24px",
   } as React.CSSProperties,
   entryTitle: {
     fontSize: "13px",

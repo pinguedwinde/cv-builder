@@ -44,7 +44,7 @@ const s = {
     fontFamily: "'Lato', 'Helvetica Neue', Arial, sans-serif",
     color: TEXT,
     backgroundColor: BG,
-    padding: "56px 72px",
+    padding: "36px 52px",
     maxWidth: "210mm",
     lineHeight: 1.7,
     fontSize: "13px",
@@ -52,7 +52,7 @@ const s = {
   } as React.CSSProperties,
   header: {
     textAlign: "center" as const,
-    marginBottom: "36px",
+    marginBottom: "22px",
   } as React.CSSProperties,
   name: {
     fontFamily: "'Cormorant Garamond', 'Garamond', 'Georgia', serif",
@@ -95,7 +95,7 @@ const s = {
     borderBottom: `1px solid ${BLUSH_BORDER}`,
     paddingBottom: "6px",
     marginBottom: "16px",
-    marginTop: "32px",
+    marginTop: "20px",
   } as React.CSSProperties,
   entryRow: {
     display: "flex",

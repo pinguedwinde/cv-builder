@@ -35,7 +35,7 @@ const s = {
     boxSizing: "border-box" as const,
   } as React.CSSProperties,
   header: {
-    padding: "40px 48px 0",
+    padding: "28px 36px 0",
     backgroundColor: WHITE,
   } as React.CSSProperties,
   name: {
@@ -52,7 +52,7 @@ const s = {
   labelBand: {
     backgroundColor: BLACK,
     color: YELLOW,
-    padding: "6px 48px",
+    padding: "6px 36px",
     fontSize: "13px",
     fontWeight: 700,
     letterSpacing: "2px",
@@ -65,7 +65,7 @@ const s = {
     width: "100%",
   } as React.CSSProperties,
   contactRow: {
-    padding: "12px 48px",
+    padding: "12px 36px",
     fontSize: "12px",
     color: MUTED,
     display: "flex",
@@ -78,7 +78,7 @@ const s = {
     marginRight: "16px",
   } as React.CSSProperties,
   body: {
-    padding: "0 48px 40px",
+    padding: "0 36px 28px",
   } as React.CSSProperties,
   sectionBand: {
     backgroundColor: BLACK,
@@ -90,7 +90,7 @@ const s = {
     textTransform: "uppercase" as const,
     padding: "5px 0 5px 0",
     marginBottom: "14px",
-    marginTop: "24px",
+    marginTop: "16px",
     paddingLeft: "12px",
   } as React.CSSProperties,
   entryRow: {
