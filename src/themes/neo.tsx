@@ -31,7 +31,7 @@ const s = {
     backgroundColor: BG,
     padding: "32px",
     maxWidth: "210mm",
-    minHeight: "297mm",
+    // minHeight removed for multi-page PDF support
     lineHeight: 1.65,
     fontSize: "12px",
     boxSizing: "border-box" as const,
@@ -190,7 +190,7 @@ export function NeoTheme({ resume }: { resume: Resume }) {
 
       {b.summary && (
         <>
-          <div style={s.sectionTitle}>
+          <div className="cv-section-title" style={s.sectionTitle}>
             <span style={s.commentPrefix}>## </span>PROFIL
           </div>
           <div style={{ ...s.entry, fontStyle: "italic" as const, color: "#A0A8B4" }}>
@@ -202,11 +202,11 @@ export function NeoTheme({ resume }: { resume: Resume }) {
       {resume.work && resume.work.length > 0 && (
         <>
           <div style={s.divider}>{DASHES}</div>
-          <div style={s.sectionTitle}>
+          <div className="cv-section-title" style={s.sectionTitle}>
             <span style={s.commentPrefix}>## </span>EXPERIENCE
           </div>
           {resume.work.map((w, i) => (
-            <div key={i} style={s.entry}>
+            <div key={i} className="cv-entry" style={s.entry}>
               <div style={s.entryCompany}>&gt; {w.name}</div>
               <div style={s.entryPosition}>{w.position}</div>
               <div style={s.entryDate}>{dateRange(w.startDate, w.endDate)}{w.location ? ` - ${w.location}` : ""}</div>
@@ -224,11 +224,11 @@ export function NeoTheme({ resume }: { resume: Resume }) {
       {resume.education && resume.education.length > 0 && (
         <>
           <div style={s.divider}>{DASHES}</div>
-          <div style={s.sectionTitle}>
+          <div className="cv-section-title" style={s.sectionTitle}>
             <span style={s.commentPrefix}>## </span>FORMATION
           </div>
           {resume.education.map((e, i) => (
-            <div key={i} style={s.entry}>
+            <div key={i} className="cv-entry" style={s.entry}>
               <div style={s.entryCompany}>&gt; {e.institution}</div>
               <div style={s.entryPosition}>{e.studyType}{e.area ? ` - ${e.area}` : ""}</div>
               <div style={s.entryDate}>{dateRange(e.startDate, e.endDate)}{e.score ? ` - ${e.score}` : ""}</div>
@@ -240,7 +240,7 @@ export function NeoTheme({ resume }: { resume: Resume }) {
       {resume.skills && resume.skills.length > 0 && (
         <>
           <div style={s.divider}>{DASHES}</div>
-          <div style={s.sectionTitle}>
+          <div className="cv-section-title" style={s.sectionTitle}>
             <span style={s.commentPrefix}>## </span>COMPETENCES
           </div>
           <div style={{ ...s.entry }}>
@@ -263,11 +263,11 @@ export function NeoTheme({ resume }: { resume: Resume }) {
       {resume.projects && resume.projects.length > 0 && (
         <>
           <div style={s.divider}>{DASHES}</div>
-          <div style={s.sectionTitle}>
+          <div className="cv-section-title" style={s.sectionTitle}>
             <span style={s.commentPrefix}>## </span>PROJETS
           </div>
           {resume.projects.map((p, i) => (
-            <div key={i} style={s.entry}>
+            <div key={i} className="cv-entry" style={s.entry}>
               <div style={s.entryCompany}>&gt; {p.name}</div>
               <div style={s.entryDate}>{dateRange(p.startDate, p.endDate)}</div>
               {p.description && <p style={s.text}>{p.description}</p>}
@@ -284,7 +284,7 @@ export function NeoTheme({ resume }: { resume: Resume }) {
       {resume.languages && resume.languages.length > 0 && (
         <>
           <div style={s.divider}>{DASHES}</div>
-          <div style={s.sectionTitle}>
+          <div className="cv-section-title" style={s.sectionTitle}>
             <span style={s.commentPrefix}>## </span>LANGUES
           </div>
           <div style={s.entry}>
@@ -302,7 +302,7 @@ export function NeoTheme({ resume }: { resume: Resume }) {
       {resume.certificates && resume.certificates.length > 0 && (
         <>
           <div style={s.divider}>{DASHES}</div>
-          <div style={s.sectionTitle}>
+          <div className="cv-section-title" style={s.sectionTitle}>
             <span style={s.commentPrefix}>## </span>CERTIFICATIONS
           </div>
           {resume.certificates.map((c, i) => (
@@ -316,11 +316,11 @@ export function NeoTheme({ resume }: { resume: Resume }) {
       {resume.volunteer && resume.volunteer.length > 0 && (
         <>
           <div style={s.divider}>{DASHES}</div>
-          <div style={s.sectionTitle}>
+          <div className="cv-section-title" style={s.sectionTitle}>
             <span style={s.commentPrefix}>## </span>BENEVOLAT
           </div>
           {resume.volunteer.map((v, i) => (
-            <div key={i} style={s.entry}>
+            <div key={i} className="cv-entry" style={s.entry}>
               <div style={s.entryCompany}>&gt; {v.organization}</div>
               <div style={s.entryPosition}>{v.position}</div>
               <div style={s.entryDate}>{dateRange(v.startDate, v.endDate)}</div>
@@ -333,7 +333,7 @@ export function NeoTheme({ resume }: { resume: Resume }) {
       {resume.interests && resume.interests.length > 0 && (
         <>
           <div style={s.divider}>{DASHES}</div>
-          <div style={s.sectionTitle}>
+          <div className="cv-section-title" style={s.sectionTitle}>
             <span style={s.commentPrefix}>## </span>INTERETS
           </div>
           <div style={s.entry}>

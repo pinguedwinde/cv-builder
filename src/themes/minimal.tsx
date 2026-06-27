@@ -105,9 +105,9 @@ export function MinimalTheme({ resume }: { resume: Resume }) {
 
       {resume.work && resume.work.length > 0 && (
         <>
-          <div style={s.sectionTitle}>Expérience</div>
+          <div className="cv-section-title" style={s.sectionTitle}>Expérience</div>
           {resume.work.map((w, i) => (
-            <div key={i} style={{ marginBottom: "20px" }}>
+            <div key={i} className="cv-entry" style={{ marginBottom: "20px" }}>
               <div style={s.entryTitle}>{w.position}</div>
               <div style={s.entryMeta}>
                 {w.name}{w.location ? `, ${w.location}` : ""} — {dateRange(w.startDate, w.endDate)}
@@ -125,9 +125,9 @@ export function MinimalTheme({ resume }: { resume: Resume }) {
 
       {resume.education && resume.education.length > 0 && (
         <>
-          <div style={s.sectionTitle}>Formation</div>
+          <div className="cv-section-title" style={s.sectionTitle}>Formation</div>
           {resume.education.map((e, i) => (
-            <div key={i} style={{ marginBottom: "14px" }}>
+            <div key={i} className="cv-entry" style={{ marginBottom: "14px" }}>
               <div style={s.entryTitle}>{e.institution}</div>
               <div style={s.entryMeta}>
                 {e.studyType} {e.area ? `— ${e.area}` : ""} — {dateRange(e.startDate, e.endDate)}
@@ -139,7 +139,7 @@ export function MinimalTheme({ resume }: { resume: Resume }) {
 
       {resume.skills && resume.skills.length > 0 && (
         <>
-          <div style={s.sectionTitle}>Compétences</div>
+          <div className="cv-section-title" style={s.sectionTitle}>Compétences</div>
           {resume.skills.map((sk, i) => (
             <div key={i} style={{ marginBottom: "6px" }}>
               <span style={{ fontWeight: 700, fontSize: "12px" }}>{sk.name}</span>
@@ -153,9 +153,9 @@ export function MinimalTheme({ resume }: { resume: Resume }) {
 
       {resume.projects && resume.projects.length > 0 && (
         <>
-          <div style={s.sectionTitle}>Projets</div>
+          <div className="cv-section-title" style={s.sectionTitle}>Projets</div>
           {resume.projects.map((p, i) => (
-            <div key={i} style={{ marginBottom: "14px" }}>
+            <div key={i} className="cv-entry" style={{ marginBottom: "14px" }}>
               <div style={s.entryTitle}>{p.name}</div>
               <div style={s.entryMeta}>{dateRange(p.startDate, p.endDate)}</div>
               {p.description && <p style={s.text}>{p.description}</p>}
@@ -166,7 +166,7 @@ export function MinimalTheme({ resume }: { resume: Resume }) {
 
       {resume.languages && resume.languages.length > 0 && (
         <>
-          <div style={s.sectionTitle}>Langues</div>
+          <div className="cv-section-title" style={s.sectionTitle}>Langues</div>
           <p style={s.text}>
             {resume.languages.map((l) => `${l.language} (${l.fluency})`).join("  ·  ")}
           </p>
@@ -175,7 +175,7 @@ export function MinimalTheme({ resume }: { resume: Resume }) {
 
       {resume.certificates && resume.certificates.length > 0 && (
         <>
-          <div style={s.sectionTitle}>Certifications</div>
+          <div className="cv-section-title" style={s.sectionTitle}>Certifications</div>
           {resume.certificates.map((c, i) => (
             <div key={i} style={{ marginBottom: "4px", fontSize: "12px" }}>
               {c.name} — {c.issuer} ({formatDate(c.date)})
@@ -186,7 +186,7 @@ export function MinimalTheme({ resume }: { resume: Resume }) {
 
       {resume.awards && resume.awards.length > 0 && (
         <>
-          <div style={s.sectionTitle}>Récompenses</div>
+          <div className="cv-section-title" style={s.sectionTitle}>Récompenses</div>
           {resume.awards.map((a, i) => (
             <div key={i} style={{ marginBottom: "4px", fontSize: "12px" }}>
               {a.title} — {a.awarder} ({formatDate(a.date)})
@@ -197,9 +197,9 @@ export function MinimalTheme({ resume }: { resume: Resume }) {
 
       {resume.volunteer && resume.volunteer.length > 0 && (
         <>
-          <div style={s.sectionTitle}>Benevolat</div>
+          <div className="cv-section-title" style={s.sectionTitle}>Benevolat</div>
           {resume.volunteer.map((v, i) => (
-            <div key={i} style={{ marginBottom: "14px" }}>
+            <div key={i} className="cv-entry" style={{ marginBottom: "14px" }}>
               <div style={s.entryTitle}>{v.position} - {v.organization}</div>
               <div style={s.entryMeta}>{dateRange(v.startDate, v.endDate)}</div>
               {v.summary && <p style={s.text}>{v.summary}</p>}
@@ -215,7 +215,7 @@ export function MinimalTheme({ resume }: { resume: Resume }) {
 
       {resume.publications && resume.publications.length > 0 && (
         <>
-          <div style={s.sectionTitle}>Publications</div>
+          <div className="cv-section-title" style={s.sectionTitle}>Publications</div>
           {resume.publications.map((p, i) => (
             <div key={i} style={{ marginBottom: "8px", fontSize: "12px" }}>
               <span style={{ fontWeight: 700 }}>{p.name}</span>
@@ -228,7 +228,7 @@ export function MinimalTheme({ resume }: { resume: Resume }) {
 
       {resume.interests && resume.interests.length > 0 && (
         <>
-          <div style={s.sectionTitle}>Intérêts</div>
+          <div className="cv-section-title" style={s.sectionTitle}>Intérêts</div>
           <p style={s.text}>
             {resume.interests.map((item) => item.name).join("  ·  ")}
           </p>
@@ -237,7 +237,7 @@ export function MinimalTheme({ resume }: { resume: Resume }) {
 
       {resume.references && resume.references.length > 0 && (
         <>
-          <div style={s.sectionTitle}>Références</div>
+          <div className="cv-section-title" style={s.sectionTitle}>Références</div>
           {resume.references.map((r, i) => (
             <div key={i} style={{ marginBottom: "10px" }}>
               <div style={{ fontSize: "12px", fontWeight: 700 }}>{r.name}</div>

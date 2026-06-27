@@ -212,7 +212,7 @@ export function CreativeTheme({ resume }: { resume: Resume }) {
       <div style={s.body}>
         {b.summary && (
           <>
-            <div style={s.sectionTitle}>
+            <div className="cv-section-title" style={s.sectionTitle}>
               <span style={s.sectionDot} /> À propos
             </div>
             <p style={s.summary}>{b.summary}</p>
@@ -221,12 +221,12 @@ export function CreativeTheme({ resume }: { resume: Resume }) {
 
         {resume.work && resume.work.length > 0 && (
           <>
-            <div style={s.sectionTitle}>
+            <div className="cv-section-title" style={s.sectionTitle}>
               <span style={s.sectionDot} /> Expérience
             </div>
             <div>
               {resume.work.map((w, i) => (
-                <div key={i} style={s.timelineItem}>
+                <div key={i} className="cv-entry" style={s.timelineItem}>
                   <div style={s.timelineAxis}>
                     <div style={s.timelineDot} />
                     {i < resume.work!.length - 1 && <div style={s.timelineLine} />}
@@ -255,12 +255,12 @@ export function CreativeTheme({ resume }: { resume: Resume }) {
 
         {resume.skills && resume.skills.length > 0 && (
           <>
-            <div style={s.sectionTitle}>
+            <div className="cv-section-title" style={s.sectionTitle}>
               <span style={s.sectionDot} /> Compétences
             </div>
             <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
               {resume.skills.map((sk, i) => (
-                <div key={i} style={{ marginBottom: "8px" }}>
+                <div key={i} className="cv-entry" style={{ marginBottom: "8px" }}>
                   <div style={{ fontSize: "12px", fontWeight: 700, marginBottom: "4px" }}>{sk.name}</div>
                   <div style={{ display: "flex", flexWrap: "wrap" }}>
                     {sk.keywords && sk.keywords.map((kw, j) => (
@@ -275,11 +275,11 @@ export function CreativeTheme({ resume }: { resume: Resume }) {
 
         {resume.education && resume.education.length > 0 && (
           <>
-            <div style={s.sectionTitle}>
+            <div className="cv-section-title" style={s.sectionTitle}>
               <span style={s.sectionDot} /> Formation
             </div>
             {resume.education.map((e, i) => (
-              <div key={i} style={s.card}>
+              <div key={i} className="cv-entry" style={s.card}>
                 <div style={s.cardTitle}>{e.institution}</div>
                 <div style={s.cardMeta}>
                   {e.studyType} {e.area ? `en ${e.area}` : ""} — {dateRange(e.startDate, e.endDate)}
@@ -291,11 +291,11 @@ export function CreativeTheme({ resume }: { resume: Resume }) {
 
         {resume.projects && resume.projects.length > 0 && (
           <>
-            <div style={s.sectionTitle}>
+            <div className="cv-section-title" style={s.sectionTitle}>
               <span style={s.sectionDot} /> Projets
             </div>
             {resume.projects.map((p, i) => (
-              <div key={i} style={s.card}>
+              <div key={i} className="cv-entry" style={s.card}>
                 <div style={s.cardTitle}>{p.name}</div>
                 <div style={s.cardMeta}>{dateRange(p.startDate, p.endDate)}</div>
                 {p.description && <p style={s.cardText}>{p.description}</p>}
@@ -313,7 +313,7 @@ export function CreativeTheme({ resume }: { resume: Resume }) {
 
         {resume.languages && resume.languages.length > 0 && (
           <>
-            <div style={s.sectionTitle}>
+            <div className="cv-section-title" style={s.sectionTitle}>
               <span style={s.sectionDot} /> Langues
             </div>
             <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
@@ -326,7 +326,7 @@ export function CreativeTheme({ resume }: { resume: Resume }) {
 
         {resume.certificates && resume.certificates.length > 0 && (
           <>
-            <div style={s.sectionTitle}>
+            <div className="cv-section-title" style={s.sectionTitle}>
               <span style={s.sectionDot} /> Certifications
             </div>
             {resume.certificates.map((c, i) => (
@@ -340,11 +340,11 @@ export function CreativeTheme({ resume }: { resume: Resume }) {
 
         {resume.awards && resume.awards.length > 0 && (
           <>
-            <div style={s.sectionTitle}>
+            <div className="cv-section-title" style={s.sectionTitle}>
               <span style={s.sectionDot} /> Récompenses
             </div>
             {resume.awards.map((a, i) => (
-              <div key={i} style={s.card}>
+              <div key={i} className="cv-entry" style={s.card}>
                 <div style={s.cardTitle}>{a.title}</div>
                 <div style={s.cardMeta}>{a.awarder} · {formatDate(a.date)}</div>
                 {a.summary && <p style={s.cardText}>{a.summary}</p>}
@@ -355,11 +355,11 @@ export function CreativeTheme({ resume }: { resume: Resume }) {
 
         {resume.volunteer && resume.volunteer.length > 0 && (
           <>
-            <div style={s.sectionTitle}>
+            <div className="cv-section-title" style={s.sectionTitle}>
               <span style={s.sectionDot} /> Bénévolat
             </div>
             {resume.volunteer.map((v, i) => (
-              <div key={i} style={s.card}>
+              <div key={i} className="cv-entry" style={s.card}>
                 <div style={s.cardTitle}>{v.position} — {v.organization}</div>
                 <div style={s.cardMeta}>{dateRange(v.startDate, v.endDate)}</div>
                 {v.summary && <p style={s.cardText}>{v.summary}</p>}
@@ -370,7 +370,7 @@ export function CreativeTheme({ resume }: { resume: Resume }) {
 
         {resume.publications && resume.publications.length > 0 && (
           <>
-            <div style={s.sectionTitle}>
+            <div className="cv-section-title" style={s.sectionTitle}>
               <span style={s.sectionDot} /> Publications
             </div>
             {resume.publications.map((p, i) => (
@@ -387,7 +387,7 @@ export function CreativeTheme({ resume }: { resume: Resume }) {
 
         {resume.interests && resume.interests.length > 0 && (
           <>
-            <div style={s.sectionTitle}>
+            <div className="cv-section-title" style={s.sectionTitle}>
               <span style={s.sectionDot} /> Centres d&apos;intérêt
             </div>
             <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
@@ -400,11 +400,11 @@ export function CreativeTheme({ resume }: { resume: Resume }) {
 
         {resume.references && resume.references.length > 0 && (
           <>
-            <div style={s.sectionTitle}>
+            <div className="cv-section-title" style={s.sectionTitle}>
               <span style={s.sectionDot} /> Références
             </div>
             {resume.references.map((r, i) => (
-              <div key={i} style={s.card}>
+              <div key={i} className="cv-entry" style={s.card}>
                 <div style={{ fontSize: "13px", fontWeight: 700 }}>{r.name}</div>
                 <p style={{ fontSize: "12px", color: "#6b7280", fontStyle: "italic", margin: "4px 0 0" }}>
                   &ldquo;{r.reference}&rdquo;

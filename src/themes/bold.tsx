@@ -200,9 +200,9 @@ export function BoldTheme({ resume }: { resume: Resume }) {
 
         {resume.work && resume.work.length > 0 && (
           <>
-            <div style={s.sectionBand}>Experience</div>
+            <div className="cv-section-title" style={s.sectionBand}>Experience</div>
             {resume.work.map((w, i) => (
-              <div key={i} style={{ marginBottom: "20px" }}>
+              <div key={i} className="cv-entry" style={{ marginBottom: "20px" }}>
                 <div style={s.entryRow}>
                   <div style={s.entryCompany}>{w.name}</div>
                   <div style={s.entryDate}>{dateRange(w.startDate, w.endDate)}</div>
@@ -220,9 +220,9 @@ export function BoldTheme({ resume }: { resume: Resume }) {
 
         {resume.education && resume.education.length > 0 && (
           <>
-            <div style={s.sectionBand}>Formation</div>
+            <div className="cv-section-title" style={s.sectionBand}>Formation</div>
             {resume.education.map((e, i) => (
-              <div key={i} style={{ marginBottom: "14px" }}>
+              <div key={i} className="cv-entry" style={{ marginBottom: "14px" }}>
                 <div style={s.entryRow}>
                   <div style={s.entryCompany}>{e.institution}</div>
                   <div style={s.entryDate}>{dateRange(e.startDate, e.endDate)}</div>
@@ -236,7 +236,7 @@ export function BoldTheme({ resume }: { resume: Resume }) {
 
         {resume.skills && resume.skills.length > 0 && (
           <>
-            <div style={s.sectionBand}>Competences</div>
+            <div className="cv-section-title" style={s.sectionBand}>Competences</div>
             <div style={s.skillGrid}>
               {resume.skills.map((sk, i) => (
                 <div key={i} style={s.skillItem}>
@@ -253,9 +253,9 @@ export function BoldTheme({ resume }: { resume: Resume }) {
 
         {resume.projects && resume.projects.length > 0 && (
           <>
-            <div style={s.sectionBand}>Projets</div>
+            <div className="cv-section-title" style={s.sectionBand}>Projets</div>
             {resume.projects.map((p, i) => (
-              <div key={i} style={{ marginBottom: "16px" }}>
+              <div key={i} className="cv-entry" style={{ marginBottom: "16px" }}>
                 <div style={s.entryRow}>
                   <div style={s.entryCompany}>{p.name}</div>
                   <div style={s.entryDate}>{dateRange(p.startDate, p.endDate)}</div>
@@ -271,7 +271,7 @@ export function BoldTheme({ resume }: { resume: Resume }) {
 
         {resume.languages && resume.languages.length > 0 && (
           <>
-            <div style={s.sectionBand}>Langues</div>
+            <div className="cv-section-title" style={s.sectionBand}>Langues</div>
             <div style={{ display: "flex", gap: "12px", flexWrap: "wrap" as const }}>
               {resume.languages.map((l, i) => (
                 <div key={i} style={{ backgroundColor: "#F5F5F5", padding: "8px 16px", borderBottom: `3px solid ${YELLOW}` }}>
@@ -285,7 +285,7 @@ export function BoldTheme({ resume }: { resume: Resume }) {
 
         {resume.certificates && resume.certificates.length > 0 && (
           <>
-            <div style={s.sectionBand}>Certifications</div>
+            <div className="cv-section-title" style={s.sectionBand}>Certifications</div>
             {resume.certificates.map((c, i) => (
               <div key={i} style={{ ...s.text, marginBottom: "6px" }}>
                 <strong style={{ textTransform: "uppercase" as const }}>{c.name}</strong> - {c.issuer}
@@ -297,9 +297,9 @@ export function BoldTheme({ resume }: { resume: Resume }) {
 
         {resume.awards && resume.awards.length > 0 && (
           <>
-            <div style={s.sectionBand}>Distinctions</div>
+            <div className="cv-section-title" style={s.sectionBand}>Distinctions</div>
             {resume.awards.map((a, i) => (
-              <div key={i} style={{ marginBottom: "10px" }}>
+              <div key={i} className="cv-entry" style={{ marginBottom: "10px" }}>
                 <div style={s.entryRow}>
                   <div style={s.entryCompany}>{a.title}</div>
                   <div style={s.entryDate}>{formatDate(a.date)}</div>
@@ -312,9 +312,9 @@ export function BoldTheme({ resume }: { resume: Resume }) {
 
         {resume.volunteer && resume.volunteer.length > 0 && (
           <>
-            <div style={s.sectionBand}>Engagement</div>
+            <div className="cv-section-title" style={s.sectionBand}>Engagement</div>
             {resume.volunteer.map((v, i) => (
-              <div key={i} style={{ marginBottom: "14px" }}>
+              <div key={i} className="cv-entry" style={{ marginBottom: "14px" }}>
                 <div style={s.entryRow}>
                   <div style={s.entryCompany}>{v.organization}</div>
                   <div style={s.entryDate}>{dateRange(v.startDate, v.endDate)}</div>
@@ -328,7 +328,7 @@ export function BoldTheme({ resume }: { resume: Resume }) {
 
         {resume.publications && resume.publications.length > 0 && (
           <>
-            <div style={s.sectionBand}>Publications</div>
+            <div className="cv-section-title" style={s.sectionBand}>Publications</div>
             {resume.publications.map((p, i) => (
               <div key={i} style={{ ...s.text, marginBottom: "6px" }}>
                 <strong style={{ textTransform: "uppercase" as const }}>{p.name}</strong>
@@ -341,7 +341,7 @@ export function BoldTheme({ resume }: { resume: Resume }) {
 
         {resume.interests && resume.interests.length > 0 && (
           <>
-            <div style={s.sectionBand}>Interets</div>
+            <div className="cv-section-title" style={s.sectionBand}>Interets</div>
             <div style={{ display: "flex", flexWrap: "wrap" as const, gap: "8px" }}>
               {resume.interests.map((item, i) => (
                 <span key={i} style={{ backgroundColor: YELLOW, color: BLACK, padding: "4px 12px", fontWeight: 700, fontSize: "12px", textTransform: "uppercase" as const, borderRadius: "2px" }}>

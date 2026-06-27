@@ -5,13 +5,21 @@ import type { ThemeId } from "@/themes";
 export async function generatePdf(resume: Resume, themeId: ThemeId | string, baseUrl: string): Promise<Buffer> {
   const browser = await chromium.launch({
     headless: true,
-    args: ["--no-sandbox", "--disable-setuid-sandbox"],
+    args: [
+      "--no-sandbox",
+      "--disable-setuid-sandbox",
+      "--font-render-hinting=none",
+      "--disable-lcd-text",
+    ],
   });
 
   try {
     const page = await browser.newPage();
-    const url = `${baseUrl}/pdf-render?theme=${encodeURIComponent(themeId)}`;
 
+    // A4 at 96 CSS px/inch: 210mm = 794px, 297mm = 1122px
+    await page.setViewportSize({ width: 794, height: 1122 });
+
+    const url = `${baseUrl}/pdf-render?theme=${encodeURIComponent(themeId)}`;
     await page.goto(url, { waitUntil: "networkidle" });
 
     await page.evaluate((data) => {
@@ -19,11 +27,19 @@ export async function generatePdf(resume: Resume, themeId: ThemeId | string, bas
       window.dispatchEvent(new CustomEvent("resume-data-ready"));
     }, { resume, themeId });
 
-    await page.waitForTimeout(1000);
+    // Wait for the theme to finish rendering (React double-rAF signal)
+    await Promise.race([
+      page.waitForFunction(() => (window as unknown as Record<string, unknown>).__PDF_READY__ === true),
+      page.waitForTimeout(8000),
+    ]);
+
+    // Ensure all web fonts are loaded before capturing
+    await page.evaluate(() => document.fonts.ready);
 
     const pdf = await page.pdf({
       format: "A4",
       printBackground: true,
+      preferCSSPageSize: true,
       margin: { top: "0", right: "0", bottom: "0", left: "0" },
     });
 

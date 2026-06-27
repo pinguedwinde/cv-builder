@@ -1,3 +1,4 @@
+import { usePdfMode } from "@/lib/pdf-context";
 import type { Resume } from "@/lib/schemas/resume";
 
 function formatDate(date?: string): string {
@@ -24,6 +25,10 @@ const RED = "#D62828";
 const WHITE = "#FFFFFF";
 const MUTED = "#888888";
 
+// Sidebar width: 200px screen = ~53mm on A4
+const SIDEBAR_W_PDF = "53mm";
+const SIDEBAR_W_PX = "200px";
+
 const s = {
   page: {
     fontFamily: "'Barlow', 'Arial', sans-serif",
@@ -35,13 +40,44 @@ const s = {
     lineHeight: 1.55,
     boxSizing: "border-box" as const,
   } as React.CSSProperties,
+  pagePdf: {
+    fontFamily: "'Barlow', 'Arial', sans-serif",
+    color: BLACK,
+    maxWidth: "210mm",
+    fontSize: "12px",
+    lineHeight: 1.55,
+    boxSizing: "border-box" as const,
+  } as React.CSSProperties,
   sidebar: {
-    width: "200px",
-    minWidth: "200px",
+    width: SIDEBAR_W_PX,
+    minWidth: SIDEBAR_W_PX,
     backgroundColor: BLACK,
     padding: "40px 24px",
     color: WHITE,
     flexShrink: 0,
+  } as React.CSSProperties,
+  sidebarPdf: {
+    position: "fixed" as const,
+    top: 0,
+    left: 0,
+    width: SIDEBAR_W_PDF,
+    height: "297mm",
+    backgroundColor: BLACK,
+    padding: "40px 20px",
+    color: WHITE,
+    overflow: "hidden",
+    boxSizing: "border-box" as const,
+  } as React.CSSProperties,
+  main: {
+    flex: 1,
+    padding: "40px 32px",
+    backgroundColor: WHITE,
+  } as React.CSSProperties,
+  mainPdf: {
+    marginLeft: SIDEBAR_W_PDF,
+    padding: "40px 32px",
+    backgroundColor: WHITE,
+    boxSizing: "border-box" as const,
   } as React.CSSProperties,
   name: {
     fontFamily: "'Barlow Condensed', 'Arial Narrow', Arial, sans-serif",
@@ -102,11 +138,6 @@ const s = {
     color: RED,
     fontWeight: 600,
   } as React.CSSProperties,
-  main: {
-    flex: 1,
-    padding: "40px 32px",
-    backgroundColor: WHITE,
-  } as React.CSSProperties,
   sectionBand: {
     backgroundColor: RED,
     color: WHITE,
@@ -164,12 +195,13 @@ const s = {
 };
 
 export function SwissTheme({ resume }: { resume: Resume }) {
+  const pdfMode = usePdfMode();
   const b = resume.basics;
   const contactItems = [b.email, b.phone, b.url].filter(Boolean) as string[];
 
   return (
-    <div style={s.page}>
-      <div style={s.sidebar}>
+    <div style={pdfMode ? s.pagePdf : s.page}>
+      <div style={pdfMode ? s.sidebarPdf : s.sidebar}>
         {b.name && (
           <div style={s.name}>
             {b.name.split(" ").map((word, i) => <div key={i}>{word}</div>)}
@@ -226,14 +258,14 @@ export function SwissTheme({ resume }: { resume: Resume }) {
         )}
       </div>
 
-      <div style={s.main}>
+      <div style={pdfMode ? s.mainPdf : s.main}>
         {b.summary && <p style={s.summary}>{b.summary}</p>}
 
         {resume.work && resume.work.length > 0 && (
           <>
-            <div style={s.sectionBand}>Experience</div>
+            <div className="cv-section-title" style={s.sectionBand}>Experience</div>
             {resume.work.map((w, i) => (
-              <div key={i} style={{ marginBottom: "18px" }}>
+              <div key={i} className="cv-entry" style={{ marginBottom: "18px" }}>
                 <div style={s.entryTitle}>{w.position}</div>
                 <div style={s.entryDate}>{dateRange(w.startDate, w.endDate)}</div>
                 <div style={s.entryMeta}>{w.name}{w.location ? ` - ${w.location}` : ""}</div>
@@ -250,9 +282,9 @@ export function SwissTheme({ resume }: { resume: Resume }) {
 
         {resume.education && resume.education.length > 0 && (
           <>
-            <div style={s.sectionBand}>Formation</div>
+            <div className="cv-section-title" style={s.sectionBand}>Formation</div>
             {resume.education.map((e, i) => (
-              <div key={i} style={{ marginBottom: "14px" }}>
+              <div key={i} className="cv-entry" style={{ marginBottom: "14px" }}>
                 <div style={s.entryTitle}>{e.studyType}{e.area ? ` - ${e.area}` : ""}</div>
                 <div style={s.entryDate}>{dateRange(e.startDate, e.endDate)}</div>
                 <div style={s.entryMeta}>{e.institution}{e.score ? ` - ${e.score}` : ""}</div>
@@ -263,9 +295,9 @@ export function SwissTheme({ resume }: { resume: Resume }) {
 
         {resume.projects && resume.projects.length > 0 && (
           <>
-            <div style={s.sectionBand}>Projets</div>
+            <div className="cv-section-title" style={s.sectionBand}>Projets</div>
             {resume.projects.map((p, i) => (
-              <div key={i} style={{ marginBottom: "14px" }}>
+              <div key={i} className="cv-entry" style={{ marginBottom: "14px" }}>
                 <div style={s.entryTitle}>{p.name}</div>
                 <div style={s.entryDate}>{dateRange(p.startDate, p.endDate)}</div>
                 {p.description && <p style={s.text}>{p.description}</p>}
@@ -279,9 +311,9 @@ export function SwissTheme({ resume }: { resume: Resume }) {
 
         {resume.certificates && resume.certificates.length > 0 && (
           <>
-            <div style={s.sectionBand}>Certifications</div>
+            <div className="cv-section-title" style={s.sectionBand}>Certifications</div>
             {resume.certificates.map((c, i) => (
-              <div key={i} style={{ ...s.text, marginBottom: "6px" }}>
+              <div key={i} className="cv-entry" style={{ ...s.text, marginBottom: "6px" }}>
                 <strong>{c.name}</strong> / {c.issuer} / {formatDate(c.date)}
               </div>
             ))}
@@ -290,9 +322,9 @@ export function SwissTheme({ resume }: { resume: Resume }) {
 
         {resume.awards && resume.awards.length > 0 && (
           <>
-            <div style={s.sectionBand}>Recompenses</div>
+            <div className="cv-section-title" style={s.sectionBand}>Recompenses</div>
             {resume.awards.map((a, i) => (
-              <div key={i} style={{ marginBottom: "8px" }}>
+              <div key={i} className="cv-entry" style={{ marginBottom: "8px" }}>
                 <div style={s.entryTitle}>{a.title}</div>
                 <div style={s.entryDate}>{formatDate(a.date)}</div>
                 <div style={s.entryMeta}>{a.awarder}</div>
@@ -303,9 +335,9 @@ export function SwissTheme({ resume }: { resume: Resume }) {
 
         {resume.volunteer && resume.volunteer.length > 0 && (
           <>
-            <div style={s.sectionBand}>Benevolat</div>
+            <div className="cv-section-title" style={s.sectionBand}>Benevolat</div>
             {resume.volunteer.map((v, i) => (
-              <div key={i} style={{ marginBottom: "14px" }}>
+              <div key={i} className="cv-entry" style={{ marginBottom: "14px" }}>
                 <div style={s.entryTitle}>{v.position}</div>
                 <div style={s.entryDate}>{dateRange(v.startDate, v.endDate)}</div>
                 <div style={s.entryMeta}>{v.organization}</div>
@@ -317,9 +349,9 @@ export function SwissTheme({ resume }: { resume: Resume }) {
 
         {resume.publications && resume.publications.length > 0 && (
           <>
-            <div style={s.sectionBand}>Publications</div>
+            <div className="cv-section-title" style={s.sectionBand}>Publications</div>
             {resume.publications.map((p, i) => (
-              <div key={i} style={{ ...s.text, marginBottom: "6px" }}>
+              <div key={i} className="cv-entry" style={{ ...s.text, marginBottom: "6px" }}>
                 <strong>{p.name}</strong>
                 {p.publisher ? ` / ${p.publisher}` : ""}
                 {p.releaseDate ? ` / ${formatDate(p.releaseDate)}` : ""}

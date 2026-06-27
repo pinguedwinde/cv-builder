@@ -169,9 +169,9 @@ export function AuroraTheme({ resume }: { resume: Resume }) {
 
         {resume.work && resume.work.length > 0 && (
           <>
-            <h2 style={s.sectionTitle}>Experience</h2>
+            <h2 className="cv-section-title" style={s.sectionTitle}>Experience</h2>
             {resume.work.map((w, i) => (
-              <div key={i} style={s.card}>
+              <div key={i} className="cv-entry" style={s.card}>
                 <div style={s.entryRow}>
                   <div style={s.entryTitle}>{w.position}</div>
                   <div style={s.entryDate}>{dateRange(w.startDate, w.endDate)}</div>
@@ -190,9 +190,9 @@ export function AuroraTheme({ resume }: { resume: Resume }) {
 
         {resume.education && resume.education.length > 0 && (
           <>
-            <h2 style={s.sectionTitle}>Formation</h2>
+            <h2 className="cv-section-title" style={s.sectionTitle}>Formation</h2>
             {resume.education.map((e, i) => (
-              <div key={i} style={s.card}>
+              <div key={i} className="cv-entry" style={s.card}>
                 <div style={s.entryRow}>
                   <div style={s.entryTitle}>{e.studyType}{e.area ? ` en ${e.area}` : ""}</div>
                   <div style={s.entryDate}>{dateRange(e.startDate, e.endDate)}</div>
@@ -206,10 +206,10 @@ export function AuroraTheme({ resume }: { resume: Resume }) {
 
         {resume.skills && resume.skills.length > 0 && (
           <>
-            <h2 style={s.sectionTitle}>Competences</h2>
+            <h2 className="cv-section-title" style={s.sectionTitle}>Competences</h2>
             <div style={{ marginBottom: "8px" }}>
               {resume.skills.map((sk, i) => (
-                <div key={i} style={{ marginBottom: "12px" }}>
+                <div key={i} className="cv-entry" style={{ marginBottom: "12px" }}>
                   <div style={{ fontSize: "12px", fontWeight: 700, color: MUTED, marginBottom: "6px" }}>
                     {sk.name}{sk.level ? ` - ${sk.level}` : ""}
                   </div>
@@ -226,9 +226,9 @@ export function AuroraTheme({ resume }: { resume: Resume }) {
 
         {resume.projects && resume.projects.length > 0 && (
           <>
-            <h2 style={s.sectionTitle}>Projets</h2>
+            <h2 className="cv-section-title" style={s.sectionTitle}>Projets</h2>
             {resume.projects.map((p, i) => (
-              <div key={i} style={s.card}>
+              <div key={i} className="cv-entry" style={s.card}>
                 <div style={s.entryRow}>
                   <div style={s.entryTitle}>{p.name}</div>
                   <div style={s.entryDate}>{dateRange(p.startDate, p.endDate)}</div>
@@ -246,7 +246,7 @@ export function AuroraTheme({ resume }: { resume: Resume }) {
 
         {resume.languages && resume.languages.length > 0 && (
           <>
-            <h2 style={s.sectionTitle}>Langues</h2>
+            <h2 className="cv-section-title" style={s.sectionTitle}>Langues</h2>
             <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" as const }}>
               {resume.languages.map((l, i) => (
                 <div key={i} style={{ ...s.card, marginBottom: 0, padding: "10px 16px", flex: "0 0 auto" }}>
@@ -260,7 +260,7 @@ export function AuroraTheme({ resume }: { resume: Resume }) {
 
         {resume.certificates && resume.certificates.length > 0 && (
           <>
-            <h2 style={s.sectionTitle}>Certifications</h2>
+            <h2 className="cv-section-title" style={s.sectionTitle}>Certifications</h2>
             {resume.certificates.map((c, i) => (
               <div key={i} style={{ ...s.text, marginBottom: "6px" }}>
                 <strong>{c.name}</strong> - {c.issuer} ({formatDate(c.date)})
@@ -271,9 +271,9 @@ export function AuroraTheme({ resume }: { resume: Resume }) {
 
         {resume.awards && resume.awards.length > 0 && (
           <>
-            <h2 style={s.sectionTitle}>Recompenses</h2>
+            <h2 className="cv-section-title" style={s.sectionTitle}>Recompenses</h2>
             {resume.awards.map((a, i) => (
-              <div key={i} style={s.card}>
+              <div key={i} className="cv-entry" style={s.card}>
                 <div style={s.entryRow}>
                   <div style={s.entryTitle}>{a.title}</div>
                   <div style={s.entryDate}>{formatDate(a.date)}</div>
@@ -287,9 +287,9 @@ export function AuroraTheme({ resume }: { resume: Resume }) {
 
         {resume.volunteer && resume.volunteer.length > 0 && (
           <>
-            <h2 style={s.sectionTitle}>Benevolat</h2>
+            <h2 className="cv-section-title" style={s.sectionTitle}>Benevolat</h2>
             {resume.volunteer.map((v, i) => (
-              <div key={i} style={s.card}>
+              <div key={i} className="cv-entry" style={s.card}>
                 <div style={s.entryRow}>
                   <div style={s.entryTitle}>{v.position}</div>
                   <div style={s.entryDate}>{dateRange(v.startDate, v.endDate)}</div>
@@ -303,7 +303,7 @@ export function AuroraTheme({ resume }: { resume: Resume }) {
 
         {resume.publications && resume.publications.length > 0 && (
           <>
-            <h2 style={s.sectionTitle}>Publications</h2>
+            <h2 className="cv-section-title" style={s.sectionTitle}>Publications</h2>
             {resume.publications.map((p, i) => (
               <div key={i} style={{ ...s.text, marginBottom: "8px" }}>
                 <strong>{p.name}</strong>
@@ -316,7 +316,7 @@ export function AuroraTheme({ resume }: { resume: Resume }) {
 
         {resume.interests && resume.interests.length > 0 && (
           <>
-            <h2 style={s.sectionTitle}>Centres d'interet</h2>
+            <h2 className="cv-section-title" style={s.sectionTitle}>Centres d'interet</h2>
             <div>
               {resume.interests.map((item, i) => (
                 <span key={i} style={s.tag}>{item.name}</span>

@@ -218,16 +218,16 @@ export function ElegantTheme({ resume }: { resume: Resume }) {
 
       {b.summary && (
         <>
-          <h2 style={s.sectionTitle}>Profil</h2>
+          <h2 className="cv-section-title" style={s.sectionTitle}>Profil</h2>
           <p style={s.summary}>{b.summary}</p>
         </>
       )}
 
       {resume.work && resume.work.length > 0 && (
         <>
-          <h2 style={s.sectionTitle}>Experience Professionnelle</h2>
+          <h2 className="cv-section-title" style={s.sectionTitle}>Experience Professionnelle</h2>
           {resume.work.map((w, i) => (
-            <div key={i} style={{ marginBottom: "20px" }}>
+            <div key={i} className="cv-entry" style={{ marginBottom: "20px" }}>
               <div style={s.entryRow}>
                 <div style={s.entryTitle}>
                   <span style={s.entryTitleBullet}>{"◆"}</span>
@@ -249,9 +249,9 @@ export function ElegantTheme({ resume }: { resume: Resume }) {
 
       {resume.education && resume.education.length > 0 && (
         <>
-          <h2 style={s.sectionTitle}>Formation</h2>
+          <h2 className="cv-section-title" style={s.sectionTitle}>Formation</h2>
           {resume.education.map((e, i) => (
-            <div key={i} style={{ marginBottom: "16px" }}>
+            <div key={i} className="cv-entry" style={{ marginBottom: "16px" }}>
               <div style={s.entryRow}>
                 <div style={s.entryTitle}>
                   <span style={s.entryTitleBullet}>{"◆"}</span>
@@ -267,7 +267,7 @@ export function ElegantTheme({ resume }: { resume: Resume }) {
 
       {resume.skills && resume.skills.length > 0 && (
         <>
-          <h2 style={s.sectionTitle}>Competences</h2>
+          <h2 className="cv-section-title" style={s.sectionTitle}>Competences</h2>
           <div style={s.skillSection}>
             {resume.skills.map((sk, i) => (
               <div key={i} style={s.skillGroup}>
@@ -283,9 +283,9 @@ export function ElegantTheme({ resume }: { resume: Resume }) {
 
       {resume.projects && resume.projects.length > 0 && (
         <>
-          <h2 style={s.sectionTitle}>Projets</h2>
+          <h2 className="cv-section-title" style={s.sectionTitle}>Projets</h2>
           {resume.projects.map((p, i) => (
-            <div key={i} style={{ marginBottom: "14px" }}>
+            <div key={i} className="cv-entry" style={{ marginBottom: "14px" }}>
               <div style={s.entryRow}>
                 <div style={s.entryTitle}>
                   <span style={s.entryTitleBullet}>{"◆"}</span>
@@ -301,7 +301,7 @@ export function ElegantTheme({ resume }: { resume: Resume }) {
 
       {resume.languages && resume.languages.length > 0 && (
         <>
-          <h2 style={s.sectionTitle}>Langues</h2>
+          <h2 className="cv-section-title" style={s.sectionTitle}>Langues</h2>
           {resume.languages.map((l, i) => (
             <div key={i} style={s.langItem}>
               <span style={{ fontWeight: 600 }}>{l.language}</span>
@@ -316,7 +316,7 @@ export function ElegantTheme({ resume }: { resume: Resume }) {
 
       {resume.certificates && resume.certificates.length > 0 && (
         <>
-          <h2 style={s.sectionTitle}>Certifications</h2>
+          <h2 className="cv-section-title" style={s.sectionTitle}>Certifications</h2>
           {resume.certificates.map((c, i) => (
             <div key={i} style={{ ...s.text, marginBottom: "6px" }}>
               <span style={s.entryTitleBullet}>{"◆"} </span>
@@ -328,9 +328,9 @@ export function ElegantTheme({ resume }: { resume: Resume }) {
 
       {resume.awards && resume.awards.length > 0 && (
         <>
-          <h2 style={s.sectionTitle}>Distinctions</h2>
+          <h2 className="cv-section-title" style={s.sectionTitle}>Distinctions</h2>
           {resume.awards.map((a, i) => (
-            <div key={i} style={{ marginBottom: "10px" }}>
+            <div key={i} className="cv-entry" style={{ marginBottom: "10px" }}>
               <div style={s.entryRow}>
                 <div style={s.entryTitle}>
                   <span style={s.entryTitleBullet}>{"◆"}</span>
@@ -347,9 +347,9 @@ export function ElegantTheme({ resume }: { resume: Resume }) {
 
       {resume.volunteer && resume.volunteer.length > 0 && (
         <>
-          <h2 style={s.sectionTitle}>Engagement</h2>
+          <h2 className="cv-section-title" style={s.sectionTitle}>Engagement</h2>
           {resume.volunteer.map((v, i) => (
-            <div key={i} style={{ marginBottom: "14px" }}>
+            <div key={i} className="cv-entry" style={{ marginBottom: "14px" }}>
               <div style={s.entryRow}>
                 <div style={s.entryTitle}>
                   <span style={s.entryTitleBullet}>{"◆"}</span>
@@ -366,7 +366,7 @@ export function ElegantTheme({ resume }: { resume: Resume }) {
 
       {resume.publications && resume.publications.length > 0 && (
         <>
-          <h2 style={s.sectionTitle}>Publications</h2>
+          <h2 className="cv-section-title" style={s.sectionTitle}>Publications</h2>
           {resume.publications.map((p, i) => (
             <div key={i} style={{ ...s.text, marginBottom: "6px" }}>
               <span style={s.entryTitleBullet}>{"◆"} </span>
@@ -380,7 +380,7 @@ export function ElegantTheme({ resume }: { resume: Resume }) {
 
       {resume.interests && resume.interests.length > 0 && (
         <>
-          <h2 style={s.sectionTitle}>Centres d'interet</h2>
+          <h2 className="cv-section-title" style={s.sectionTitle}>Centres d'interet</h2>
           <p style={{ ...s.text, color: MUTED, fontStyle: "italic" as const }}>
             {resume.interests.map((item) => item.name).join("  ·  ")}
           </p>

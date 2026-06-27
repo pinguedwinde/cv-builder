@@ -1,3 +1,4 @@
+import { usePdfMode } from "@/lib/pdf-context";
 import type { Resume } from "@/lib/schemas/resume";
 
 function formatDate(date?: string): string {
@@ -32,6 +33,10 @@ const colors = {
   accent: "#3b82f6",
 };
 
+// Sidebar width: 280px screen = ~74mm on A4
+const SIDEBAR_W_PDF = "74mm";
+const SIDEBAR_W_PX = "280px";
+
 const s = {
   page: {
     fontFamily: "'Inter', 'Segoe UI', system-ui, sans-serif",
@@ -41,17 +46,41 @@ const s = {
     lineHeight: 1.5,
     color: colors.text,
   } as React.CSSProperties,
+  pagePdf: {
+    fontFamily: "'Inter', 'Segoe UI', system-ui, sans-serif",
+    fontSize: "13px",
+    lineHeight: 1.5,
+    color: colors.text,
+  } as React.CSSProperties,
   sidebar: {
-    width: "280px",
-    minWidth: "280px",
+    width: SIDEBAR_W_PX,
+    minWidth: SIDEBAR_W_PX,
     backgroundColor: colors.sidebarBg,
     color: colors.sidebarText,
     padding: "40px 24px",
+  } as React.CSSProperties,
+  sidebarPdf: {
+    position: "fixed" as const,
+    top: 0,
+    left: 0,
+    width: SIDEBAR_W_PDF,
+    height: "297mm",
+    backgroundColor: colors.sidebarBg,
+    color: colors.sidebarText,
+    padding: "40px 24px",
+    overflow: "hidden",
+    boxSizing: "border-box" as const,
   } as React.CSSProperties,
   main: {
     flex: 1,
     padding: "40px 32px",
     backgroundColor: colors.mainBg,
+  } as React.CSSProperties,
+  mainPdf: {
+    marginLeft: SIDEBAR_W_PDF,
+    padding: "40px 32px",
+    backgroundColor: colors.mainBg,
+    boxSizing: "border-box" as const,
   } as React.CSSProperties,
   sidebarName: {
     fontSize: "26px",
@@ -172,11 +201,12 @@ function getSkillLevelPercent(level?: string): number {
 }
 
 export function ModernTheme({ resume }: { resume: Resume }) {
+  const pdfMode = usePdfMode();
   const b = resume.basics;
 
   return (
-    <div style={s.page}>
-      <aside style={s.sidebar}>
+    <div style={pdfMode ? s.pagePdf : s.page}>
+      <aside style={pdfMode ? s.sidebarPdf : s.sidebar}>
         {b.name && <div style={s.sidebarName}>{b.name}</div>}
         {b.label && <div style={s.sidebarLabel}>{b.label}</div>}
 
@@ -258,19 +288,19 @@ export function ModernTheme({ resume }: { resume: Resume }) {
         )}
       </aside>
 
-      <main style={s.main}>
+      <main style={pdfMode ? s.mainPdf : s.main}>
         {b.summary && (
           <div style={s.mainSection}>
-            <div style={s.mainSectionTitle}>Profil</div>
+            <div className="cv-section-title" style={s.mainSectionTitle}>Profil</div>
             <p style={{ fontSize: "13px", color: "#475569", lineHeight: 1.7 }}>{b.summary}</p>
           </div>
         )}
 
         {resume.work && resume.work.length > 0 && (
           <div style={s.mainSection}>
-            <div style={s.mainSectionTitle}>Expérience</div>
+            <div className="cv-section-title" style={s.mainSectionTitle}>Expérience</div>
             {resume.work.map((w, i) => (
-              <div key={i} style={{ marginBottom: "18px" }}>
+              <div key={i} className="cv-entry" style={{ marginBottom: "18px" }}>
                 <div style={s.entryHeader}>
                   <div style={s.entryTitle}>{w.position}</div>
                   <div style={s.entryDate}>{dateRange(w.startDate, w.endDate)}</div>
@@ -293,9 +323,9 @@ export function ModernTheme({ resume }: { resume: Resume }) {
 
         {resume.education && resume.education.length > 0 && (
           <div style={s.mainSection}>
-            <div style={s.mainSectionTitle}>Formation</div>
+            <div className="cv-section-title" style={s.mainSectionTitle}>Formation</div>
             {resume.education.map((e, i) => (
-              <div key={i} style={{ marginBottom: "14px" }}>
+              <div key={i} className="cv-entry" style={{ marginBottom: "14px" }}>
                 <div style={s.entryHeader}>
                   <div style={s.entryTitle}>{e.institution}</div>
                   <div style={s.entryDate}>{dateRange(e.startDate, e.endDate)}</div>
@@ -310,9 +340,9 @@ export function ModernTheme({ resume }: { resume: Resume }) {
 
         {resume.projects && resume.projects.length > 0 && (
           <div style={s.mainSection}>
-            <div style={s.mainSectionTitle}>Projets</div>
+            <div className="cv-section-title" style={s.mainSectionTitle}>Projets</div>
             {resume.projects.map((p, i) => (
-              <div key={i} style={{ marginBottom: "14px" }}>
+              <div key={i} className="cv-entry" style={{ marginBottom: "14px" }}>
                 <div style={s.entryHeader}>
                   <div style={s.entryTitle}>{p.name}</div>
                   <div style={s.entryDate}>{dateRange(p.startDate, p.endDate)}</div>
@@ -332,9 +362,9 @@ export function ModernTheme({ resume }: { resume: Resume }) {
 
         {resume.certificates && resume.certificates.length > 0 && (
           <div style={s.mainSection}>
-            <div style={s.mainSectionTitle}>Certifications</div>
+            <div className="cv-section-title" style={s.mainSectionTitle}>Certifications</div>
             {resume.certificates.map((c, i) => (
-              <div key={i} style={{ marginBottom: "6px" }}>
+              <div key={i} className="cv-entry" style={{ marginBottom: "6px" }}>
                 <div style={{ ...s.entryTitle, fontSize: "13px" }}>{c.name}</div>
                 <div style={s.entrySubtitle}>{c.issuer} · {formatDate(c.date)}</div>
               </div>
@@ -344,9 +374,9 @@ export function ModernTheme({ resume }: { resume: Resume }) {
 
         {resume.awards && resume.awards.length > 0 && (
           <div style={s.mainSection}>
-            <div style={s.mainSectionTitle}>Récompenses</div>
+            <div className="cv-section-title" style={s.mainSectionTitle}>Récompenses</div>
             {resume.awards.map((a, i) => (
-              <div key={i} style={{ marginBottom: "8px" }}>
+              <div key={i} className="cv-entry" style={{ marginBottom: "8px" }}>
                 <div style={{ ...s.entryTitle, fontSize: "13px" }}>{a.title}</div>
                 <div style={s.entrySubtitle}>{a.awarder} · {formatDate(a.date)}</div>
                 {a.summary && <p style={s.entrySummary}>{a.summary}</p>}
@@ -357,9 +387,9 @@ export function ModernTheme({ resume }: { resume: Resume }) {
 
         {resume.volunteer && resume.volunteer.length > 0 && (
           <div style={s.mainSection}>
-            <div style={s.mainSectionTitle}>Bénévolat</div>
+            <div className="cv-section-title" style={s.mainSectionTitle}>Bénévolat</div>
             {resume.volunteer.map((v, i) => (
-              <div key={i} style={{ marginBottom: "14px" }}>
+              <div key={i} className="cv-entry" style={{ marginBottom: "14px" }}>
                 <div style={s.entryHeader}>
                   <div style={s.entryTitle}>{v.position}</div>
                   <div style={s.entryDate}>{dateRange(v.startDate, v.endDate)}</div>
@@ -373,9 +403,9 @@ export function ModernTheme({ resume }: { resume: Resume }) {
 
         {resume.references && resume.references.length > 0 && (
           <div style={s.mainSection}>
-            <div style={s.mainSectionTitle}>Références</div>
+            <div className="cv-section-title" style={s.mainSectionTitle}>Références</div>
             {resume.references.map((r, i) => (
-              <div key={i} style={{ marginBottom: "10px" }}>
+              <div key={i} className="cv-entry" style={{ marginBottom: "10px" }}>
                 <div style={{ fontSize: "13px", fontWeight: 600 }}>{r.name}</div>
                 <p style={{ fontSize: "12px", color: "#64748b", fontStyle: "italic", margin: "2px 0" }}>
                   &ldquo;{r.reference}&rdquo;

@@ -145,16 +145,16 @@ export function ClassicTheme({ resume }: { resume: Resume }) {
 
       {b.summary && (
         <>
-          <h2 style={styles.sectionTitle}>Profil</h2>
+          <h2 className="cv-section-title" style={styles.sectionTitle}>Profil</h2>
           <p style={styles.summary}>{b.summary}</p>
         </>
       )}
 
       {resume.work && resume.work.length > 0 && (
         <>
-          <h2 style={styles.sectionTitle}>Expérience Professionnelle</h2>
+          <h2 className="cv-section-title" style={styles.sectionTitle}>Expérience Professionnelle</h2>
           {resume.work.map((w, i) => (
-            <div key={i} style={{ marginBottom: "18px" }}>
+            <div key={i} className="cv-entry" style={{ marginBottom: "18px" }}>
               <div style={styles.entryTitle}>{w.position} — {w.name}</div>
               <div style={styles.entryMeta}>
                 {dateRange(w.startDate, w.endDate)}{w.location ? ` | ${w.location}` : ""}
@@ -174,9 +174,9 @@ export function ClassicTheme({ resume }: { resume: Resume }) {
 
       {resume.education && resume.education.length > 0 && (
         <>
-          <h2 style={styles.sectionTitle}>Formation</h2>
+          <h2 className="cv-section-title" style={styles.sectionTitle}>Formation</h2>
           {resume.education.map((e, i) => (
-            <div key={i} style={{ marginBottom: "14px" }}>
+            <div key={i} className="cv-entry" style={{ marginBottom: "14px" }}>
               <div style={styles.entryTitle}>
                 {e.studyType} {e.area ? `en ${e.area}` : ""} — {e.institution}
               </div>
@@ -193,7 +193,7 @@ export function ClassicTheme({ resume }: { resume: Resume }) {
 
       {resume.skills && resume.skills.length > 0 && (
         <>
-          <h2 style={styles.sectionTitle}>Compétences</h2>
+          <h2 className="cv-section-title" style={styles.sectionTitle}>Compétences</h2>
           {resume.skills.map((s, i) => (
             <div key={i} style={styles.skillGroup}>
               <span style={styles.skillName}>{s.name}</span>
@@ -208,9 +208,9 @@ export function ClassicTheme({ resume }: { resume: Resume }) {
 
       {resume.projects && resume.projects.length > 0 && (
         <>
-          <h2 style={styles.sectionTitle}>Projets</h2>
+          <h2 className="cv-section-title" style={styles.sectionTitle}>Projets</h2>
           {resume.projects.map((p, i) => (
-            <div key={i} style={{ marginBottom: "14px" }}>
+            <div key={i} className="cv-entry" style={{ marginBottom: "14px" }}>
               <div style={styles.entryTitle}>{p.name}</div>
               <div style={styles.entryMeta}>{dateRange(p.startDate, p.endDate)}</div>
               {p.description && <p style={styles.entrySummary}>{p.description}</p>}
@@ -228,7 +228,7 @@ export function ClassicTheme({ resume }: { resume: Resume }) {
 
       {resume.languages && resume.languages.length > 0 && (
         <>
-          <h2 style={styles.sectionTitle}>Langues</h2>
+          <h2 className="cv-section-title" style={styles.sectionTitle}>Langues</h2>
           <div style={{ display: "flex", gap: "24px", flexWrap: "wrap" }}>
             {resume.languages.map((l, i) => (
               <span key={i} style={{ fontSize: "13px" }}>
@@ -241,9 +241,9 @@ export function ClassicTheme({ resume }: { resume: Resume }) {
 
       {resume.certificates && resume.certificates.length > 0 && (
         <>
-          <h2 style={styles.sectionTitle}>Certifications</h2>
+          <h2 className="cv-section-title" style={styles.sectionTitle}>Certifications</h2>
           {resume.certificates.map((c, i) => (
-            <div key={i} style={{ fontSize: "13px", marginBottom: "4px" }}>
+            <div key={i} className="cv-entry" style={{ fontSize: "13px", marginBottom: "4px" }}>
               <strong>{c.name}</strong> — {c.issuer} ({formatDate(c.date)})
             </div>
           ))}
@@ -252,9 +252,9 @@ export function ClassicTheme({ resume }: { resume: Resume }) {
 
       {resume.awards && resume.awards.length > 0 && (
         <>
-          <h2 style={styles.sectionTitle}>Récompenses</h2>
+          <h2 className="cv-section-title" style={styles.sectionTitle}>Récompenses</h2>
           {resume.awards.map((a, i) => (
-            <div key={i} style={{ marginBottom: "8px" }}>
+            <div key={i} className="cv-entry" style={{ marginBottom: "8px" }}>
               <div style={{ fontSize: "13px" }}>
                 <strong>{a.title}</strong> — {a.awarder} ({formatDate(a.date)})
               </div>
@@ -266,9 +266,9 @@ export function ClassicTheme({ resume }: { resume: Resume }) {
 
       {resume.volunteer && resume.volunteer.length > 0 && (
         <>
-          <h2 style={styles.sectionTitle}>Bénévolat</h2>
+          <h2 className="cv-section-title" style={styles.sectionTitle}>Bénévolat</h2>
           {resume.volunteer.map((v, i) => (
-            <div key={i} style={{ marginBottom: "14px" }}>
+            <div key={i} className="cv-entry" style={{ marginBottom: "14px" }}>
               <div style={styles.entryTitle}>{v.position} — {v.organization}</div>
               <div style={styles.entryMeta}>{dateRange(v.startDate, v.endDate)}</div>
               {v.summary && <p style={styles.entrySummary}>{v.summary}</p>}
@@ -279,7 +279,7 @@ export function ClassicTheme({ resume }: { resume: Resume }) {
 
       {resume.interests && resume.interests.length > 0 && (
         <>
-          <h2 style={styles.sectionTitle}>Centres d&apos;intérêt</h2>
+          <h2 className="cv-section-title" style={styles.sectionTitle}>Centres d&apos;intérêt</h2>
           <div style={{ display: "flex", gap: "24px", flexWrap: "wrap" }}>
             {resume.interests.map((item, i) => (
               <span key={i} style={{ fontSize: "13px" }}>
@@ -293,9 +293,9 @@ export function ClassicTheme({ resume }: { resume: Resume }) {
 
       {resume.publications && resume.publications.length > 0 && (
         <>
-          <h2 style={styles.sectionTitle}>Publications</h2>
+          <h2 className="cv-section-title" style={styles.sectionTitle}>Publications</h2>
           {resume.publications.map((p, i) => (
-            <div key={i} style={{ marginBottom: "8px" }}>
+            <div key={i} className="cv-entry" style={{ marginBottom: "8px" }}>
               <div style={{ fontSize: "13px" }}>
                 <strong>{p.name}</strong>
                 {p.publisher ? ` - ${p.publisher}` : ""}
@@ -309,9 +309,9 @@ export function ClassicTheme({ resume }: { resume: Resume }) {
 
       {resume.references && resume.references.length > 0 && (
         <>
-          <h2 style={styles.sectionTitle}>References</h2>
+          <h2 className="cv-section-title" style={styles.sectionTitle}>References</h2>
           {resume.references.map((r, i) => (
-            <div key={i} style={{ marginBottom: "10px" }}>
+            <div key={i} className="cv-entry" style={{ marginBottom: "10px" }}>
               <div style={{ fontSize: "13px", fontWeight: 700 }}>{r.name}</div>
               <p style={{ fontSize: "12px", color: "#555", fontStyle: "italic", margin: "2px 0" }}>
                 &ldquo;{r.reference}&rdquo;

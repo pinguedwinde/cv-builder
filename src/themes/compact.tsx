@@ -1,3 +1,4 @@
+import { usePdfMode } from "@/lib/pdf-context";
 import type { Resume } from "@/lib/schemas/resume";
 
 function formatDate(date?: string): string {
@@ -142,25 +143,197 @@ const s = {
 };
 
 export function CompactTheme({ resume }: { resume: Resume }) {
+  const pdfMode = usePdfMode();
   const b = resume.basics;
 
+  const header = (
+    <header style={s.header}>
+      <div style={s.headerLeft}>
+        {b.name && <h1 style={s.name}>{b.name}</h1>}
+        {b.label && <div style={s.label}>{b.label}</div>}
+      </div>
+      <div style={s.headerRight}>
+        {b.email && <div>{b.email}</div>}
+        {b.phone && <div>{b.phone}</div>}
+        {b.url && <div>{b.url}</div>}
+        {b.location?.city && <div>{b.location.city}, {b.location.countryCode}</div>}
+        {b.profiles && b.profiles.filter((p) => p.network).map((p, i) => (
+          <div key={i}>{p.network}: {p.username}</div>
+        ))}
+      </div>
+    </header>
+  );
+
+  // PDF mode: single-column for reliable multi-page pagination
+  if (pdfMode) {
+    return (
+      <div style={s.page}>
+        {header}
+        {b.summary && (
+          <p style={{ fontSize: "11px", color: colors.text, marginBottom: "12px", lineHeight: 1.5 }}>
+            {b.summary}
+          </p>
+        )}
+
+        {resume.work && resume.work.length > 0 && (
+          <>
+            <div className="cv-section-title" style={s.sectionTitle}>Expérience Professionnelle</div>
+            {resume.work.map((w, i) => (
+              <div key={i} className="cv-entry" style={{ marginBottom: "10px" }}>
+                <div style={s.entryTitle}>{w.position} — {w.name}</div>
+                <div style={s.entryMeta}>
+                  {dateRange(w.startDate, w.endDate)}{w.location ? ` | ${w.location}` : ""}
+                </div>
+                {w.summary && <p style={s.entryText}>{w.summary}</p>}
+                {w.highlights && w.highlights.length > 0 && (
+                  <ul style={{ margin: "2px 0", padding: 0 }}>
+                    {w.highlights.map((h, j) => (
+                      <li key={j} style={s.bullet}>{h}</li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            ))}
+          </>
+        )}
+
+        {resume.education && resume.education.length > 0 && (
+          <>
+            <div className="cv-section-title" style={s.sectionTitle}>Formation</div>
+            {resume.education.map((e, i) => (
+              <div key={i} className="cv-entry" style={{ marginBottom: "8px" }}>
+                <div style={s.entryTitle}>{e.institution}</div>
+                <div style={s.entryMeta}>
+                  {e.studyType} {e.area ? `- ${e.area}` : ""} | {dateRange(e.startDate, e.endDate)}
+                </div>
+                {e.score && <div style={{ fontSize: "10px", color: colors.muted }}>{e.score}</div>}
+              </div>
+            ))}
+          </>
+        )}
+
+        {resume.skills && resume.skills.length > 0 && (
+          <>
+            <div className="cv-section-title" style={s.sectionTitle}>Compétences</div>
+            {resume.skills.map((sk, i) => (
+              <div key={i} style={s.skillRow}>
+                <span style={s.skillName}>{sk.name}</span>
+                <span style={s.skillKw}>
+                  {sk.keywords && sk.keywords.length > 0 ? sk.keywords.join(", ") : sk.level}
+                </span>
+              </div>
+            ))}
+          </>
+        )}
+
+        {resume.languages && resume.languages.length > 0 && (
+          <>
+            <div className="cv-section-title" style={s.sectionTitle}>Langues</div>
+            {resume.languages.map((l, i) => (
+              <div key={i} style={s.langItem}>
+                <strong>{l.language}</strong> — {l.fluency}
+              </div>
+            ))}
+          </>
+        )}
+
+        {resume.projects && resume.projects.length > 0 && (
+          <>
+            <div className="cv-section-title" style={s.sectionTitle}>Projets</div>
+            {resume.projects.map((p, i) => (
+              <div key={i} className="cv-entry" style={{ marginBottom: "8px" }}>
+                <div style={s.entryTitle}>{p.name}</div>
+                <div style={s.entryMeta}>{dateRange(p.startDate, p.endDate)}</div>
+                {p.description && <p style={s.entryText}>{p.description}</p>}
+                {p.keywords && p.keywords.length > 0 && (
+                  <p style={{ fontSize: "10px", color: colors.muted }}>{p.keywords.join(", ")}</p>
+                )}
+              </div>
+            ))}
+          </>
+        )}
+
+        {resume.certificates && resume.certificates.length > 0 && (
+          <>
+            <div className="cv-section-title" style={s.sectionTitle}>Certifications</div>
+            {resume.certificates.map((c, i) => (
+              <div key={i} className="cv-entry" style={s.certItem}>
+                <strong>{c.name}</strong> — {c.issuer} ({formatDate(c.date)})
+              </div>
+            ))}
+          </>
+        )}
+
+        {resume.awards && resume.awards.length > 0 && (
+          <>
+            <div className="cv-section-title" style={s.sectionTitle}>Récompenses</div>
+            {resume.awards.map((a, i) => (
+              <div key={i} className="cv-entry" style={s.certItem}>
+                <strong>{a.title}</strong> — {a.awarder} ({formatDate(a.date)})
+              </div>
+            ))}
+          </>
+        )}
+
+        {resume.volunteer && resume.volunteer.length > 0 && (
+          <>
+            <div className="cv-section-title" style={s.sectionTitle}>Bénévolat</div>
+            {resume.volunteer.map((v, i) => (
+              <div key={i} className="cv-entry" style={{ marginBottom: "8px" }}>
+                <div style={s.entryTitle}>{v.position} — {v.organization}</div>
+                <div style={s.entryMeta}>{dateRange(v.startDate, v.endDate)}</div>
+                {v.summary && <p style={s.entryText}>{v.summary}</p>}
+              </div>
+            ))}
+          </>
+        )}
+
+        {resume.interests && resume.interests.length > 0 && (
+          <>
+            <div className="cv-section-title" style={s.sectionTitle}>Centres d&apos;intérêt</div>
+            {resume.interests.map((item, i) => (
+              <div key={i} style={{ fontSize: "11px", marginBottom: "2px" }}>
+                <strong>{item.name}</strong>
+                {item.keywords && item.keywords.length > 0 && (
+                  <span style={{ color: colors.muted }}> — {item.keywords.join(", ")}</span>
+                )}
+              </div>
+            ))}
+          </>
+        )}
+
+        {resume.publications && resume.publications.length > 0 && (
+          <>
+            <div className="cv-section-title" style={s.sectionTitle}>Publications</div>
+            {resume.publications.map((p, i) => (
+              <div key={i} className="cv-entry" style={s.certItem}>
+                <strong>{p.name}</strong> — {p.publisher} ({formatDate(p.releaseDate)})
+              </div>
+            ))}
+          </>
+        )}
+
+        {resume.references && resume.references.length > 0 && (
+          <>
+            <div className="cv-section-title" style={s.sectionTitle}>Références</div>
+            {resume.references.map((r, i) => (
+              <div key={i} className="cv-entry" style={{ marginBottom: "6px" }}>
+                <div style={{ fontSize: "11px", fontWeight: 600 }}>{r.name}</div>
+                <p style={{ fontSize: "10px", color: colors.muted, fontStyle: "italic", margin: 0 }}>
+                  &ldquo;{r.reference}&rdquo;
+                </p>
+              </div>
+            ))}
+          </>
+        )}
+      </div>
+    );
+  }
+
+  // Screen mode: two-column layout
   return (
     <div style={s.page}>
-      <header style={s.header}>
-        <div style={s.headerLeft}>
-          {b.name && <h1 style={s.name}>{b.name}</h1>}
-          {b.label && <div style={s.label}>{b.label}</div>}
-        </div>
-        <div style={s.headerRight}>
-          {b.email && <div>{b.email}</div>}
-          {b.phone && <div>{b.phone}</div>}
-          {b.url && <div>{b.url}</div>}
-          {b.location?.city && <div>{b.location.city}, {b.location.countryCode}</div>}
-          {b.profiles && b.profiles.filter((p) => p.network).map((p, i) => (
-            <div key={i}>{p.network}: {p.username}</div>
-          ))}
-        </div>
-      </header>
+      {header}
 
       {b.summary && (
         <p style={{ fontSize: "11px", color: colors.text, marginBottom: "12px", lineHeight: 1.5 }}>
