@@ -16,7 +16,7 @@ function dateRange(start?: string, end?: string): string {
   const e = formatDate(end);
   if (!start && !end) return "";
   if (!end) return `depuis ${s}`;
-  return `${s} — ${e}`;
+  return `${s} - ${e}`;
 }
 
 const s = {
@@ -98,8 +98,8 @@ export function MinimalTheme({ resume }: { resume: Resume }) {
 
       {b.summary && (
         <>
-          <div style={s.sectionTitle}>—</div>
-          <p style={{ ...s.text, lineHeight: 1.8 }}>{b.summary}</p>
+          <hr style={{ border: "none", borderTop: "1px solid #000", margin: "0 0 16px 0" }} />
+          <p style={{ ...s.text, lineHeight: 1.8, fontStyle: "italic" }}>{b.summary}</p>
         </>
       )}
 
@@ -197,12 +197,30 @@ export function MinimalTheme({ resume }: { resume: Resume }) {
 
       {resume.volunteer && resume.volunteer.length > 0 && (
         <>
-          <div style={s.sectionTitle}>Bénévolat</div>
+          <div style={s.sectionTitle}>Benevolat</div>
           {resume.volunteer.map((v, i) => (
             <div key={i} style={{ marginBottom: "14px" }}>
-              <div style={s.entryTitle}>{v.position} — {v.organization}</div>
+              <div style={s.entryTitle}>{v.position} - {v.organization}</div>
               <div style={s.entryMeta}>{dateRange(v.startDate, v.endDate)}</div>
               {v.summary && <p style={s.text}>{v.summary}</p>}
+              {v.highlights && v.highlights.length > 0 && v.highlights.map((h, j) => (
+                <div key={j} style={s.bullet}>
+                  <span style={{ position: "absolute", left: 0 }}>→</span> {h}
+                </div>
+              ))}
+            </div>
+          ))}
+        </>
+      )}
+
+      {resume.publications && resume.publications.length > 0 && (
+        <>
+          <div style={s.sectionTitle}>Publications</div>
+          {resume.publications.map((p, i) => (
+            <div key={i} style={{ marginBottom: "8px", fontSize: "12px" }}>
+              <span style={{ fontWeight: 700 }}>{p.name}</span>
+              {p.publisher ? ` - ${p.publisher}` : ""}
+              {p.releaseDate ? ` (${formatDate(p.releaseDate)})` : ""}
             </div>
           ))}
         </>

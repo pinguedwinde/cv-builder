@@ -12,9 +12,10 @@ import type { Resume } from "@/lib/schemas/resume";
 import type { ThemeId } from "@/themes";
 import type { MatchResult } from "@/lib/ai/matching";
 import {
-  ArrowLeft, Link, FileText, Target, CheckCircle,
+  Link, FileText, Target, CheckCircle,
   AlertTriangle, XCircle, Sparkles,
 } from "lucide-react";
+import { Navbar } from "@/components/Navbar";
 
 export default function MatchPage() {
   const params = useParams();
@@ -91,19 +92,15 @@ export default function MatchPage() {
     return <div className="flex items-center justify-center h-screen">CV non trouvé</div>;
   }
 
+  const navActions = (
+    <Button variant="outline" size="sm" onClick={() => router.push(`/editor/${id}`)}>
+      Editer le CV
+    </Button>
+  );
+
   return (
     <div className="min-h-screen bg-background">
-      <header className="bg-card border-b px-6 py-3 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <Button variant="ghost" size="sm" onClick={() => router.push("/")}>
-            <ArrowLeft className="w-4 h-4" />
-          </Button>
-          <h1 className="text-lg font-semibold">Matching CV / Poste</h1>
-        </div>
-        <Button variant="outline" size="sm" onClick={() => router.push(`/editor/${id}`)}>
-          Éditer le CV
-        </Button>
-      </header>
+      <Navbar showBack backHref={`/editor/${id}`} title="Matching CV / Poste" actions={navActions} />
 
       <div className="max-w-7xl mx-auto px-6 py-6 flex gap-6">
         <div className="w-1/3 space-y-4 overflow-auto" style={{ maxHeight: "calc(100vh - 120px)" }}>

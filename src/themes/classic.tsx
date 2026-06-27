@@ -118,6 +118,15 @@ export function ClassicTheme({ resume }: { resume: Resume }) {
   return (
     <div style={styles.page}>
       <header style={styles.header}>
+        {b.image && (
+          <div style={{ display: "flex", justifyContent: "center", marginBottom: "16px" }}>
+            <img
+              src={b.image}
+              alt={b.name || "photo"}
+              style={{ width: "80px", height: "80px", borderRadius: "50%", objectFit: "cover", border: "3px solid #1a1a2e" }}
+            />
+          </div>
+        )}
         {b.name && <h1 style={styles.name}>{b.name}</h1>}
         {b.label && <p style={styles.label}>{b.label}</p>}
         <div style={styles.contact}>
@@ -282,9 +291,25 @@ export function ClassicTheme({ resume }: { resume: Resume }) {
         </>
       )}
 
+      {resume.publications && resume.publications.length > 0 && (
+        <>
+          <h2 style={styles.sectionTitle}>Publications</h2>
+          {resume.publications.map((p, i) => (
+            <div key={i} style={{ marginBottom: "8px" }}>
+              <div style={{ fontSize: "13px" }}>
+                <strong>{p.name}</strong>
+                {p.publisher ? ` - ${p.publisher}` : ""}
+                {p.releaseDate ? ` (${formatDate(p.releaseDate)})` : ""}
+              </div>
+              {p.summary && <p style={{ fontSize: "12px", color: "#555", margin: "2px 0" }}>{p.summary}</p>}
+            </div>
+          ))}
+        </>
+      )}
+
       {resume.references && resume.references.length > 0 && (
         <>
-          <h2 style={styles.sectionTitle}>Références</h2>
+          <h2 style={styles.sectionTitle}>References</h2>
           {resume.references.map((r, i) => (
             <div key={i} style={{ marginBottom: "10px" }}>
               <div style={{ fontSize: "13px", fontWeight: 700 }}>{r.name}</div>

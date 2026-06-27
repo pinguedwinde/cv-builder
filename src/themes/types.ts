@@ -9,4 +9,5 @@ export interface ThemeConfig {
   component: ComponentType<{ resume: Resume }>;
 }
 
-export type ThemeId = "classic" | "modern" | "minimal" | "creative" | "compact";
+export type ThemeId = "classic" | "modern" | "minimal" | "creative" | "compact"
+  | "executive" | "aurora" | "swiss" | "neo" | "elegant" | "bold";

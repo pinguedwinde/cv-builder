@@ -2,16 +2,22 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
+import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  DropdownMenu, DropdownMenuTrigger, DropdownMenuContent,
+  DropdownMenuItem, DropdownMenuSeparator,
+} from "@/components/ui/dropdown-menu";
+import { Navbar } from "@/components/Navbar";
 import { PreviewPanel } from "@/components/preview/PreviewPanel";
 import type { Resume } from "@/lib/schemas/resume";
 import type { ThemeId } from "@/themes";
 import {
-  ArrowLeft, Save, Download, Plus, Trash2, Star, Target,
+  Save, Download, Plus, Trash2, Star, Target, ChevronDown,
   User, Briefcase, GraduationCap, Wrench, Globe, FolderOpen,
   Award, FileCheck, Heart, MessageSquare, Users,
 } from "lucide-react";
@@ -155,53 +161,94 @@ export default function EditorPage() {
   }
 
   if (loading) {
-    return <div className="flex items-center justify-center h-screen">Chargement...</div>;
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <motion.div
+          className="flex flex-col items-center gap-3 text-muted-foreground"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+        >
+          <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+          <span className="text-sm">Chargement...</span>
+        </motion.div>
+      </div>
+    );
   }
 
   if (!resume) {
-    return <div className="flex items-center justify-center h-screen">CV non trouvé</div>;
+    return <div className="flex items-center justify-center h-screen">CV non trouve</div>;
   }
+
+  const navActions = (
+    <div className="flex items-center gap-2">
+      <Input
+        value={title}
+        onChange={(e) => setTitle(e.target.value)}
+        className="h-8 w-48 text-sm font-medium hidden md:flex"
+        placeholder="Titre du CV"
+      />
+      <Button variant="outline" size="sm" onClick={() => router.push(`/review/${id}`)}>
+        <Star className="w-3.5 h-3.5" />
+        <span className="hidden sm:inline">Revue</span>
+      </Button>
+      <Button variant="outline" size="sm" onClick={() => router.push(`/match/${id}`)}>
+        <Target className="w-3.5 h-3.5" />
+        <span className="hidden sm:inline">Match</span>
+      </Button>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="outline" size="sm">
+            <Download className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">Exporter</span>
+            <ChevronDown className="w-3 h-3" />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          <DropdownMenuItem onClick={() => handleExport("json")}>
+            <Download className="w-3.5 h-3.5" /> JSON
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => handleExport("yaml")}>
+            <Download className="w-3.5 h-3.5" /> YAML
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => handleExport("markdown")}>
+            <Download className="w-3.5 h-3.5" /> Markdown
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem onClick={() => handleExport("pdf")}>
+            <Download className="w-3.5 h-3.5" /> PDF
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+      <Button size="sm" onClick={save} disabled={saving}>
+        <Save className="w-3.5 h-3.5" />
+        <span className="hidden sm:inline">{saving ? "..." : "Sauvegarder"}</span>
+      </Button>
+    </div>
+  );
 
   return (
     <div className="h-screen flex flex-col">
-      <header className="bg-card border-b px-4 py-2 flex items-center justify-between shrink-0">
-        <div className="flex items-center gap-3">
-          <Button variant="ghost" size="sm" onClick={() => router.push("/")}>
-            <ArrowLeft className="w-4 h-4" />
-          </Button>
-          <Input
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            className="h-8 w-64 text-sm font-medium"
-            placeholder="Titre du CV"
-          />
-        </div>
-        <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" onClick={() => router.push(`/review/${id}`)}>
-            <Star className="w-3.5 h-3.5" /> Revue
-          </Button>
-          <Button variant="outline" size="sm" onClick={() => router.push(`/match/${id}`)}>
-            <Target className="w-3.5 h-3.5" /> Match
-          </Button>
-          <Button variant="outline" size="sm" onClick={() => handleExport("json")}>
-            <Download className="w-3.5 h-3.5" /> JSON
-          </Button>
-          <Button variant="outline" size="sm" onClick={() => handleExport("yaml")}>
-            <Download className="w-3.5 h-3.5" /> YAML
-          </Button>
-          <Button variant="outline" size="sm" onClick={() => handleExport("markdown")}>
-            <Download className="w-3.5 h-3.5" /> MD
-          </Button>
-          <Button size="sm" onClick={save} disabled={saving}>
-            <Save className="w-3.5 h-3.5" /> {saving ? "Sauvegarde..." : "Sauvegarder"}
-          </Button>
-        </div>
-      </header>
+      <Navbar showBack backHref="/" title={title} actions={navActions} />
+
+      <AnimatePresence>
+        {saving && (
+          <motion.div
+            className="fixed bottom-6 right-6 z-50 bg-primary text-primary-foreground px-4 py-2 rounded-full shadow-lg flex items-center gap-2 text-sm"
+            initial={{ y: 20, opacity: 0, scale: 0.9 }}
+            animate={{ y: 0, opacity: 1, scale: 1 }}
+            exit={{ y: 20, opacity: 0, scale: 0.9 }}
+            transition={{ duration: 0.2 }}
+          >
+            <Save className="w-3.5 h-3.5 animate-pulse" />
+            Sauvegarde...
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <div className="flex-1 flex overflow-hidden">
-        <div className="w-1/2 overflow-auto border-r bg-card p-4">
+        <div className="w-1/2 overflow-auto border-r bg-background p-4">
           <Tabs defaultValue="basics" className="w-full">
-            <TabsList className="w-full flex flex-wrap h-auto">
+            <TabsList className="w-full flex flex-wrap h-auto bg-muted/60">
               <TabsTrigger value="basics" className="text-xs gap-1"><User className="w-3 h-3" /> Profil</TabsTrigger>
               <TabsTrigger value="work" className="text-xs gap-1"><Briefcase className="w-3 h-3" /> Expérience</TabsTrigger>
               <TabsTrigger value="education" className="text-xs gap-1"><GraduationCap className="w-3 h-3" /> Formation</TabsTrigger>
@@ -269,7 +316,7 @@ export default function EditorPage() {
 
             <TabsContent value="work" className="space-y-4 mt-4">
               {resume.work?.map((w, i) => (
-                <div key={i} className="border rounded-lg p-3 space-y-2">
+                <div key={i} className="border border-l-4 border-l-primary/40 rounded-lg bg-card p-3 space-y-2 shadow-sm">
                   <div className="flex justify-between items-center">
                     <span className="text-xs font-semibold text-muted-foreground">Expérience #{i + 1}</span>
                     <Button variant="ghost" size="sm" onClick={() => removeArrayItem("work", i)} className="text-red-500 h-6 w-6 p-0">
@@ -329,7 +376,7 @@ export default function EditorPage() {
 
             <TabsContent value="education" className="space-y-4 mt-4">
               {resume.education?.map((e, i) => (
-                <div key={i} className="border rounded-lg p-3 space-y-2">
+                <div key={i} className="border border-l-4 border-l-primary/40 rounded-lg bg-card p-3 space-y-2 shadow-sm">
                   <div className="flex justify-between items-center">
                     <span className="text-xs font-semibold text-muted-foreground">Formation #{i + 1}</span>
                     <Button variant="ghost" size="sm" onClick={() => removeArrayItem("education", i)} className="text-red-500 h-6 w-6 p-0">
@@ -375,7 +422,7 @@ export default function EditorPage() {
 
             <TabsContent value="skills" className="space-y-4 mt-4">
               {resume.skills?.map((sk, i) => (
-                <div key={i} className="border rounded-lg p-3 space-y-2">
+                <div key={i} className="border border-l-4 border-l-primary/40 rounded-lg bg-card p-3 space-y-2 shadow-sm">
                   <div className="flex justify-between items-center">
                     <span className="text-xs font-semibold text-muted-foreground">Groupe #{i + 1}</span>
                     <Button variant="ghost" size="sm" onClick={() => removeArrayItem("skills", i)} className="text-red-500 h-6 w-6 p-0">
@@ -413,7 +460,7 @@ export default function EditorPage() {
 
             <TabsContent value="projects" className="space-y-4 mt-4">
               {resume.projects?.map((p, i) => (
-                <div key={i} className="border rounded-lg p-3 space-y-2">
+                <div key={i} className="border border-l-4 border-l-primary/40 rounded-lg bg-card p-3 space-y-2 shadow-sm">
                   <div className="flex justify-between items-center">
                     <span className="text-xs font-semibold text-muted-foreground">Projet #{i + 1}</span>
                     <Button variant="ghost" size="sm" onClick={() => removeArrayItem("projects", i)} className="text-red-500 h-6 w-6 p-0">
@@ -488,7 +535,7 @@ export default function EditorPage() {
 
             <TabsContent value="certificates" className="space-y-4 mt-4">
               {resume.certificates?.map((c, i) => (
-                <div key={i} className="border rounded-lg p-3 space-y-2">
+                <div key={i} className="border border-l-4 border-l-primary/40 rounded-lg bg-card p-3 space-y-2 shadow-sm">
                   <div className="flex justify-between items-center">
                     <span className="text-xs font-semibold text-muted-foreground">Certification #{i + 1}</span>
                     <Button variant="ghost" size="sm" onClick={() => removeArrayItem("certificates", i)} className="text-red-500 h-6 w-6 p-0">
@@ -522,7 +569,7 @@ export default function EditorPage() {
 
             <TabsContent value="awards" className="space-y-4 mt-4">
               {resume.awards?.map((a, i) => (
-                <div key={i} className="border rounded-lg p-3 space-y-2">
+                <div key={i} className="border border-l-4 border-l-primary/40 rounded-lg bg-card p-3 space-y-2 shadow-sm">
                   <div className="flex justify-between items-center">
                     <span className="text-xs font-semibold text-muted-foreground">Prix #{i + 1}</span>
                     <Button variant="ghost" size="sm" onClick={() => removeArrayItem("awards", i)} className="text-red-500 h-6 w-6 p-0">
@@ -556,7 +603,7 @@ export default function EditorPage() {
 
             <TabsContent value="volunteer" className="space-y-4 mt-4">
               {resume.volunteer?.map((v, i) => (
-                <div key={i} className="border rounded-lg p-3 space-y-2">
+                <div key={i} className="border border-l-4 border-l-primary/40 rounded-lg bg-card p-3 space-y-2 shadow-sm">
                   <div className="flex justify-between items-center">
                     <span className="text-xs font-semibold text-muted-foreground">Bénévolat #{i + 1}</span>
                     <Button variant="ghost" size="sm" onClick={() => removeArrayItem("volunteer", i)} className="text-red-500 h-6 w-6 p-0">
@@ -623,7 +670,7 @@ export default function EditorPage() {
 
             <TabsContent value="references" className="space-y-4 mt-4">
               {resume.references?.map((r, i) => (
-                <div key={i} className="border rounded-lg p-3 space-y-2">
+                <div key={i} className="border border-l-4 border-l-primary/40 rounded-lg bg-card p-3 space-y-2 shadow-sm">
                   <div className="flex justify-between items-center">
                     <span className="text-xs font-semibold text-muted-foreground">Référence #{i + 1}</span>
                     <Button variant="ghost" size="sm" onClick={() => removeArrayItem("references", i)} className="text-red-500 h-6 w-6 p-0">

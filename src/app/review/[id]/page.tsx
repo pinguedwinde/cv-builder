@@ -9,7 +9,8 @@ import { ThemeRenderer } from "@/components/themes/ThemeRenderer";
 import type { Resume } from "@/lib/schemas/resume";
 import type { ThemeId } from "@/themes";
 import type { ReviewResult } from "@/lib/ai/review";
-import { ArrowLeft, RefreshCw, AlertTriangle, AlertCircle, Info, CheckCircle } from "lucide-react";
+import { RefreshCw, AlertTriangle, AlertCircle, Info, CheckCircle } from "lucide-react";
+import { Navbar } from "@/components/Navbar";
 
 export default function ReviewPage() {
   const params = useParams();
@@ -86,25 +87,21 @@ export default function ReviewPage() {
     return <div className="flex items-center justify-center h-screen">CV non trouvé</div>;
   }
 
+  const navActions = (
+    <div className="flex gap-2">
+      <Button variant="outline" size="sm" onClick={() => router.push(`/editor/${id}`)}>
+        Editer
+      </Button>
+      <Button size="sm" onClick={runReview} disabled={reviewing}>
+        <RefreshCw className={`w-4 h-4 ${reviewing ? "animate-spin" : ""}`} />
+        <span className="hidden sm:inline">{reviewing ? "Analyse..." : "Lancer la revue"}</span>
+      </Button>
+    </div>
+  );
+
   return (
     <div className="min-h-screen bg-background">
-      <header className="bg-card border-b px-6 py-3 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <Button variant="ghost" size="sm" onClick={() => router.push("/")}>
-            <ArrowLeft className="w-4 h-4" />
-          </Button>
-          <h1 className="text-lg font-semibold">Revue du CV</h1>
-        </div>
-        <div className="flex gap-2">
-          <Button variant="outline" size="sm" onClick={() => router.push(`/editor/${id}`)}>
-            Éditer
-          </Button>
-          <Button size="sm" onClick={runReview} disabled={reviewing}>
-            <RefreshCw className={`w-4 h-4 ${reviewing ? "animate-spin" : ""}`} />
-            {reviewing ? "Analyse en cours..." : "Lancer la revue"}
-          </Button>
-        </div>
-      </header>
+      <Navbar showBack backHref={`/editor/${id}`} title="Revue du CV" actions={navActions} />
 
       <div className="max-w-7xl mx-auto px-6 py-6 flex gap-6">
         <div className="w-1/2">
