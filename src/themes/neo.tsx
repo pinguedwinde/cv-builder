@@ -29,10 +29,10 @@ const s = {
     fontFamily: "'JetBrains Mono', 'Fira Code', 'Cascadia Code', 'Consolas', 'Courier New', monospace",
     color: TEXT,
     backgroundColor: BG,
-    padding: "24px",
+    padding: "18px",
     maxWidth: "210mm",
     // minHeight removed for multi-page PDF support
-    lineHeight: 1.65,
+    lineHeight: 1.5,
     fontSize: "12px",
     boxSizing: "border-box" as const,
   } as React.CSSProperties,
@@ -59,7 +59,7 @@ const s = {
     display: "inline-block",
   } as React.CSSProperties),
   terminalBody: {
-    padding: "16px 20px",
+    padding: "12px 16px",
   } as React.CSSProperties,
   prompt: {
     color: MUTED_COLOR,

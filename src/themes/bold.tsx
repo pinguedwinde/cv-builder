@@ -30,12 +30,12 @@ const s = {
     color: BLACK,
     backgroundColor: WHITE,
     maxWidth: "210mm",
-    lineHeight: 1.55,
+    lineHeight: 1.4,
     fontSize: "13px",
     boxSizing: "border-box" as const,
   } as React.CSSProperties,
   header: {
-    padding: "28px 36px 0",
+    padding: "20px 28px 0",
     backgroundColor: WHITE,
   } as React.CSSProperties,
   name: {
@@ -52,7 +52,7 @@ const s = {
   labelBand: {
     backgroundColor: BLACK,
     color: YELLOW,
-    padding: "6px 36px",
+    padding: "6px 28px",
     fontSize: "13px",
     fontWeight: 700,
     letterSpacing: "2px",
@@ -65,7 +65,7 @@ const s = {
     width: "100%",
   } as React.CSSProperties,
   contactRow: {
-    padding: "12px 36px",
+    padding: "10px 28px",
     fontSize: "12px",
     color: MUTED,
     display: "flex",
@@ -78,7 +78,7 @@ const s = {
     marginRight: "16px",
   } as React.CSSProperties,
   body: {
-    padding: "0 36px 28px",
+    padding: "0 28px 20px",
   } as React.CSSProperties,
   sectionBand: {
     backgroundColor: BLACK,

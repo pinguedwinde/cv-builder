@@ -34,13 +34,13 @@ const s = {
     color: TEXT,
     backgroundColor: "#FFFFFF",
     maxWidth: "210mm",
-    lineHeight: 1.6,
+    lineHeight: 1.45,
     fontSize: "13px",
     boxSizing: "border-box" as const,
   } as React.CSSProperties,
   header: {
     background: `linear-gradient(120deg, ${TEAL}, ${ACCENT}, ${PURPLE})`,
-    padding: "28px 36px 20px",
+    padding: "22px 28px 16px",
     color: "#fff",
   } as React.CSSProperties,
   name: {
@@ -68,7 +68,7 @@ const s = {
     color: "#fff",
   } as React.CSSProperties,
   body: {
-    padding: "24px 36px",
+    padding: "18px 28px",
   } as React.CSSProperties,
   sectionTitle: {
     fontSize: "13px",
@@ -77,9 +77,9 @@ const s = {
     textTransform: "uppercase" as const,
     letterSpacing: "2px",
     borderBottom: `2px solid ${ACCENT}`,
-    paddingBottom: "6px",
-    marginBottom: "12px",
-    marginTop: "20px",
+    paddingBottom: "4px",
+    marginBottom: "10px",
+    marginTop: "16px",
   } as React.CSSProperties,
   card: {
     backgroundColor: CARD_BG,
@@ -141,7 +141,7 @@ const s = {
   summary: {
     fontSize: "13px",
     color: "#4A4A6A",
-    lineHeight: 1.8,
+    lineHeight: 1.5,
     backgroundColor: CARD_BG,
     borderLeft: `4px solid ${ACCENT}`,
     padding: "12px 16px",

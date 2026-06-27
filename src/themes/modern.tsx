@@ -43,13 +43,13 @@ const s = {
     display: "flex",
     minHeight: "1120px",
     fontSize: "13px",
-    lineHeight: 1.5,
+    lineHeight: 1.4,
     color: colors.text,
   } as React.CSSProperties,
   pagePdf: {
     fontFamily: "'Inter', 'Segoe UI', system-ui, sans-serif",
     fontSize: "13px",
-    lineHeight: 1.5,
+    lineHeight: 1.4,
     color: colors.text,
   } as React.CSSProperties,
   sidebar: {
@@ -57,23 +57,23 @@ const s = {
     minWidth: SIDEBAR_W_PX,
     backgroundColor: colors.sidebarBg,
     color: colors.sidebarText,
-    padding: "32px 20px",
+    padding: "24px 16px",
   } as React.CSSProperties,
   sidebarPdf: {
     width: SIDEBAR_W_PDF,
     backgroundColor: colors.sidebarBg,
     color: colors.sidebarText,
-    padding: "32px 20px",
+    padding: "24px 16px",
     boxSizing: "border-box" as const,
     minHeight: "297mm",
   } as React.CSSProperties,
   main: {
     flex: 1,
-    padding: "32px 24px",
+    padding: "24px 18px",
     backgroundColor: colors.mainBg,
   } as React.CSSProperties,
   mainPdf: {
-    padding: "32px 24px",
+    padding: "24px 18px",
     backgroundColor: colors.mainBg,
     boxSizing: "border-box" as const,
   } as React.CSSProperties,
@@ -88,7 +88,7 @@ const s = {
     fontSize: "13px",
     color: colors.accent,
     fontWeight: 500,
-    marginBottom: "24px",
+    marginBottom: "14px",
   } as React.CSSProperties,
   sidebarSection: {
     marginBottom: "24px",
@@ -113,7 +113,7 @@ const s = {
     color: colors.sidebarMuted,
   } as React.CSSProperties,
   mainSection: {
-    marginBottom: "20px",
+    marginBottom: "14px",
   } as React.CSSProperties,
   mainSectionTitle: {
     fontSize: "14px",

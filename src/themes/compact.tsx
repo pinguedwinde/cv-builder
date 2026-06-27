@@ -37,7 +37,7 @@ const s = {
     color: colors.text,
     fontSize: "11px",
     lineHeight: 1.4,
-    padding: "24px 28px",
+    padding: "20px 22px",
   } as React.CSSProperties,
   header: {
     display: "flex",

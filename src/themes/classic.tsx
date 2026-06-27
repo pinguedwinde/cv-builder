@@ -23,17 +23,17 @@ const styles = {
   page: {
     fontFamily: "'Georgia', 'Times New Roman', serif",
     color: "#1a1a2e",
-    padding: "32px 40px",
+    padding: "24px 32px",
     maxWidth: "800px",
     margin: "0 auto",
-    lineHeight: 1.6,
-    fontSize: "14px",
+    lineHeight: 1.45,
+    fontSize: "13px",
   } as React.CSSProperties,
   header: {
     textAlign: "center" as const,
     borderBottom: "3px solid #1a1a2e",
     paddingBottom: "24px",
-    marginBottom: "20px",
+    marginBottom: "14px",
   } as React.CSSProperties,
   name: {
     fontSize: "32px",
@@ -66,7 +66,7 @@ const styles = {
     borderBottom: "1px solid #ccc",
     paddingBottom: "6px",
     marginBottom: "16px",
-    marginTop: "18px",
+    marginTop: "14px",
   } as React.CSSProperties,
   entryTitle: {
     fontSize: "15px",
@@ -96,7 +96,7 @@ const styles = {
     fontSize: "14px",
     color: "#333",
     fontStyle: "italic" as const,
-    lineHeight: 1.7,
+    lineHeight: 1.5,
   } as React.CSSProperties,
   skillGroup: {
     marginBottom: "8px",
