@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, type ReactNode } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, Reorder, useDragControls } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -20,13 +20,100 @@ import {
   Save, Download, Plus, Trash2, Star, Target, ChevronDown,
   User, Briefcase, GraduationCap, Wrench, Globe, FolderOpen,
   Award, FileCheck, Heart, MessageSquare, Users, Loader2,
-  Code2, AlertCircle, CheckCircle2,
+  Code2, AlertCircle, CheckCircle2, GripVertical,
 } from "lucide-react";
+import { nanoid } from "nanoid";
 import { exportToJson } from "@/lib/exporters/json";
 import { exportToYaml } from "@/lib/exporters/yaml";
 import { exportToMarkdown } from "@/lib/exporters/markdown";
 import { parseJson } from "@/lib/parsers/json";
 import { parseYaml } from "@/lib/parsers/yaml";
+
+type AnyItem = Record<string, unknown>;
+
+/** Add a stable _id to each item in an array section (client-side only). */
+function withIds(arr: unknown[] | undefined | null): AnyItem[] {
+  return (arr || []).map((item) => ({ _id: nanoid(), ...(item as AnyItem) }));
+}
+
+/** Remove _id before persisting. */
+function stripIds(arr: unknown[] | undefined | null): AnyItem[] {
+  return (arr || []).map((item) => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { _id, ...rest } = item as AnyItem;
+    return rest;
+  });
+}
+
+/** Get stable React key from an item. */
+const itemKey = (item: unknown) => (item as AnyItem)._id as string;
+
+function DraggableCard({
+  value,
+  label,
+  onDelete,
+  children,
+}: {
+  value: unknown;
+  label: string;
+  onDelete: () => void;
+  children: ReactNode;
+}) {
+  const controls = useDragControls();
+  return (
+    <Reorder.Item
+      as="div"
+      value={value}
+      dragListener={false}
+      dragControls={controls}
+      className="border border-l-4 border-l-primary/40 rounded-lg bg-card p-3 space-y-2 shadow-sm"
+    >
+      <div className="flex justify-between items-center">
+        <div className="flex items-center gap-1.5">
+          <GripVertical
+            className="w-4 h-4 text-muted-foreground/40 hover:text-muted-foreground cursor-grab active:cursor-grabbing shrink-0"
+            onPointerDown={(e) => controls.start(e)}
+          />
+          <span className="text-xs font-semibold text-muted-foreground">{label}</span>
+        </div>
+        <Button variant="ghost" size="sm" onClick={onDelete} className="text-red-500 h-6 w-6 p-0">
+          <Trash2 className="w-3 h-3" />
+        </Button>
+      </div>
+      {children}
+    </Reorder.Item>
+  );
+}
+
+function DraggableRow({
+  value,
+  onDelete,
+  children,
+}: {
+  value: unknown;
+  onDelete: () => void;
+  children: ReactNode;
+}) {
+  const controls = useDragControls();
+  return (
+    <Reorder.Item
+      as="div"
+      value={value}
+      dragListener={false}
+      dragControls={controls}
+      className="flex gap-2 items-end"
+    >
+      <GripVertical
+        className="w-4 h-4 text-muted-foreground/40 hover:text-muted-foreground cursor-grab active:cursor-grabbing shrink-0 self-center mb-1"
+        onPointerDown={(e) => controls.start(e)}
+      />
+      {children}
+      <Button variant="ghost" size="sm" onClick={onDelete} className="text-red-500 h-8 w-8 p-0 shrink-0">
+        <Trash2 className="w-3 h-3" />
+      </Button>
+    </Reorder.Item>
+  );
+}
 
 export default function EditorPage() {
   const params = useParams();
@@ -51,7 +138,21 @@ export default function EditorPage() {
         const res = await fetch(`/api/resumes/${id}`);
         if (!res.ok) throw new Error("Not found");
         const data = await res.json();
-        setResume(data.data as Resume);
+        const raw = data.data as Resume;
+        // Attach stable client-side _id to all array items for drag-and-drop key tracking.
+        setResume({
+          ...raw,
+          work:         withIds(raw.work)         as Resume["work"],
+          education:    withIds(raw.education)    as Resume["education"],
+          skills:       withIds(raw.skills)       as Resume["skills"],
+          projects:     withIds(raw.projects)     as Resume["projects"],
+          languages:    withIds(raw.languages)    as Resume["languages"],
+          certificates: withIds(raw.certificates) as Resume["certificates"],
+          awards:       withIds(raw.awards)       as Resume["awards"],
+          volunteer:    withIds(raw.volunteer)    as Resume["volunteer"],
+          interests:    withIds(raw.interests)    as Resume["interests"],
+          references:   withIds(raw.references)   as Resume["references"],
+        });
         setTitle(data.title);
         setThemeId((data.theme as ThemeId) || "modern");
         setColorThemeId(data.colorTheme || "default");
@@ -67,11 +168,25 @@ export default function EditorPage() {
   const save = useCallback(async () => {
     if (!resume) return;
     setSaving(true);
+    // Strip _id before persisting — it's only used for drag-and-drop key stability.
+    const clean = {
+      ...resume,
+      work:         stripIds(resume.work)         as Resume["work"],
+      education:    stripIds(resume.education)    as Resume["education"],
+      skills:       stripIds(resume.skills)       as Resume["skills"],
+      projects:     stripIds(resume.projects)     as Resume["projects"],
+      languages:    stripIds(resume.languages)    as Resume["languages"],
+      certificates: stripIds(resume.certificates) as Resume["certificates"],
+      awards:       stripIds(resume.awards)       as Resume["awards"],
+      volunteer:    stripIds(resume.volunteer)    as Resume["volunteer"],
+      interests:    stripIds(resume.interests)    as Resume["interests"],
+      references:   stripIds(resume.references)   as Resume["references"],
+    };
     try {
       await fetch(`/api/resumes/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title, data: resume, theme: themeId, colorTheme: colorThemeId }),
+        body: JSON.stringify({ title, data: clean, theme: themeId, colorTheme: colorThemeId }),
       });
     } catch {
       console.error("Save failed");
@@ -107,54 +222,59 @@ export default function EditorPage() {
 
   function updateArrayItem(section: keyof Resume, index: number, field: string, value: string | string[]) {
     if (!resume) return;
-    const items = [...(resume[section] as Array<Record<string, unknown>>)];
+    const items = [...(resume[section] as AnyItem[])];
     items[index] = { ...items[index], [field]: value };
     setResume({ ...resume, [section]: items });
   }
 
-  function addArrayItem(section: keyof Resume, template: Record<string, unknown>) {
+  function addArrayItem(section: keyof Resume, template: AnyItem) {
     if (!resume) return;
-    const items = [...((resume[section] as Array<Record<string, unknown>>) || []), template];
+    const items = [...((resume[section] as AnyItem[]) || []), { _id: nanoid(), ...template }];
     setResume({ ...resume, [section]: items });
   }
 
   function removeArrayItem(section: keyof Resume, index: number) {
     if (!resume) return;
-    const items = [...(resume[section] as Array<Record<string, unknown>>)];
+    const items = [...(resume[section] as AnyItem[])];
     items.splice(index, 1);
     setResume({ ...resume, [section]: items });
   }
 
+  function reorderSection(section: keyof Resume, newOrder: unknown[]) {
+    if (!resume) return;
+    setResume({ ...resume, [section]: newOrder });
+  }
+
   function updateHighlight(workIndex: number, highlightIndex: number, value: string) {
     if (!resume?.work) return;
-    const work = [...resume.work];
-    const highlights = [...(work[workIndex].highlights || [])];
+    const work = [...resume.work] as AnyItem[];
+    const highlights = [...((work[workIndex].highlights as string[]) || [])];
     highlights[highlightIndex] = value;
     work[workIndex] = { ...work[workIndex], highlights };
-    setResume({ ...resume, work });
+    setResume({ ...resume, work: work as Resume["work"] });
   }
 
   function addHighlight(workIndex: number) {
     if (!resume?.work) return;
-    const work = [...resume.work];
-    work[workIndex] = { ...work[workIndex], highlights: [...(work[workIndex].highlights || []), ""] };
-    setResume({ ...resume, work });
+    const work = [...resume.work] as AnyItem[];
+    work[workIndex] = { ...work[workIndex], highlights: [...((work[workIndex].highlights as string[]) || []), ""] };
+    setResume({ ...resume, work: work as Resume["work"] });
   }
 
   function removeHighlight(workIndex: number, highlightIndex: number) {
     if (!resume?.work) return;
-    const work = [...resume.work];
-    const highlights = [...(work[workIndex].highlights || [])];
+    const work = [...resume.work] as AnyItem[];
+    const highlights = [...((work[workIndex].highlights as string[]) || [])];
     highlights.splice(highlightIndex, 1);
     work[workIndex] = { ...work[workIndex], highlights };
-    setResume({ ...resume, work });
+    setResume({ ...resume, work: work as Resume["work"] });
   }
 
   function updateSkillKeywords(skillIndex: number, keywords: string) {
     if (!resume?.skills) return;
-    const skills = [...resume.skills];
+    const skills = [...resume.skills] as AnyItem[];
     skills[skillIndex] = { ...skills[skillIndex], keywords: keywords.split(",").map((k) => k.trim()).filter(Boolean) };
-    setResume({ ...resume, skills });
+    setResume({ ...resume, skills: skills as Resume["skills"] });
   }
 
   function initRawContent(r: Resume, fmt: "json" | "yaml" | "markdown") {
@@ -368,57 +488,64 @@ export default function EditorPage() {
               </div>
             </TabsContent>
 
-            <TabsContent value="work" className="space-y-4 mt-4 flex-1 min-h-0 overflow-auto">
-              {resume.work?.map((w, i) => (
-                <div key={i} className="border border-l-4 border-l-primary/40 rounded-lg bg-card p-3 space-y-2 shadow-sm">
-                  <div className="flex justify-between items-center">
-                    <span className="text-xs font-semibold text-muted-foreground">Expérience #{i + 1}</span>
-                    <Button variant="ghost" size="sm" onClick={() => removeArrayItem("work", i)} className="text-red-500 h-6 w-6 p-0">
-                      <Trash2 className="w-3 h-3" />
-                    </Button>
-                  </div>
-                  <div className="grid grid-cols-2 gap-2">
-                    <div>
-                      <Label className="text-xs">Poste</Label>
-                      <Input value={w.position || ""} onChange={(e) => updateArrayItem("work", i, "position", e.target.value)} />
-                    </div>
-                    <div>
-                      <Label className="text-xs">Entreprise</Label>
-                      <Input value={w.name || ""} onChange={(e) => updateArrayItem("work", i, "name", e.target.value)} />
-                    </div>
-                    <div>
-                      <Label className="text-xs">Début</Label>
-                      <Input value={w.startDate || ""} onChange={(e) => updateArrayItem("work", i, "startDate", e.target.value)} placeholder="2023-01" />
-                    </div>
-                    <div>
-                      <Label className="text-xs">Fin</Label>
-                      <Input value={w.endDate || ""} onChange={(e) => updateArrayItem("work", i, "endDate", e.target.value)} placeholder="2024-01 ou vide" />
-                    </div>
-                  </div>
-                  <div>
-                    <Label className="text-xs">Lieu</Label>
-                    <Input value={w.location || ""} onChange={(e) => updateArrayItem("work", i, "location", e.target.value)} />
-                  </div>
-                  <div>
-                    <Label className="text-xs">Description</Label>
-                    <Textarea value={w.summary || ""} onChange={(e) => updateArrayItem("work", i, "summary", e.target.value)} rows={2} />
-                  </div>
-                  <div>
-                    <Label className="text-xs">Points clés</Label>
-                    {w.highlights?.map((h, j) => (
-                      <div key={j} className="flex gap-1 mb-1">
-                        <Input value={h} onChange={(e) => updateHighlight(i, j, e.target.value)} className="text-xs" />
-                        <Button variant="ghost" size="sm" onClick={() => removeHighlight(i, j)} className="h-6 w-6 p-0 text-red-400 shrink-0">
-                          <Trash2 className="w-3 h-3" />
-                        </Button>
+            <TabsContent value="work" className="flex flex-col gap-4 mt-4 flex-1 min-h-0 overflow-auto">
+              <Reorder.Group
+                as="div"
+                axis="y"
+                values={resume.work || []}
+                onReorder={(v) => reorderSection("work", v)}
+                className="flex flex-col gap-4"
+              >
+                {resume.work?.map((w, i) => (
+                  <DraggableCard
+                    key={itemKey(w)}
+                    value={w}
+                    label={`Expérience #${i + 1}`}
+                    onDelete={() => removeArrayItem("work", i)}
+                  >
+                    <div className="grid grid-cols-2 gap-2">
+                      <div>
+                        <Label className="text-xs">Poste</Label>
+                        <Input value={(w as AnyItem).position as string || ""} onChange={(e) => updateArrayItem("work", i, "position", e.target.value)} />
                       </div>
-                    ))}
-                    <Button variant="outline" size="sm" onClick={() => addHighlight(i)} className="text-xs mt-1">
-                      <Plus className="w-3 h-3" /> Point clé
-                    </Button>
-                  </div>
-                </div>
-              ))}
+                      <div>
+                        <Label className="text-xs">Entreprise</Label>
+                        <Input value={(w as AnyItem).name as string || ""} onChange={(e) => updateArrayItem("work", i, "name", e.target.value)} />
+                      </div>
+                      <div>
+                        <Label className="text-xs">Début</Label>
+                        <Input value={(w as AnyItem).startDate as string || ""} onChange={(e) => updateArrayItem("work", i, "startDate", e.target.value)} placeholder="2023-01" />
+                      </div>
+                      <div>
+                        <Label className="text-xs">Fin</Label>
+                        <Input value={(w as AnyItem).endDate as string || ""} onChange={(e) => updateArrayItem("work", i, "endDate", e.target.value)} placeholder="2024-01 ou vide" />
+                      </div>
+                    </div>
+                    <div>
+                      <Label className="text-xs">Lieu</Label>
+                      <Input value={(w as AnyItem).location as string || ""} onChange={(e) => updateArrayItem("work", i, "location", e.target.value)} />
+                    </div>
+                    <div>
+                      <Label className="text-xs">Description</Label>
+                      <Textarea value={(w as AnyItem).summary as string || ""} onChange={(e) => updateArrayItem("work", i, "summary", e.target.value)} rows={2} />
+                    </div>
+                    <div>
+                      <Label className="text-xs">Points clés</Label>
+                      {((w as AnyItem).highlights as string[] || []).map((h, j) => (
+                        <div key={j} className="flex gap-1 mb-1">
+                          <Input value={h} onChange={(e) => updateHighlight(i, j, e.target.value)} className="text-xs" />
+                          <Button variant="ghost" size="sm" onClick={() => removeHighlight(i, j)} className="h-6 w-6 p-0 text-red-400 shrink-0">
+                            <Trash2 className="w-3 h-3" />
+                          </Button>
+                        </div>
+                      ))}
+                      <Button variant="outline" size="sm" onClick={() => addHighlight(i)} className="text-xs mt-1">
+                        <Plus className="w-3 h-3" /> Point clé
+                      </Button>
+                    </div>
+                  </DraggableCard>
+                ))}
+              </Reorder.Group>
               <Button
                 variant="outline"
                 size="sm"
@@ -428,43 +555,50 @@ export default function EditorPage() {
               </Button>
             </TabsContent>
 
-            <TabsContent value="education" className="space-y-4 mt-4 flex-1 min-h-0 overflow-auto">
-              {resume.education?.map((e, i) => (
-                <div key={i} className="border border-l-4 border-l-primary/40 rounded-lg bg-card p-3 space-y-2 shadow-sm">
-                  <div className="flex justify-between items-center">
-                    <span className="text-xs font-semibold text-muted-foreground">Formation #{i + 1}</span>
-                    <Button variant="ghost" size="sm" onClick={() => removeArrayItem("education", i)} className="text-red-500 h-6 w-6 p-0">
-                      <Trash2 className="w-3 h-3" />
-                    </Button>
-                  </div>
-                  <div className="grid grid-cols-2 gap-2">
-                    <div>
-                      <Label className="text-xs">Établissement</Label>
-                      <Input value={e.institution || ""} onChange={(ev) => updateArrayItem("education", i, "institution", ev.target.value)} />
+            <TabsContent value="education" className="flex flex-col gap-4 mt-4 flex-1 min-h-0 overflow-auto">
+              <Reorder.Group
+                as="div"
+                axis="y"
+                values={resume.education || []}
+                onReorder={(v) => reorderSection("education", v)}
+                className="flex flex-col gap-4"
+              >
+                {resume.education?.map((e, i) => (
+                  <DraggableCard
+                    key={itemKey(e)}
+                    value={e}
+                    label={`Formation #${i + 1}`}
+                    onDelete={() => removeArrayItem("education", i)}
+                  >
+                    <div className="grid grid-cols-2 gap-2">
+                      <div>
+                        <Label className="text-xs">Établissement</Label>
+                        <Input value={(e as AnyItem).institution as string || ""} onChange={(ev) => updateArrayItem("education", i, "institution", ev.target.value)} />
+                      </div>
+                      <div>
+                        <Label className="text-xs">Domaine</Label>
+                        <Input value={(e as AnyItem).area as string || ""} onChange={(ev) => updateArrayItem("education", i, "area", ev.target.value)} />
+                      </div>
+                      <div>
+                        <Label className="text-xs">Type</Label>
+                        <Input value={(e as AnyItem).studyType as string || ""} onChange={(ev) => updateArrayItem("education", i, "studyType", ev.target.value)} placeholder="Master, Licence..." />
+                      </div>
+                      <div>
+                        <Label className="text-xs">Note/Mention</Label>
+                        <Input value={(e as AnyItem).score as string || ""} onChange={(ev) => updateArrayItem("education", i, "score", ev.target.value)} />
+                      </div>
+                      <div>
+                        <Label className="text-xs">Début</Label>
+                        <Input value={(e as AnyItem).startDate as string || ""} onChange={(ev) => updateArrayItem("education", i, "startDate", ev.target.value)} placeholder="2020-09" />
+                      </div>
+                      <div>
+                        <Label className="text-xs">Fin</Label>
+                        <Input value={(e as AnyItem).endDate as string || ""} onChange={(ev) => updateArrayItem("education", i, "endDate", ev.target.value)} placeholder="2023-06" />
+                      </div>
                     </div>
-                    <div>
-                      <Label className="text-xs">Domaine</Label>
-                      <Input value={e.area || ""} onChange={(ev) => updateArrayItem("education", i, "area", ev.target.value)} />
-                    </div>
-                    <div>
-                      <Label className="text-xs">Type</Label>
-                      <Input value={e.studyType || ""} onChange={(ev) => updateArrayItem("education", i, "studyType", ev.target.value)} placeholder="Master, Licence..." />
-                    </div>
-                    <div>
-                      <Label className="text-xs">Note/Mention</Label>
-                      <Input value={e.score || ""} onChange={(ev) => updateArrayItem("education", i, "score", ev.target.value)} />
-                    </div>
-                    <div>
-                      <Label className="text-xs">Début</Label>
-                      <Input value={e.startDate || ""} onChange={(ev) => updateArrayItem("education", i, "startDate", ev.target.value)} placeholder="2020-09" />
-                    </div>
-                    <div>
-                      <Label className="text-xs">Fin</Label>
-                      <Input value={e.endDate || ""} onChange={(ev) => updateArrayItem("education", i, "endDate", ev.target.value)} placeholder="2023-06" />
-                    </div>
-                  </div>
-                </div>
-              ))}
+                  </DraggableCard>
+                ))}
+              </Reorder.Group>
               <Button
                 variant="outline"
                 size="sm"
@@ -474,35 +608,42 @@ export default function EditorPage() {
               </Button>
             </TabsContent>
 
-            <TabsContent value="skills" className="space-y-4 mt-4 flex-1 min-h-0 overflow-auto">
-              {resume.skills?.map((sk, i) => (
-                <div key={i} className="border border-l-4 border-l-primary/40 rounded-lg bg-card p-3 space-y-2 shadow-sm">
-                  <div className="flex justify-between items-center">
-                    <span className="text-xs font-semibold text-muted-foreground">Groupe #{i + 1}</span>
-                    <Button variant="ghost" size="sm" onClick={() => removeArrayItem("skills", i)} className="text-red-500 h-6 w-6 p-0">
-                      <Trash2 className="w-3 h-3" />
-                    </Button>
-                  </div>
-                  <div className="grid grid-cols-2 gap-2">
-                    <div>
-                      <Label className="text-xs">Nom</Label>
-                      <Input value={sk.name || ""} onChange={(e) => updateArrayItem("skills", i, "name", e.target.value)} />
+            <TabsContent value="skills" className="flex flex-col gap-4 mt-4 flex-1 min-h-0 overflow-auto">
+              <Reorder.Group
+                as="div"
+                axis="y"
+                values={resume.skills || []}
+                onReorder={(v) => reorderSection("skills", v)}
+                className="flex flex-col gap-4"
+              >
+                {resume.skills?.map((sk, i) => (
+                  <DraggableCard
+                    key={itemKey(sk)}
+                    value={sk}
+                    label={`Groupe #${i + 1}`}
+                    onDelete={() => removeArrayItem("skills", i)}
+                  >
+                    <div className="grid grid-cols-2 gap-2">
+                      <div>
+                        <Label className="text-xs">Nom</Label>
+                        <Input value={(sk as AnyItem).name as string || ""} onChange={(e) => updateArrayItem("skills", i, "name", e.target.value)} />
+                      </div>
+                      <div>
+                        <Label className="text-xs">Niveau</Label>
+                        <Input value={(sk as AnyItem).level as string || ""} onChange={(e) => updateArrayItem("skills", i, "level", e.target.value)} placeholder="Expert, Avancé..." />
+                      </div>
                     </div>
                     <div>
-                      <Label className="text-xs">Niveau</Label>
-                      <Input value={sk.level || ""} onChange={(e) => updateArrayItem("skills", i, "level", e.target.value)} placeholder="Expert, Avancé..." />
+                      <Label className="text-xs">Mots-clés (séparés par virgule)</Label>
+                      <Input
+                        value={((sk as AnyItem).keywords as string[] || []).join(", ")}
+                        onChange={(e) => updateSkillKeywords(i, e.target.value)}
+                        placeholder="React, TypeScript, Node.js..."
+                      />
                     </div>
-                  </div>
-                  <div>
-                    <Label className="text-xs">Mots-clés (séparés par virgule)</Label>
-                    <Input
-                      value={sk.keywords?.join(", ") || ""}
-                      onChange={(e) => updateSkillKeywords(i, e.target.value)}
-                      placeholder="React, TypeScript, Node.js..."
-                    />
-                  </div>
-                </div>
-              ))}
+                  </DraggableCard>
+                ))}
+              </Reorder.Group>
               <Button
                 variant="outline"
                 size="sm"
@@ -512,51 +653,58 @@ export default function EditorPage() {
               </Button>
             </TabsContent>
 
-            <TabsContent value="projects" className="space-y-4 mt-4 flex-1 min-h-0 overflow-auto">
-              {resume.projects?.map((p, i) => (
-                <div key={i} className="border border-l-4 border-l-primary/40 rounded-lg bg-card p-3 space-y-2 shadow-sm">
-                  <div className="flex justify-between items-center">
-                    <span className="text-xs font-semibold text-muted-foreground">Projet #{i + 1}</span>
-                    <Button variant="ghost" size="sm" onClick={() => removeArrayItem("projects", i)} className="text-red-500 h-6 w-6 p-0">
-                      <Trash2 className="w-3 h-3" />
-                    </Button>
-                  </div>
-                  <div className="grid grid-cols-2 gap-2">
-                    <div>
-                      <Label className="text-xs">Nom</Label>
-                      <Input value={p.name || ""} onChange={(e) => updateArrayItem("projects", i, "name", e.target.value)} />
+            <TabsContent value="projects" className="flex flex-col gap-4 mt-4 flex-1 min-h-0 overflow-auto">
+              <Reorder.Group
+                as="div"
+                axis="y"
+                values={resume.projects || []}
+                onReorder={(v) => reorderSection("projects", v)}
+                className="flex flex-col gap-4"
+              >
+                {resume.projects?.map((p, i) => (
+                  <DraggableCard
+                    key={itemKey(p)}
+                    value={p}
+                    label={`Projet #${i + 1}`}
+                    onDelete={() => removeArrayItem("projects", i)}
+                  >
+                    <div className="grid grid-cols-2 gap-2">
+                      <div>
+                        <Label className="text-xs">Nom</Label>
+                        <Input value={(p as AnyItem).name as string || ""} onChange={(e) => updateArrayItem("projects", i, "name", e.target.value)} />
+                      </div>
+                      <div>
+                        <Label className="text-xs">URL</Label>
+                        <Input value={(p as AnyItem).url as string || ""} onChange={(e) => updateArrayItem("projects", i, "url", e.target.value)} />
+                      </div>
+                      <div>
+                        <Label className="text-xs">Début</Label>
+                        <Input value={(p as AnyItem).startDate as string || ""} onChange={(e) => updateArrayItem("projects", i, "startDate", e.target.value)} />
+                      </div>
+                      <div>
+                        <Label className="text-xs">Fin</Label>
+                        <Input value={(p as AnyItem).endDate as string || ""} onChange={(e) => updateArrayItem("projects", i, "endDate", e.target.value)} />
+                      </div>
                     </div>
                     <div>
-                      <Label className="text-xs">URL</Label>
-                      <Input value={p.url || ""} onChange={(e) => updateArrayItem("projects", i, "url", e.target.value)} />
+                      <Label className="text-xs">Description</Label>
+                      <Textarea value={(p as AnyItem).description as string || ""} onChange={(e) => updateArrayItem("projects", i, "description", e.target.value)} rows={2} />
                     </div>
                     <div>
-                      <Label className="text-xs">Début</Label>
-                      <Input value={p.startDate || ""} onChange={(e) => updateArrayItem("projects", i, "startDate", e.target.value)} />
+                      <Label className="text-xs">Technologies (virgule)</Label>
+                      <Input
+                        value={((p as AnyItem).keywords as string[] || []).join(", ")}
+                        onChange={(e) => {
+                          if (!resume) return;
+                          const projects = [...(resume.projects as AnyItem[])];
+                          projects[i] = { ...projects[i], keywords: e.target.value.split(",").map((k) => k.trim()).filter(Boolean) };
+                          setResume({ ...resume, projects: projects as Resume["projects"] });
+                        }}
+                      />
                     </div>
-                    <div>
-                      <Label className="text-xs">Fin</Label>
-                      <Input value={p.endDate || ""} onChange={(e) => updateArrayItem("projects", i, "endDate", e.target.value)} />
-                    </div>
-                  </div>
-                  <div>
-                    <Label className="text-xs">Description</Label>
-                    <Textarea value={p.description || ""} onChange={(e) => updateArrayItem("projects", i, "description", e.target.value)} rows={2} />
-                  </div>
-                  <div>
-                    <Label className="text-xs">Technologies (virgule)</Label>
-                    <Input
-                      value={p.keywords?.join(", ") || ""}
-                      onChange={(e) => {
-                        if (!resume) return;
-                        const projects = [...resume.projects!];
-                        projects[i] = { ...projects[i], keywords: e.target.value.split(",").map((k) => k.trim()).filter(Boolean) };
-                        setResume({ ...resume, projects });
-                      }}
-                    />
-                  </div>
-                </div>
-              ))}
+                  </DraggableCard>
+                ))}
+              </Reorder.Group>
               <Button
                 variant="outline"
                 size="sm"
@@ -566,181 +714,227 @@ export default function EditorPage() {
               </Button>
             </TabsContent>
 
-            <TabsContent value="languages" className="space-y-4 mt-4 flex-1 min-h-0 overflow-auto">
-              {resume.languages?.map((l, i) => (
-                <div key={i} className="flex gap-2 items-end">
-                  <div className="flex-1">
-                    <Label className="text-xs">Langue</Label>
-                    <Input value={l.language || ""} onChange={(e) => updateArrayItem("languages", i, "language", e.target.value)} />
-                  </div>
-                  <div className="flex-1">
-                    <Label className="text-xs">Niveau</Label>
-                    <Input value={l.fluency || ""} onChange={(e) => updateArrayItem("languages", i, "fluency", e.target.value)} />
-                  </div>
-                  <Button variant="ghost" size="sm" onClick={() => removeArrayItem("languages", i)} className="text-red-500 h-8 w-8 p-0 shrink-0">
-                    <Trash2 className="w-3 h-3" />
-                  </Button>
-                </div>
-              ))}
+            <TabsContent value="languages" className="flex flex-col gap-2 mt-4 flex-1 min-h-0 overflow-auto">
+              <Reorder.Group
+                as="div"
+                axis="y"
+                values={resume.languages || []}
+                onReorder={(v) => reorderSection("languages", v)}
+                className="flex flex-col gap-2"
+              >
+                {resume.languages?.map((l, i) => (
+                  <DraggableRow
+                    key={itemKey(l)}
+                    value={l}
+                    onDelete={() => removeArrayItem("languages", i)}
+                  >
+                    <div className="flex-1">
+                      <Label className="text-xs">Langue</Label>
+                      <Input value={(l as AnyItem).language as string || ""} onChange={(e) => updateArrayItem("languages", i, "language", e.target.value)} />
+                    </div>
+                    <div className="flex-1">
+                      <Label className="text-xs">Niveau</Label>
+                      <Input value={(l as AnyItem).fluency as string || ""} onChange={(e) => updateArrayItem("languages", i, "fluency", e.target.value)} />
+                    </div>
+                  </DraggableRow>
+                ))}
+              </Reorder.Group>
               <Button variant="outline" size="sm" onClick={() => addArrayItem("languages", { language: "", fluency: "" })}>
                 <Plus className="w-3 h-3" /> Ajouter
               </Button>
             </TabsContent>
 
-            <TabsContent value="certificates" className="space-y-4 mt-4 flex-1 min-h-0 overflow-auto">
-              {resume.certificates?.map((c, i) => (
-                <div key={i} className="border border-l-4 border-l-primary/40 rounded-lg bg-card p-3 space-y-2 shadow-sm">
-                  <div className="flex justify-between items-center">
-                    <span className="text-xs font-semibold text-muted-foreground">Certification #{i + 1}</span>
-                    <Button variant="ghost" size="sm" onClick={() => removeArrayItem("certificates", i)} className="text-red-500 h-6 w-6 p-0">
-                      <Trash2 className="w-3 h-3" />
-                    </Button>
-                  </div>
-                  <div className="grid grid-cols-2 gap-2">
-                    <div>
-                      <Label className="text-xs">Nom</Label>
-                      <Input value={c.name || ""} onChange={(e) => updateArrayItem("certificates", i, "name", e.target.value)} />
+            <TabsContent value="certificates" className="flex flex-col gap-4 mt-4 flex-1 min-h-0 overflow-auto">
+              <Reorder.Group
+                as="div"
+                axis="y"
+                values={resume.certificates || []}
+                onReorder={(v) => reorderSection("certificates", v)}
+                className="flex flex-col gap-4"
+              >
+                {resume.certificates?.map((c, i) => (
+                  <DraggableCard
+                    key={itemKey(c)}
+                    value={c}
+                    label={`Certification #${i + 1}`}
+                    onDelete={() => removeArrayItem("certificates", i)}
+                  >
+                    <div className="grid grid-cols-2 gap-2">
+                      <div>
+                        <Label className="text-xs">Nom</Label>
+                        <Input value={(c as AnyItem).name as string || ""} onChange={(e) => updateArrayItem("certificates", i, "name", e.target.value)} />
+                      </div>
+                      <div>
+                        <Label className="text-xs">Émetteur</Label>
+                        <Input value={(c as AnyItem).issuer as string || ""} onChange={(e) => updateArrayItem("certificates", i, "issuer", e.target.value)} />
+                      </div>
+                      <div>
+                        <Label className="text-xs">Date</Label>
+                        <Input value={(c as AnyItem).date as string || ""} onChange={(e) => updateArrayItem("certificates", i, "date", e.target.value)} />
+                      </div>
+                      <div>
+                        <Label className="text-xs">URL</Label>
+                        <Input value={(c as AnyItem).url as string || ""} onChange={(e) => updateArrayItem("certificates", i, "url", e.target.value)} />
+                      </div>
                     </div>
-                    <div>
-                      <Label className="text-xs">Émetteur</Label>
-                      <Input value={c.issuer || ""} onChange={(e) => updateArrayItem("certificates", i, "issuer", e.target.value)} />
-                    </div>
-                    <div>
-                      <Label className="text-xs">Date</Label>
-                      <Input value={c.date || ""} onChange={(e) => updateArrayItem("certificates", i, "date", e.target.value)} />
-                    </div>
-                    <div>
-                      <Label className="text-xs">URL</Label>
-                      <Input value={c.url || ""} onChange={(e) => updateArrayItem("certificates", i, "url", e.target.value)} />
-                    </div>
-                  </div>
-                </div>
-              ))}
+                  </DraggableCard>
+                ))}
+              </Reorder.Group>
               <Button variant="outline" size="sm" onClick={() => addArrayItem("certificates", { name: "", date: "", issuer: "", url: "" })}>
                 <Plus className="w-3 h-3" /> Ajouter
               </Button>
             </TabsContent>
 
-            <TabsContent value="awards" className="space-y-4 mt-4 flex-1 min-h-0 overflow-auto">
-              {resume.awards?.map((a, i) => (
-                <div key={i} className="border border-l-4 border-l-primary/40 rounded-lg bg-card p-3 space-y-2 shadow-sm">
-                  <div className="flex justify-between items-center">
-                    <span className="text-xs font-semibold text-muted-foreground">Prix #{i + 1}</span>
-                    <Button variant="ghost" size="sm" onClick={() => removeArrayItem("awards", i)} className="text-red-500 h-6 w-6 p-0">
-                      <Trash2 className="w-3 h-3" />
-                    </Button>
-                  </div>
-                  <div className="grid grid-cols-2 gap-2">
-                    <div>
-                      <Label className="text-xs">Titre</Label>
-                      <Input value={a.title || ""} onChange={(e) => updateArrayItem("awards", i, "title", e.target.value)} />
+            <TabsContent value="awards" className="flex flex-col gap-4 mt-4 flex-1 min-h-0 overflow-auto">
+              <Reorder.Group
+                as="div"
+                axis="y"
+                values={resume.awards || []}
+                onReorder={(v) => reorderSection("awards", v)}
+                className="flex flex-col gap-4"
+              >
+                {resume.awards?.map((a, i) => (
+                  <DraggableCard
+                    key={itemKey(a)}
+                    value={a}
+                    label={`Prix #${i + 1}`}
+                    onDelete={() => removeArrayItem("awards", i)}
+                  >
+                    <div className="grid grid-cols-2 gap-2">
+                      <div>
+                        <Label className="text-xs">Titre</Label>
+                        <Input value={(a as AnyItem).title as string || ""} onChange={(e) => updateArrayItem("awards", i, "title", e.target.value)} />
+                      </div>
+                      <div>
+                        <Label className="text-xs">Décerné par</Label>
+                        <Input value={(a as AnyItem).awarder as string || ""} onChange={(e) => updateArrayItem("awards", i, "awarder", e.target.value)} />
+                      </div>
                     </div>
                     <div>
-                      <Label className="text-xs">Décerné par</Label>
-                      <Input value={a.awarder || ""} onChange={(e) => updateArrayItem("awards", i, "awarder", e.target.value)} />
+                      <Label className="text-xs">Date</Label>
+                      <Input value={(a as AnyItem).date as string || ""} onChange={(e) => updateArrayItem("awards", i, "date", e.target.value)} />
                     </div>
-                  </div>
-                  <div>
-                    <Label className="text-xs">Date</Label>
-                    <Input value={a.date || ""} onChange={(e) => updateArrayItem("awards", i, "date", e.target.value)} />
-                  </div>
-                  <div>
-                    <Label className="text-xs">Description</Label>
-                    <Textarea value={a.summary || ""} onChange={(e) => updateArrayItem("awards", i, "summary", e.target.value)} rows={2} />
-                  </div>
-                </div>
-              ))}
+                    <div>
+                      <Label className="text-xs">Description</Label>
+                      <Textarea value={(a as AnyItem).summary as string || ""} onChange={(e) => updateArrayItem("awards", i, "summary", e.target.value)} rows={2} />
+                    </div>
+                  </DraggableCard>
+                ))}
+              </Reorder.Group>
               <Button variant="outline" size="sm" onClick={() => addArrayItem("awards", { title: "", date: "", awarder: "", summary: "" })}>
                 <Plus className="w-3 h-3" /> Ajouter
               </Button>
             </TabsContent>
 
-            <TabsContent value="volunteer" className="space-y-4 mt-4 flex-1 min-h-0 overflow-auto">
-              {resume.volunteer?.map((v, i) => (
-                <div key={i} className="border border-l-4 border-l-primary/40 rounded-lg bg-card p-3 space-y-2 shadow-sm">
-                  <div className="flex justify-between items-center">
-                    <span className="text-xs font-semibold text-muted-foreground">Bénévolat #{i + 1}</span>
-                    <Button variant="ghost" size="sm" onClick={() => removeArrayItem("volunteer", i)} className="text-red-500 h-6 w-6 p-0">
-                      <Trash2 className="w-3 h-3" />
-                    </Button>
-                  </div>
-                  <div className="grid grid-cols-2 gap-2">
-                    <div>
-                      <Label className="text-xs">Rôle</Label>
-                      <Input value={v.position || ""} onChange={(e) => updateArrayItem("volunteer", i, "position", e.target.value)} />
+            <TabsContent value="volunteer" className="flex flex-col gap-4 mt-4 flex-1 min-h-0 overflow-auto">
+              <Reorder.Group
+                as="div"
+                axis="y"
+                values={resume.volunteer || []}
+                onReorder={(v) => reorderSection("volunteer", v)}
+                className="flex flex-col gap-4"
+              >
+                {resume.volunteer?.map((v, i) => (
+                  <DraggableCard
+                    key={itemKey(v)}
+                    value={v}
+                    label={`Bénévolat #${i + 1}`}
+                    onDelete={() => removeArrayItem("volunteer", i)}
+                  >
+                    <div className="grid grid-cols-2 gap-2">
+                      <div>
+                        <Label className="text-xs">Rôle</Label>
+                        <Input value={(v as AnyItem).position as string || ""} onChange={(e) => updateArrayItem("volunteer", i, "position", e.target.value)} />
+                      </div>
+                      <div>
+                        <Label className="text-xs">Organisation</Label>
+                        <Input value={(v as AnyItem).organization as string || ""} onChange={(e) => updateArrayItem("volunteer", i, "organization", e.target.value)} />
+                      </div>
+                      <div>
+                        <Label className="text-xs">Début</Label>
+                        <Input value={(v as AnyItem).startDate as string || ""} onChange={(e) => updateArrayItem("volunteer", i, "startDate", e.target.value)} />
+                      </div>
+                      <div>
+                        <Label className="text-xs">Fin</Label>
+                        <Input value={(v as AnyItem).endDate as string || ""} onChange={(e) => updateArrayItem("volunteer", i, "endDate", e.target.value)} />
+                      </div>
                     </div>
                     <div>
-                      <Label className="text-xs">Organisation</Label>
-                      <Input value={v.organization || ""} onChange={(e) => updateArrayItem("volunteer", i, "organization", e.target.value)} />
+                      <Label className="text-xs">Description</Label>
+                      <Textarea value={(v as AnyItem).summary as string || ""} onChange={(e) => updateArrayItem("volunteer", i, "summary", e.target.value)} rows={2} />
                     </div>
-                    <div>
-                      <Label className="text-xs">Début</Label>
-                      <Input value={v.startDate || ""} onChange={(e) => updateArrayItem("volunteer", i, "startDate", e.target.value)} />
-                    </div>
-                    <div>
-                      <Label className="text-xs">Fin</Label>
-                      <Input value={v.endDate || ""} onChange={(e) => updateArrayItem("volunteer", i, "endDate", e.target.value)} />
-                    </div>
-                  </div>
-                  <div>
-                    <Label className="text-xs">Description</Label>
-                    <Textarea value={v.summary || ""} onChange={(e) => updateArrayItem("volunteer", i, "summary", e.target.value)} rows={2} />
-                  </div>
-                </div>
-              ))}
+                  </DraggableCard>
+                ))}
+              </Reorder.Group>
               <Button variant="outline" size="sm" onClick={() => addArrayItem("volunteer", { organization: "", position: "", startDate: "", endDate: "", summary: "", highlights: [] })}>
                 <Plus className="w-3 h-3" /> Ajouter
               </Button>
             </TabsContent>
 
-            <TabsContent value="interests" className="space-y-4 mt-4 flex-1 min-h-0 overflow-auto">
-              {resume.interests?.map((item, i) => (
-                <div key={i} className="flex gap-2 items-end">
-                  <div className="flex-1">
-                    <Label className="text-xs">Nom</Label>
-                    <Input value={item.name || ""} onChange={(e) => updateArrayItem("interests", i, "name", e.target.value)} />
-                  </div>
-                  <div className="flex-1">
-                    <Label className="text-xs">Mots-clés (virgule)</Label>
-                    <Input
-                      value={item.keywords?.join(", ") || ""}
-                      onChange={(e) => {
-                        if (!resume) return;
-                        const interests = [...resume.interests!];
-                        interests[i] = { ...interests[i], keywords: e.target.value.split(",").map((k) => k.trim()).filter(Boolean) };
-                        setResume({ ...resume, interests });
-                      }}
-                    />
-                  </div>
-                  <Button variant="ghost" size="sm" onClick={() => removeArrayItem("interests", i)} className="text-red-500 h-8 w-8 p-0 shrink-0">
-                    <Trash2 className="w-3 h-3" />
-                  </Button>
-                </div>
-              ))}
+            <TabsContent value="interests" className="flex flex-col gap-2 mt-4 flex-1 min-h-0 overflow-auto">
+              <Reorder.Group
+                as="div"
+                axis="y"
+                values={resume.interests || []}
+                onReorder={(v) => reorderSection("interests", v)}
+                className="flex flex-col gap-2"
+              >
+                {resume.interests?.map((item, i) => (
+                  <DraggableRow
+                    key={itemKey(item)}
+                    value={item}
+                    onDelete={() => removeArrayItem("interests", i)}
+                  >
+                    <div className="flex-1">
+                      <Label className="text-xs">Nom</Label>
+                      <Input value={(item as AnyItem).name as string || ""} onChange={(e) => updateArrayItem("interests", i, "name", e.target.value)} />
+                    </div>
+                    <div className="flex-1">
+                      <Label className="text-xs">Mots-clés (virgule)</Label>
+                      <Input
+                        value={((item as AnyItem).keywords as string[] || []).join(", ")}
+                        onChange={(e) => {
+                          if (!resume) return;
+                          const interests = [...(resume.interests as AnyItem[])];
+                          interests[i] = { ...interests[i], keywords: e.target.value.split(",").map((k) => k.trim()).filter(Boolean) };
+                          setResume({ ...resume, interests: interests as Resume["interests"] });
+                        }}
+                      />
+                    </div>
+                  </DraggableRow>
+                ))}
+              </Reorder.Group>
               <Button variant="outline" size="sm" onClick={() => addArrayItem("interests", { name: "", keywords: [] })}>
                 <Plus className="w-3 h-3" /> Ajouter
               </Button>
             </TabsContent>
 
-            <TabsContent value="references" className="space-y-4 mt-4 flex-1 min-h-0 overflow-auto">
-              {resume.references?.map((r, i) => (
-                <div key={i} className="border border-l-4 border-l-primary/40 rounded-lg bg-card p-3 space-y-2 shadow-sm">
-                  <div className="flex justify-between items-center">
-                    <span className="text-xs font-semibold text-muted-foreground">Référence #{i + 1}</span>
-                    <Button variant="ghost" size="sm" onClick={() => removeArrayItem("references", i)} className="text-red-500 h-6 w-6 p-0">
-                      <Trash2 className="w-3 h-3" />
-                    </Button>
-                  </div>
-                  <div>
-                    <Label className="text-xs">Nom</Label>
-                    <Input value={r.name || ""} onChange={(e) => updateArrayItem("references", i, "name", e.target.value)} />
-                  </div>
-                  <div>
-                    <Label className="text-xs">Référence</Label>
-                    <Textarea value={r.reference || ""} onChange={(e) => updateArrayItem("references", i, "reference", e.target.value)} rows={3} />
-                  </div>
-                </div>
-              ))}
+            <TabsContent value="references" className="flex flex-col gap-4 mt-4 flex-1 min-h-0 overflow-auto">
+              <Reorder.Group
+                as="div"
+                axis="y"
+                values={resume.references || []}
+                onReorder={(v) => reorderSection("references", v)}
+                className="flex flex-col gap-4"
+              >
+                {resume.references?.map((r, i) => (
+                  <DraggableCard
+                    key={itemKey(r)}
+                    value={r}
+                    label={`Référence #${i + 1}`}
+                    onDelete={() => removeArrayItem("references", i)}
+                  >
+                    <div>
+                      <Label className="text-xs">Nom</Label>
+                      <Input value={(r as AnyItem).name as string || ""} onChange={(e) => updateArrayItem("references", i, "name", e.target.value)} />
+                    </div>
+                    <div>
+                      <Label className="text-xs">Référence</Label>
+                      <Textarea value={(r as AnyItem).reference as string || ""} onChange={(e) => updateArrayItem("references", i, "reference", e.target.value)} rows={3} />
+                    </div>
+                  </DraggableCard>
+                ))}
+              </Reorder.Group>
               <Button variant="outline" size="sm" onClick={() => addArrayItem("references", { name: "", reference: "" })}>
                 <Plus className="w-3 h-3" /> Ajouter
               </Button>
