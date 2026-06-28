@@ -299,7 +299,7 @@ export default function EditorPage() {
       </AnimatePresence>
 
       <div className="flex-1 flex overflow-hidden">
-        <div className="w-1/2 flex flex-col overflow-hidden border-r bg-background p-4">
+        <div className="flex-1 min-w-0 flex flex-col overflow-hidden border-r bg-background p-4">
           <Tabs value={currentTab} onValueChange={handleTabChange} className="flex flex-col flex-1 min-h-0 w-full">
             <TabsList className="w-full flex flex-wrap h-auto bg-muted/60">
               <TabsTrigger value="basics" className="text-xs gap-1"><User className="w-3 h-3" /> Profil</TabsTrigger>
@@ -799,7 +799,7 @@ export default function EditorPage() {
           </Tabs>
         </div>
 
-        <div className="w-1/2 overflow-hidden">
+        <div className="flex-shrink-0 overflow-hidden" style={{ width: "210mm" }}>
           <PreviewPanel
             resume={resume}
             themeId={themeId}

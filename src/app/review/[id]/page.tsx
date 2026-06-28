@@ -104,8 +104,8 @@ export default function ReviewPage() {
       <Navbar showBack backHref={`/editor/${id}`} title="Revue du CV" actions={navActions} />
 
       <div className="flex flex-1 gap-4 px-4 pb-4 pt-2 min-h-0">
-        <div className="flex-1 overflow-auto rounded-lg border bg-card shadow-sm">
-          <div style={{ width: "210mm", minHeight: "297mm" }}>
+        <div className="flex-shrink-0 overflow-auto rounded-lg border bg-card shadow-sm" style={{ width: "210mm" }}>
+          <div style={{ minHeight: "297mm" }}>
             <ThemeRenderer resume={resume} themeId={themeId} />
           </div>
         </div>

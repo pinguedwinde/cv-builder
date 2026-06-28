@@ -226,14 +226,13 @@ export function PreviewPanel({ resume, themeId, onThemeChange, colorThemeId = "d
         </div>
       </div>
 
-      <div className="flex-1 overflow-auto bg-muted/60 p-6">
+      <div className="flex-1 overflow-auto bg-muted/60 pb-6">
         <div
-          className="mx-auto bg-white shadow-xl origin-top"
+          className="mx-auto bg-white shadow-xl"
           style={{
-            transform: `scale(${zoom / 100})`,
+            zoom: zoom / 100,
             width: "210mm",
             minHeight: "297mm",
-            transition: "transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1)",
           }}
         >
           <ThemeRenderer resume={resume} themeId={themeId} colorThemeId={colorThemeId} />
