@@ -11,15 +11,18 @@ export const dynamic = "force-dynamic";
 const personas = [
   { name: "Marie Dupont", file: "sample-resume.json", theme: "modern" },
   { name: "SORE Zenatou", file: "sample-resume-sore.json", theme: "classic" },
+  { name: "Zénatou SORÉ — Chef de Projet PV", file: "sample-resume-zenatou-sore-pv.json", theme: "executive" },
+  { name: "Zénatou SORÉ — Ingénieure IRVE", file: "sample-resume-zenatou-sore-irve.json", theme: "aurora" },
+  { name: "Zénatou SORÉ — CFO/CFA SSI", file: "sample-resume-zenatou-sore-cfo-cfa-ssi.json", theme: "swiss" },
 ];
 
 function autoSeed() {
-  const count = db.select().from(resumes).all().length;
-  if (count > 0) return;
-
+  const existing = db.select().from(resumes).all();
+  const existingTitles = new Set(existing.map((r) => r.title));
   const now = new Date();
 
   for (const persona of personas) {
+    if (existingTitles.has(persona.name)) continue;
     const samplePath = path.join(process.cwd(), "data", persona.file);
     if (!fs.existsSync(samplePath)) continue;
 

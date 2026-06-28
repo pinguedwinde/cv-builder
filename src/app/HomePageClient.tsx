@@ -244,6 +244,7 @@ export function HomePageClient({ initialResumes, initialReviewsSummary }: HomePa
             {resumes.map((resume) => {
               const theme = themes[resume.theme as keyof typeof themes];
               const basics = resume.data?.basics as { name?: string; label?: string } | undefined;
+              const meta = resume.data?.meta as { target?: string } | undefined;
               const accentBorder = themeAccents[resume.theme] ?? "border-primary";
               const reviewSummary = reviewsSummary[resume.id];
               return (
@@ -268,6 +269,14 @@ export function HomePageClient({ initialResumes, initialReviewsSummary }: HomePa
                       </CardTitle>
                       {basics?.label && (
                         <p className="text-xs text-muted-foreground truncate">{basics.label}</p>
+                      )}
+                      {meta?.target && (
+                        <div className="flex items-center gap-1 mt-1">
+                          <Target className="w-3 h-3 text-orange-500 shrink-0" />
+                          <span className="text-xs font-medium text-orange-600 bg-orange-50 border border-orange-200 px-2 py-0.5 rounded-full truncate dark:bg-orange-950/30 dark:text-orange-400 dark:border-orange-800">
+                            {meta.target}
+                          </span>
+                        </div>
                       )}
                     </CardHeader>
                     <CardContent className="pt-0">

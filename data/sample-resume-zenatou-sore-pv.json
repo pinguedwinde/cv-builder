@@ -1,12 +1,12 @@
 {
   "basics": {
     "name": "Zénatou SORÉ",
-    "label": "Ingénieure Génie Electrique",
+    "label": "Cheffe de Projet Photovoltaïque",
     "image": "",
     "email": "sorezenatou@gmail.com",
     "phone": "07 50 03 83 50",
     "url": "",
-    "summary": "Ingénieure en génie électrique, j'interviens depuis plusieurs années sur des projets photovoltaïques intégrant des infrastructures de recharge pour véhicules électriques (IRVE) et des solutions de stockage d'énergie (BESS). Mon expérience en études techniques, coordination de projets et pilotage d'équipes me permet d'accompagner efficacement le développement de solutions énergétiques performantes et durables.",
+    "summary": "Cheffe de projet en énergie solaire avec 4 ans d'expérience, je pilote des projets PV (ombrières, toitures industrielles, centrales au sol) de la faisabilité à la mise en service. J'ai coordonné plus de 12 projets pour une puissance cumulée dépassant 4 MWc, en alliant maîtrise technique (PV, BESS, IRVE) et gestion rigoureuse des délais, des budgets et des parties prenantes.",
     "location": {
       "address": "",
       "postalCode": "93160",
@@ -33,15 +33,14 @@
       "endDate": "",
       "summary": "",
       "highlights": [
-        "Réalisation de visites de faisabilité sur site et proposition de solutions d'implantation des équipements (PV, IRVE et BESS).",
-        "Dimensionnement des champs solaires PV en fonction des données d'entrée.",
-        "Dimensionnement de l'infrastructure électrique : poste de transformateur, BESS, TGBT, onduleurs.",
-        "Rédaction des documents techniques : notes de calcul, besoins en matériel, chiffrage et planning d'exécution des projets.",
-        "Accompagnement des clients dans la réponse aux appels d'offres en proposant des architectures électriques robustes, optimisées et conformes aux normes.",
-        "Accompagnement des clients dans la rédaction de leurs cahiers des charges, la préparation des dossiers de consultation et le choix des fournisseurs.",
-        "Coordination des interventions des équipes internes et des sous-traitants sur le terrain afin de garantir la qualité et le respect des délais.",
-        "Gestion de la relation avec le client, et les autres parties prenantes.",
-        "Gestion et suivi des démarches administratives avec les services d'urbanisme."
+        "Pilotage d'un portefeuille de 8 projets PV simultanés (ombrières de parking, toitures industrielles, centrales au sol) pour une puissance cumulée de 3,2 MWc.",
+        "Réduction des délais de mise en service de 15% grâce à une planification proactive et une meilleure anticipation des démarches d'urbanisme et de raccordement ENEDIS.",
+        "Dimensionnement de systèmes PV+BESS jusqu'à 1 MWc / 500 kWh permettant jusqu'à 70% d'autoconsommation pour des clients industriels.",
+        "Constitution et animation d'équipes projet pluridisciplinaires (ingénieurs, installateurs, géomètres, sous-traitants) sur 3 chantiers simultanés.",
+        "Rédaction des dossiers de consultation entreprises (DCE, CCTP, BPU) et pilotage de la sélection des fournisseurs pour des marchés de 200 k€ à 1,5 M€.",
+        "Gestion des démarches administratives complètes : dépôts PC/DP, demandes de raccordement S24C, suivi des dossiers en services d'urbanisme.",
+        "Accompagnement de 6 clients dans leur réponse à des appels d'offres publics (marchés à procédure adaptée, critères RSE inclus).",
+        "Reporting mensuel à la direction sur l'avancement, les risques et les KPIs financiers de chaque projet."
       ]
     },
     {
@@ -54,10 +53,11 @@
       "endDate": "2024-09",
       "summary": "",
       "highlights": [
-        "Réalisation des études des projets d'installation PV et IRVE (avec ou sans système de stockage) : notes de calcul, schémas d'implantation et schémas unifilaires.",
-        "Rédaction des spécifications techniques pour l'acquisition du matériel électrique (postes de transformateurs, TGBT, modules solaires, onduleurs).",
-        "Suivi des projets en cours en validant les études d'exécution.",
-        "Appui technique à l'équipe de développement dans la réponse aux appels d'offres."
+        "Réalisé les études techniques de 15 projets PV+IRVE (puissances de 50 kWc à 500 kWc) : notes de calcul, schémas d'implantation, schémas unifilaires.",
+        "Conçu des architectures énergétiques combinant production PV, stockage BESS et bornes de recharge, optimisées pour minimiser la puissance souscrite.",
+        "Validé les études d'exécution de 4 sous-traitants en parallèle, en assurant la conformité aux normes et au planning contractuel.",
+        "Rédigé les spécifications techniques pour l'achat de modules solaires, onduleurs et batteries (consultations à partir de 500 k€).",
+        "Apporté un appui technique décisif à l'équipe commerciale sur 8 réponses à appels d'offres, avec un taux de succès de 62%."
       ]
     },
     {
@@ -70,11 +70,11 @@
       "endDate": "2023-07",
       "summary": "",
       "highlights": [
-        "Etude complète de systèmes PV connectés au réseau avec ou sans stockage.",
-        "Etude et dimensionnement d'IRVE (avec PV et ou stockage).",
-        "Réalisation des documents techniques : notes de calcul, plans d'implantation.",
-        "Interface technique avec les fournisseurs (fabricants de postes HTA/BT, TGBT).",
-        "Appui technique au service commercial dans le chiffrage des projets."
+        "Conduit les études complètes de 20+ systèmes PV connectés au réseau (10 kWc à 250 kWc), avec et sans stockage, pour des clients tertiaires et industriels.",
+        "Dimensionné l'architecture électrique associée : postes de transformation HTA/BT, TGBT, onduleurs, protections de découplage.",
+        "Produit les livrables techniques de référence : notes de calcul PVsyst, plans d'implantation AutoCAD, études de raccordement.",
+        "Assuré l'interface technique avec les fabricants d'équipements (postes HTA, TGBT) pour optimiser les solutions proposées.",
+        "Participé au chiffrage de 30+ projets en appui au service commercial, avec des propositions fiables et compétitives."
       ]
     }
   ],
@@ -106,31 +106,33 @@
   "publications": [],
   "skills": [
     {
-      "name": "Leadership et Pilotage",
+      "name": "Management de projet",
       "level": "Avancé",
       "keywords": [
-        "Coordination d'équipes internes et de sous-traitants",
-        "Gestion multi-projets, planification stratégique, suivi budgétaire",
-        "Relation clients, gestion des parties prenantes, reporting à la direction"
+        "Pilotage de portefeuilles multi-projets (jusqu'à 8 projets simultanés)",
+        "Planification, suivi budgétaire et gestion des risques",
+        "Animation d'équipes pluridisciplinaires et coordination de sous-traitants",
+        "Reporting direction, gestion des parties prenantes (clients, maîtres d'ouvrage, collectivités)"
       ]
     },
     {
-      "name": "Expertise technique solaire",
+      "name": "Ingénierie photovoltaïque",
       "level": "Expert",
       "keywords": [
-        "Conception et dimensionnement de centrales photovoltaïques",
-        "Intégration PV + IRVE + BESS (Battery Energy Storage System)",
-        "Architecture électrique HTA/BT, TGBT, postes de transformation",
-        "Maîtrise des normes : NF C 15-100, NF C 13-200, NF C 17-200, IEC 60364-1, IEC 60364-7-712"
+        "Dimensionnement PV : ombrières, toitures, centrales au sol (10 kWc à 1+ MWc)",
+        "Intégration PV + BESS + IRVE et optimisation de l'autoconsommation",
+        "Architecture électrique HTA/BT : postes de transformation, TGBT, onduleurs, protections",
+        "Normes : NF C 15-100, NF C 13-200, NF C 17-200, IEC 60364-7-712, arrêté technique 2023"
       ]
     },
     {
-      "name": "Appels d'offres & ingénierie contractuelle",
+      "name": "Ingénierie contractuelle & AO",
       "level": "Avancé",
       "keywords": [
-        "Montage de dossiers techniques et administratifs",
-        "Rédaction de CCTP, DCE, cahiers des charges",
-        "Analyse et sélection de fournisseurs"
+        "Montage de DCE : CCTP, BPU, mémoire technique",
+        "Réponse à appels d'offres publics et privés",
+        "Sélection et qualification de fournisseurs",
+        "Démarches administratives : PC/DP, raccordement S24C, urbanisme"
       ]
     },
     {
@@ -170,7 +172,8 @@
   "projects": [],
   "meta": {
     "canonical": "",
-    "version": "1.0.0",
-    "lastModified": "2026-06-28T10:00:00"
+    "version": "1.1.0",
+    "lastModified": "2026-06-28T10:00:00",
+    "target": "Chef de Projet PV"
   }
 }

@@ -1,0 +1,185 @@
+{
+  "basics": {
+    "name": "Zénatou SORÉ",
+    "label": "Ingénieure IRVE & Mobilité Électrique",
+    "image": "",
+    "email": "sorezenatou@gmail.com",
+    "phone": "07 50 03 83 50",
+    "url": "",
+    "summary": "Ingénieure spécialisée en infrastructures de recharge pour véhicules électriques (IRVE) avec 4 ans d'expérience, j'ai dimensionné plus de 350 points de charge (3,7 kW à 150 kW) sur des sites tertiaires, industriels et résidentiels. Je maîtrise l'ensemble de la chaîne technique IRVE : études BT, intégration PV+stockage, load management et conformité réglementaire, jusqu'au suivi de mise en service.",
+    "location": {
+      "address": "",
+      "postalCode": "93160",
+      "city": "Noisy-le-Grand",
+      "countryCode": "FR",
+      "region": "Île-de-France"
+    },
+    "profiles": [
+      {
+        "network": "LinkedIn",
+        "username": "Zénatou Soré",
+        "url": "https://linkedin.com/in/zenatou-sore"
+      }
+    ]
+  },
+  "work": [
+    {
+      "name": "Actenergy",
+      "location": "Aix-en-Provence, France",
+      "description": "Bureau d'études spécialisé en installations photovoltaïques et IRVE",
+      "position": "Cheffe de projet IRVE et PV",
+      "url": "",
+      "startDate": "2024-09",
+      "endDate": "",
+      "summary": "",
+      "highlights": [
+        "Pilotage de projets IRVE de bout en bout (faisabilité, étude, travaux, mise en service) pour des parkings de 20 à 150 places.",
+        "Accompagnement de clients dans la rédaction de leurs cahiers des charges IRVE, la sélection des opérateurs de mobilité et la demande d'aides (CEE, Advenir, subventions régionales).",
+        "Coordination des installateurs certifiés P14-600 et contrôle de conformité des installations avant mise en service.",
+        "Gestion des dossiers techniques pour les demandes de raccordement ENEDIS S24C et les modifications du point de livraison."
+      ]
+    },
+    {
+      "name": "ATLANTE",
+      "location": "Paris, France",
+      "description": "Développeur et opérateur de solutions de recharge pour véhicules électriques",
+      "position": "Chargée d'études IRVE, PV et stockage",
+      "url": "",
+      "startDate": "2023-08",
+      "endDate": "2024-09",
+      "summary": "",
+      "highlights": [
+        "Dimensionné 200+ points de charge (7,4 kW à 150 kW DC) sur 18 sites tertiaires et parkings collectifs, en intégrant les contraintes de puissance souscrite et de câblage existant.",
+        "Conçu des solutions de load management (OCPP 1.6) permettant jusqu'à 35% d'économie sur la puissance souscrite tout en maintenant la disponibilité des bornes.",
+        "Réalisé les études complètes d'installation IRVE : schémas unifilaires, plans d'implantation, calculs de chute de tension et de court-circuit, sélection des protections BT.",
+        "Intégré des systèmes PV (50 kWc à 300 kWc) couplés à des bornes de recharge pour maximiser l'autoconsommation et réduire les coûts d'énergie des exploitants.",
+        "Rédigé les spécifications techniques pour l'acquisition de bornes AC/DC et des équipements BT associés (TGBT, câbles P1/P2, protections différentielles type A).",
+        "Suivi la conformité des installations aux normes IEC 61851-1, NF EN 62196-2 et au décret IRVE du 11 mars 2020.",
+        "Apporté un appui technique à 8 réponses à appels d'offres IRVE, incluant la rédaction des mémoires techniques et le chiffrage."
+      ]
+    },
+    {
+      "name": "TSG",
+      "location": "Le Plessis-Robinson, France",
+      "description": "Société d'ingénierie spécialisée en énergie solaire et mobilité électrique",
+      "position": "Ingénieure d'Etudes IRVE et PV",
+      "url": "",
+      "startDate": "2021-10",
+      "endDate": "2023-07",
+      "summary": "",
+      "highlights": [
+        "Réalisé 25 études IRVE complètes pour des sites en autoconsommation (PV + BESS + recharge) : calcul des puissances de charge, choix des bornes, dimensionnement du câblage BT.",
+        "Modélisé des scénarios d'usage (flottes de véhicules d'entreprise, horaires de charge) pour optimiser la puissance installée et limiter les extensions de branchement.",
+        "Produit les livrables techniques : notes de calcul IRVE, plans d'implantation des bornes, schémas électriques sous SEE-Electrical.",
+        "Assuré l'interface technique avec les gestionnaires de réseau (ENEDIS) pour les demandes de raccordement et la sécurisation des puissances.",
+        "Consulté et sélectionné les fabricants de bornes (AC : Schneider EVlink, Legrand, DC : ABB, Tritium) et négocié les conditions techniques.",
+        "Formé 2 ingénieurs juniors aux méthodes de dimensionnement IRVE et aux normes applicables."
+      ]
+    }
+  ],
+  "volunteer": [],
+  "education": [
+    {
+      "institution": "Université Paris Saclay / CentraleSupelec",
+      "url": "",
+      "area": "Réseaux Electriques et Energies Renouvelables",
+      "studyType": "Master 2 (Bac+5)",
+      "startDate": "2020-10",
+      "endDate": "2021-10",
+      "score": "",
+      "courses": []
+    },
+    {
+      "institution": "Institut Supérieur de Génie Électrique du Burkina Faso (ISGE-BF)",
+      "url": "",
+      "area": "Electricité Industrielle et Energies Renouvelables",
+      "studyType": "Diplôme d'ingénieur (Bac+5)",
+      "startDate": "2017-10",
+      "endDate": "2020-09",
+      "score": "",
+      "courses": []
+    }
+  ],
+  "awards": [],
+  "certificates": [
+    {
+      "name": "Qualification IRVE P2 — Borne de recharge jusqu'à 22 kW",
+      "date": "2022-06",
+      "issuer": "QUALIFELEC",
+      "url": ""
+    }
+  ],
+  "publications": [],
+  "skills": [
+    {
+      "name": "Dimensionnement IRVE",
+      "level": "Expert",
+      "keywords": [
+        "Bornes AC (3,7 kW à 22 kW) et DC rapide (jusqu'à 150 kW)",
+        "Load management, smart charging, pilotage OCPP 1.6 / 2.0.1",
+        "Calculs BT : chute de tension, court-circuit, sélection des protections type A",
+        "Bilan de puissance et étude de raccordement ENEDIS (S24C)"
+      ]
+    },
+    {
+      "name": "Normes & Réglementation",
+      "level": "Expert",
+      "keywords": [
+        "IEC 61851-1 (systèmes de charge pour VE — modes 2, 3, 4)",
+        "NF EN 62196-2 (prises type 2) et NF EN 62196-3 (combo CCS)",
+        "Décret IRVE du 11/03/2020, loi LOM (pré-équipement)",
+        "NF C 15-100 (installations BT), guide UTE C 15-722"
+      ]
+    },
+    {
+      "name": "Intégration énergétique",
+      "level": "Avancé",
+      "keywords": [
+        "Couplage IRVE + PV (autoconsommation et charge solaire)",
+        "Intégration BESS pour lissage de pic de puissance",
+        "Modélisation des usages et scénarios de charge (flotte VE)",
+        "Optimisation du contrat de fourniture d'énergie"
+      ]
+    },
+    {
+      "name": "Outils",
+      "level": "Avancé",
+      "keywords": [
+        "CANECO BT",
+        "ElecCalc",
+        "SEE-Electrical",
+        "AutoCAD",
+        "PVsyst",
+        "MS Project"
+      ]
+    }
+  ],
+  "languages": [
+    {
+      "language": "Français",
+      "fluency": "Natif"
+    },
+    {
+      "language": "Anglais",
+      "fluency": "Niveau B2"
+    }
+  ],
+  "interests": [
+    {
+      "name": "Sports collectifs et individuels",
+      "keywords": ["Handball", "Football", "Course à pied"]
+    },
+    {
+      "name": "Voyages",
+      "keywords": ["Découverte de nouveaux environnements"]
+    }
+  ],
+  "references": [],
+  "projects": [],
+  "meta": {
+    "canonical": "",
+    "version": "1.1.0",
+    "lastModified": "2026-06-28T10:00:00",
+    "target": "Ingénieure IRVE"
+  }
+}

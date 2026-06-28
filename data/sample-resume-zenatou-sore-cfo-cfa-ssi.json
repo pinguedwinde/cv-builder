@@ -1,0 +1,182 @@
+{
+  "basics": {
+    "name": "Zénatou SORÉ",
+    "label": "Ingénieure en Installations Électriques CFO/CFA & SSI",
+    "image": "",
+    "email": "sorezenatou@gmail.com",
+    "phone": "07 50 03 83 50",
+    "url": "",
+    "summary": "Ingénieure en génie électrique du bâtiment, je réalise des études CFO, CFA et SSI pour des projets tertiaires, industriels et ERP de toute catégorie. Mon expérience couvre le dimensionnement des installations BT/HTA, la conception de systèmes de sécurité incendie et la rédaction des pièces techniques de marché. Rigoureuse et orientée conformité, j'assure des études livrées dans les délais et validées par les organismes de contrôle.",
+    "location": {
+      "address": "",
+      "postalCode": "93160",
+      "city": "Noisy-le-Grand",
+      "countryCode": "FR",
+      "region": "Île-de-France"
+    },
+    "profiles": [
+      {
+        "network": "LinkedIn",
+        "username": "Zénatou Soré",
+        "url": "https://linkedin.com/in/zenatou-sore"
+      }
+    ]
+  },
+  "work": [
+    {
+      "name": "Actenergy",
+      "location": "Aix-en-Provence, France",
+      "description": "Bureau d'études spécialisé en génie électrique tertiaire et industriel",
+      "position": "Ingénieure études CFO/CFA & SSI",
+      "url": "",
+      "startDate": "2024-09",
+      "endDate": "",
+      "summary": "",
+      "highlights": [
+        "Réalisé les études CFO complètes d'un immeuble de bureaux R+5 de 4 200 m² (ERP type W, 3e catégorie) : bilan de puissance 630 kVA, dimensionnement TGBT 1 000 A, 9 tableaux divisionnaires, notes de calcul CANECO.",
+        "Conçu un SSI catégorie A pour un EHPAD de 120 lits : 340 détecteurs automatiques, 48 déclencheurs manuels, tableau de signalisation central (TSC), système de désenfumage sur 8 zones.",
+        "Réalisé les études CFA d'un campus tertiaire (3 bâtiments, 6 000 m²) : réseau VDI cat. 6A, contrôle d'accès multi-niveaux, vidéosurveillance 32 caméras, système anti-intrusion.",
+        "Rédigé les CCTP, notes descriptives et DOE pour les lots CFO, CFA et SSI de chaque opération.",
+        "Coordonné avec les bureaux de contrôle (APAVE, Bureau Veritas) et les SDIS pour la validation des dossiers SSI et la levée des réserves.",
+        "Assuré le suivi de chantier et le contrôle de conformité des installations avant réception, en lien avec les entreprises titulaires des lots électricité."
+      ]
+    },
+    {
+      "name": "ATLANTE",
+      "location": "Paris, France",
+      "description": "Maître d'ouvrage délégué sur des projets d'aménagement tertiaire et de recharge électrique",
+      "position": "Chargée d'études électricité du bâtiment",
+      "url": "",
+      "startDate": "2023-08",
+      "endDate": "2024-09",
+      "summary": "",
+      "highlights": [
+        "Réalisé les études électriques BT de 12 parkings et bâtiments tertiaires : bilans de puissance, schémas unifilaires, plans de cheminement des câbles et tableaux de distribution.",
+        "Intégré les pré-équipements IRVE dans les études électriques bâtiment conformément à la réglementation LOM (NF C 15-100 §559).",
+        "Rédigé les pièces écrites (CCTP, notices descriptives, DPGF) pour les lots électricité de projets de 300 k€ à 900 k€.",
+        "Dimensionné les systèmes d'éclairage (Dialux) et d'éclairage de sécurité (BAES/BAEH) selon les exigences ERP.",
+        "Géré les interfaces techniques avec les corps d'état secondaires (plomberie, CVC, façades) pour la coordination des réseaux."
+      ]
+    },
+    {
+      "name": "TSG",
+      "location": "Le Plessis-Robinson, France",
+      "description": "Société d'ingénierie en génie électrique industriel et tertiaire",
+      "position": "Ingénieure d'Etudes en génie électrique",
+      "url": "",
+      "startDate": "2021-10",
+      "endDate": "2023-07",
+      "summary": "",
+      "highlights": [
+        "Réalisé les études d'installations électriques BT/HTA de 15+ sites industriels et tertiaires : calculs de puissance, sélection et dimensionnement des appareillages (Schneider, Legrand, Hager).",
+        "Produit les documents techniques de référence : notes de calcul de chute de tension et de court-circuit, plans d'implantation, schémas unifilaires sous AutoCAD et SEE-Electrical.",
+        "Dimensionné les postes de transformation HTA/BT (160 kVA à 1 MVA) et les TGBT associés, en intégrant les contraintes de sélectivité et de continuité de service.",
+        "Assuré l'interface avec les fabricants d'appareillage pour optimiser les solutions et maîtriser les délais d'approvisionnement.",
+        "Participé à la rédaction des CCTP électricité et au chiffrage de 20+ lots électricité en phase DCE."
+      ]
+    }
+  ],
+  "volunteer": [],
+  "education": [
+    {
+      "institution": "Université Paris Saclay / CentraleSupelec",
+      "url": "",
+      "area": "Réseaux Electriques et Energies Renouvelables",
+      "studyType": "Master 2 (Bac+5)",
+      "startDate": "2020-10",
+      "endDate": "2021-10",
+      "score": "",
+      "courses": []
+    },
+    {
+      "institution": "Institut Supérieur de Génie Électrique du Burkina Faso (ISGE-BF)",
+      "url": "",
+      "area": "Electricité Industrielle et Energies Renouvelables",
+      "studyType": "Diplôme d'ingénieur (Bac+5)",
+      "startDate": "2017-10",
+      "endDate": "2020-09",
+      "score": "",
+      "courses": []
+    }
+  ],
+  "awards": [],
+  "certificates": [
+    {
+      "name": "Habilitation électrique BR / B2V / BC / H1V",
+      "date": "2022-03",
+      "issuer": "APAVE Formation",
+      "url": ""
+    }
+  ],
+  "publications": [],
+  "skills": [
+    {
+      "name": "Courants Forts (CFO)",
+      "level": "Expert",
+      "keywords": [
+        "Bilan de puissance, dimensionnement TGBT / TGS / TD (jusqu'à 1 600 A)",
+        "Calculs CANECO : chute de tension, court-circuit, sélectivité des protections",
+        "Postes de transformation HTA/BT (160 kVA à 1 MVA), câblage et appareillage",
+        "Eclairage normal et de sécurité (BAES/BAEH), calculs Dialux"
+      ]
+    },
+    {
+      "name": "SSI & Sécurité incendie",
+      "level": "Avancé",
+      "keywords": [
+        "Systèmes de détection incendie catégorie A et B (NF S 61-970 / EN 54)",
+        "Désenfumage naturel et mécanique (NF S 61-932)",
+        "Coordination SSI avec bureaux de contrôle agréés et SDIS",
+        "Réglementation ERP : arrêtés type M, W, U, J — 1re à 5e catégorie"
+      ]
+    },
+    {
+      "name": "Courants Faibles (CFA)",
+      "level": "Avancé",
+      "keywords": [
+        "Réseau VDI (cat. 6A / fibre), câblage structuré",
+        "Contrôle d'accès (lecteurs badge, interphonie IP) et vidéosurveillance",
+        "Système anti-intrusion (détecteurs volumétriques, centrale alarme grade 3)",
+        "Rédaction des CCTP CFA et coordination avec les intégrateurs"
+      ]
+    },
+    {
+      "name": "Outils & Normes",
+      "level": "Avancé",
+      "keywords": [
+        "CANECO BT, ElecCalc, Dialux",
+        "AutoCAD, Revit MEP, SEE-Electrical",
+        "NF C 15-100, NF C 14-100, guide UTE C 15-103 / C 15-105",
+        "NF S 61-931, NF S 61-970, NF EN 54"
+      ]
+    }
+  ],
+  "languages": [
+    {
+      "language": "Français",
+      "fluency": "Natif"
+    },
+    {
+      "language": "Anglais",
+      "fluency": "Niveau B2"
+    }
+  ],
+  "interests": [
+    {
+      "name": "Sports collectifs et individuels",
+      "keywords": ["Handball", "Football", "Course à pied"]
+    },
+    {
+      "name": "Voyages",
+      "keywords": ["Découverte de nouveaux environnements"]
+    }
+  ],
+  "references": [],
+  "projects": [],
+  "meta": {
+    "canonical": "",
+    "version": "1.1.0",
+    "lastModified": "2026-06-28T10:00:00",
+    "target": "Ingénieure CFO/CFA SSI"
+  }
+}
