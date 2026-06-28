@@ -100,19 +100,17 @@ export default function ReviewPage() {
   );
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="h-screen flex flex-col bg-background overflow-hidden">
       <Navbar showBack backHref={`/editor/${id}`} title="Revue du CV" actions={navActions} />
 
-      <div className="max-w-7xl mx-auto px-6 py-6 flex gap-6">
-        <div className="w-1/2">
-          <div className="bg-card rounded-lg shadow-sm border overflow-auto" style={{ maxHeight: "calc(100vh - 120px)" }}>
-            <div style={{ width: "210mm", minHeight: "297mm" }}>
-              <ThemeRenderer resume={resume} themeId={themeId} />
-            </div>
+      <div className="flex flex-1 gap-4 px-4 pb-4 pt-2 min-h-0">
+        <div className="flex-1 overflow-auto rounded-lg border bg-card shadow-sm">
+          <div style={{ width: "210mm", minHeight: "297mm" }}>
+            <ThemeRenderer resume={resume} themeId={themeId} />
           </div>
         </div>
 
-        <div className="w-1/2 space-y-4 overflow-auto" style={{ maxHeight: "calc(100vh - 120px)" }}>
+        <div className="flex-1 overflow-auto space-y-4">
           {!review ? (
             <Card>
               <CardContent className="py-12 text-center">
@@ -227,3 +225,4 @@ export default function ReviewPage() {
     </div>
   );
 }
+

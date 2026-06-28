@@ -99,19 +99,19 @@ export default function MatchPage() {
   );
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="h-screen flex flex-col bg-background overflow-hidden">
       <Navbar showBack backHref={`/editor/${id}`} title="Matching CV / Poste" actions={navActions} />
 
-      <div className="max-w-7xl mx-auto px-6 py-6 flex gap-6">
-        <div className="w-1/3 space-y-4 overflow-auto" style={{ maxHeight: "calc(100vh - 120px)" }}>
-          <Card>
-            <CardHeader className="pb-2">
+      <div className="flex flex-1 gap-4 px-4 pb-4 pt-2 min-h-0">
+        <div className="w-1/2 flex flex-col gap-4 min-h-0">
+          <Card className="flex flex-col flex-1 min-h-0">
+            <CardHeader className="pb-2 shrink-0">
               <CardTitle className="text-base flex items-center gap-2">
                 <Target className="w-4 h-4" /> Offre d&apos;emploi
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-3">
-              <div className="flex gap-2">
+            <CardContent className="flex flex-col flex-1 gap-3 min-h-0 overflow-hidden">
+              <div className="flex gap-2 shrink-0">
                 <Button
                   variant={jobType === "text" ? "default" : "outline"}
                   size="sm"
@@ -134,47 +134,51 @@ export default function MatchPage() {
                 <Textarea
                   value={jobContent}
                   onChange={(e) => setJobContent(e.target.value)}
-                  rows={12}
                   placeholder="Collez le texte de l'offre d'emploi ici..."
-                  className="text-xs"
+                  className="flex-1 resize-none text-xs min-h-0"
                 />
               ) : (
                 <Input
                   value={jobUrl}
                   onChange={(e) => setJobUrl(e.target.value)}
                   placeholder="https://..."
+                  className="shrink-0"
                 />
               )}
 
-              <label className="flex items-center gap-2 text-sm">
-                <input
-                  type="checkbox"
-                  checked={optimize}
-                  onChange={(e) => setOptimize(e.target.checked)}
-                  className="rounded"
-                />
-                <Sparkles className="w-3 h-3" />
-                Optimiser le CV (IA)
-              </label>
+              <div className="shrink-0 space-y-3">
+                <label className="flex items-center gap-2 text-sm">
+                  <input
+                    type="checkbox"
+                    checked={optimize}
+                    onChange={(e) => setOptimize(e.target.checked)}
+                    className="rounded"
+                  />
+                  <Sparkles className="w-3 h-3" />
+                  Optimiser le CV (IA)
+                </label>
 
-              <Button
-                onClick={runMatch}
-                disabled={matching || (jobType === "text" ? !jobContent.trim() : !jobUrl.trim())}
-                className="w-full"
-              >
-                {matching ? (
-                  <>
-                    <div className="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full" />
-                    Analyse en cours...
-                  </>
-                ) : (
-                  <>
-                    <Target className="w-4 h-4" /> Analyser la correspondance
-                  </>
-                )}
-              </Button>
+                <Button
+                  onClick={runMatch}
+                  disabled={matching || (jobType === "text" ? !jobContent.trim() : !jobUrl.trim())}
+                  className="w-full"
+                >
+                  {matching ? (
+                    <>
+                      <div className="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full" />
+                      Analyse en cours...
+                    </>
+                  ) : (
+                    <>
+                      <Target className="w-4 h-4" /> Analyser la correspondance
+                    </>
+                  )}
+                </Button>
+              </div>
             </CardContent>
           </Card>
+
+          <div className="overflow-auto space-y-4 shrink-0">
 
           {matchResult && (
             <>
@@ -260,12 +264,13 @@ export default function MatchPage() {
               )}
             </>
           )}
+          </div>
         </div>
 
-        <div className="w-2/3 flex gap-4">
-          <div className="flex-1">
-            <h3 className="text-sm font-semibold mb-2 text-center text-muted-foreground">CV actuel</h3>
-            <div className="bg-card rounded-lg shadow-sm border overflow-auto" style={{ maxHeight: "calc(100vh - 160px)" }}>
+        <div className="w-1/2 flex gap-4 min-h-0">
+          <div className="flex-1 flex flex-col min-h-0">
+            <h3 className="text-sm font-semibold mb-2 text-center text-muted-foreground shrink-0">CV actuel</h3>
+            <div className="flex-1 bg-card rounded-lg shadow-sm border overflow-auto">
               <div style={{ width: "210mm", minHeight: "297mm" }}>
                 <ThemeRenderer resume={resume} themeId={themeId} />
               </div>
@@ -273,9 +278,9 @@ export default function MatchPage() {
           </div>
 
           {optimizedResume && (
-            <div className="flex-1">
-              <h3 className="text-sm font-semibold mb-2 text-center text-green-600">CV optimisé</h3>
-              <div className="bg-card rounded-lg shadow-sm border overflow-auto ring-2 ring-green-200" style={{ maxHeight: "calc(100vh - 160px)" }}>
+            <div className="flex-1 flex flex-col min-h-0">
+              <h3 className="text-sm font-semibold mb-2 text-center text-green-600 shrink-0">CV optimisé</h3>
+              <div className="flex-1 bg-card rounded-lg shadow-sm border overflow-auto ring-2 ring-green-200">
                 <div style={{ width: "210mm", minHeight: "297mm" }}>
                   <ThemeRenderer resume={optimizedResume} themeId={themeId} />
                 </div>
