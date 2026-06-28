@@ -20,7 +20,13 @@ import {
   Save, Download, Plus, Trash2, Star, Target, ChevronDown,
   User, Briefcase, GraduationCap, Wrench, Globe, FolderOpen,
   Award, FileCheck, Heart, MessageSquare, Users, Loader2,
+  Code2, AlertCircle, CheckCircle2,
 } from "lucide-react";
+import { exportToJson } from "@/lib/exporters/json";
+import { exportToYaml } from "@/lib/exporters/yaml";
+import { exportToMarkdown } from "@/lib/exporters/markdown";
+import { parseJson } from "@/lib/parsers/json";
+import { parseYaml } from "@/lib/parsers/yaml";
 
 export default function EditorPage() {
   const params = useParams();
@@ -34,6 +40,10 @@ export default function EditorPage() {
   const [saving, setSaving] = useState(false);
   const [loading, setLoading] = useState(true);
   const [exportingPdf, setExportingPdf] = useState(false);
+  const [currentTab, setCurrentTab] = useState("basics");
+  const [rawFormat, setRawFormat] = useState<"json" | "yaml" | "markdown">("json");
+  const [rawContent, setRawContent] = useState("");
+  const [rawError, setRawError] = useState<string | null>(null);
 
   useEffect(() => {
     async function load() {
@@ -145,6 +155,35 @@ export default function EditorPage() {
     const skills = [...resume.skills];
     skills[skillIndex] = { ...skills[skillIndex], keywords: keywords.split(",").map((k) => k.trim()).filter(Boolean) };
     setResume({ ...resume, skills });
+  }
+
+  function initRawContent(r: Resume, fmt: "json" | "yaml" | "markdown") {
+    if (fmt === "json") setRawContent(exportToJson(r));
+    else if (fmt === "yaml") setRawContent(exportToYaml(r));
+    else setRawContent(exportToMarkdown(r));
+    setRawError(null);
+  }
+
+  function handleTabChange(tab: string) {
+    setCurrentTab(tab);
+    if (tab === "raw" && resume) initRawContent(resume, rawFormat);
+  }
+
+  function handleFormatChange(fmt: "json" | "yaml" | "markdown") {
+    setRawFormat(fmt);
+    if (resume) initRawContent(resume, fmt);
+  }
+
+  function handleRawChange(value: string) {
+    setRawContent(value);
+    if (rawFormat === "markdown") return;
+    const result = rawFormat === "json" ? parseJson(value) : parseYaml(value);
+    if (result.success && result.data) {
+      setRawError(null);
+      setResume(result.data);
+    } else {
+      setRawError(result.errors?.join("\n") || "Erreur de parsing");
+    }
   }
 
   async function handleExport(format: string) {
@@ -260,8 +299,8 @@ export default function EditorPage() {
       </AnimatePresence>
 
       <div className="flex-1 flex overflow-hidden">
-        <div className="w-1/2 overflow-auto border-r bg-background p-4">
-          <Tabs defaultValue="basics" className="w-full">
+        <div className="w-1/2 flex flex-col overflow-hidden border-r bg-background p-4">
+          <Tabs value={currentTab} onValueChange={handleTabChange} className="flex flex-col flex-1 min-h-0 w-full">
             <TabsList className="w-full flex flex-wrap h-auto bg-muted/60">
               <TabsTrigger value="basics" className="text-xs gap-1"><User className="w-3 h-3" /> Profil</TabsTrigger>
               <TabsTrigger value="work" className="text-xs gap-1"><Briefcase className="w-3 h-3" /> Expérience</TabsTrigger>
@@ -274,9 +313,10 @@ export default function EditorPage() {
               <TabsTrigger value="volunteer" className="text-xs gap-1"><Heart className="w-3 h-3" /> Bénévolat</TabsTrigger>
               <TabsTrigger value="interests" className="text-xs gap-1"><Users className="w-3 h-3" /> Intérêts</TabsTrigger>
               <TabsTrigger value="references" className="text-xs gap-1"><MessageSquare className="w-3 h-3" /> Références</TabsTrigger>
+              <TabsTrigger value="raw" className="text-xs gap-1"><Code2 className="w-3 h-3" /> Brut</TabsTrigger>
             </TabsList>
 
-            <TabsContent value="basics" className="space-y-4 mt-4">
+            <TabsContent value="basics" className="space-y-4 mt-4 flex-1 min-h-0 overflow-auto">
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <Label className="text-xs">Nom complet</Label>
@@ -328,7 +368,7 @@ export default function EditorPage() {
               </div>
             </TabsContent>
 
-            <TabsContent value="work" className="space-y-4 mt-4">
+            <TabsContent value="work" className="space-y-4 mt-4 flex-1 min-h-0 overflow-auto">
               {resume.work?.map((w, i) => (
                 <div key={i} className="border border-l-4 border-l-primary/40 rounded-lg bg-card p-3 space-y-2 shadow-sm">
                   <div className="flex justify-between items-center">
@@ -388,7 +428,7 @@ export default function EditorPage() {
               </Button>
             </TabsContent>
 
-            <TabsContent value="education" className="space-y-4 mt-4">
+            <TabsContent value="education" className="space-y-4 mt-4 flex-1 min-h-0 overflow-auto">
               {resume.education?.map((e, i) => (
                 <div key={i} className="border border-l-4 border-l-primary/40 rounded-lg bg-card p-3 space-y-2 shadow-sm">
                   <div className="flex justify-between items-center">
@@ -434,7 +474,7 @@ export default function EditorPage() {
               </Button>
             </TabsContent>
 
-            <TabsContent value="skills" className="space-y-4 mt-4">
+            <TabsContent value="skills" className="space-y-4 mt-4 flex-1 min-h-0 overflow-auto">
               {resume.skills?.map((sk, i) => (
                 <div key={i} className="border border-l-4 border-l-primary/40 rounded-lg bg-card p-3 space-y-2 shadow-sm">
                   <div className="flex justify-between items-center">
@@ -472,7 +512,7 @@ export default function EditorPage() {
               </Button>
             </TabsContent>
 
-            <TabsContent value="projects" className="space-y-4 mt-4">
+            <TabsContent value="projects" className="space-y-4 mt-4 flex-1 min-h-0 overflow-auto">
               {resume.projects?.map((p, i) => (
                 <div key={i} className="border border-l-4 border-l-primary/40 rounded-lg bg-card p-3 space-y-2 shadow-sm">
                   <div className="flex justify-between items-center">
@@ -526,7 +566,7 @@ export default function EditorPage() {
               </Button>
             </TabsContent>
 
-            <TabsContent value="languages" className="space-y-4 mt-4">
+            <TabsContent value="languages" className="space-y-4 mt-4 flex-1 min-h-0 overflow-auto">
               {resume.languages?.map((l, i) => (
                 <div key={i} className="flex gap-2 items-end">
                   <div className="flex-1">
@@ -547,7 +587,7 @@ export default function EditorPage() {
               </Button>
             </TabsContent>
 
-            <TabsContent value="certificates" className="space-y-4 mt-4">
+            <TabsContent value="certificates" className="space-y-4 mt-4 flex-1 min-h-0 overflow-auto">
               {resume.certificates?.map((c, i) => (
                 <div key={i} className="border border-l-4 border-l-primary/40 rounded-lg bg-card p-3 space-y-2 shadow-sm">
                   <div className="flex justify-between items-center">
@@ -581,7 +621,7 @@ export default function EditorPage() {
               </Button>
             </TabsContent>
 
-            <TabsContent value="awards" className="space-y-4 mt-4">
+            <TabsContent value="awards" className="space-y-4 mt-4 flex-1 min-h-0 overflow-auto">
               {resume.awards?.map((a, i) => (
                 <div key={i} className="border border-l-4 border-l-primary/40 rounded-lg bg-card p-3 space-y-2 shadow-sm">
                   <div className="flex justify-between items-center">
@@ -615,7 +655,7 @@ export default function EditorPage() {
               </Button>
             </TabsContent>
 
-            <TabsContent value="volunteer" className="space-y-4 mt-4">
+            <TabsContent value="volunteer" className="space-y-4 mt-4 flex-1 min-h-0 overflow-auto">
               {resume.volunteer?.map((v, i) => (
                 <div key={i} className="border border-l-4 border-l-primary/40 rounded-lg bg-card p-3 space-y-2 shadow-sm">
                   <div className="flex justify-between items-center">
@@ -653,7 +693,7 @@ export default function EditorPage() {
               </Button>
             </TabsContent>
 
-            <TabsContent value="interests" className="space-y-4 mt-4">
+            <TabsContent value="interests" className="space-y-4 mt-4 flex-1 min-h-0 overflow-auto">
               {resume.interests?.map((item, i) => (
                 <div key={i} className="flex gap-2 items-end">
                   <div className="flex-1">
@@ -682,7 +722,7 @@ export default function EditorPage() {
               </Button>
             </TabsContent>
 
-            <TabsContent value="references" className="space-y-4 mt-4">
+            <TabsContent value="references" className="space-y-4 mt-4 flex-1 min-h-0 overflow-auto">
               {resume.references?.map((r, i) => (
                 <div key={i} className="border border-l-4 border-l-primary/40 rounded-lg bg-card p-3 space-y-2 shadow-sm">
                   <div className="flex justify-between items-center">
@@ -704,6 +744,57 @@ export default function EditorPage() {
               <Button variant="outline" size="sm" onClick={() => addArrayItem("references", { name: "", reference: "" })}>
                 <Plus className="w-3 h-3" /> Ajouter
               </Button>
+            </TabsContent>
+
+            <TabsContent value="raw" className="flex flex-col flex-1 min-h-0 mt-4">
+              <div className="flex flex-col flex-1 min-h-0 gap-3">
+                <div className="flex items-center gap-2">
+                  <div className="flex gap-1">
+                    {(["json", "yaml", "markdown"] as const).map((fmt) => (
+                      <Button
+                        key={fmt}
+                        variant={rawFormat === fmt ? "default" : "outline"}
+                        size="sm"
+                        onClick={() => handleFormatChange(fmt)}
+                        className="text-xs"
+                      >
+                        {fmt === "markdown" ? "MD" : fmt.toUpperCase()}
+                      </Button>
+                    ))}
+                  </div>
+                  {rawFormat === "markdown" ? (
+                    <span className="text-xs text-muted-foreground">Lecture seule</span>
+                  ) : rawError ? (
+                    <span className="flex items-center gap-1 text-xs text-red-500">
+                      <AlertCircle className="w-3.5 h-3.5" /> Erreur de syntaxe
+                    </span>
+                  ) : (
+                    <span className="flex items-center gap-1 text-xs text-green-600 dark:text-green-400">
+                      <CheckCircle2 className="w-3.5 h-3.5" /> Valide
+                    </span>
+                  )}
+                </div>
+
+                {rawError && (
+                  <div className="rounded-md border border-red-200 bg-red-50 dark:bg-red-950/20 dark:border-red-900 p-2">
+                    <pre className="whitespace-pre-wrap font-mono text-xs text-red-600 dark:text-red-400">{rawError}</pre>
+                  </div>
+                )}
+
+                <textarea
+                  value={rawContent}
+                  onChange={(e) => handleRawChange(e.target.value)}
+                  readOnly={rawFormat === "markdown"}
+                  spellCheck={false}
+                  className={[
+                    "w-full rounded-md border bg-muted/30 p-3 font-mono text-xs resize-none",
+                    "focus:outline-none focus:ring-1 focus:ring-ring",
+                    rawError ? "border-red-300 dark:border-red-800" : "",
+                    rawFormat === "markdown" ? "cursor-default opacity-75" : "",
+                  "flex-1 min-h-0",
+                  ].join(" ")}
+                />
+              </div>
             </TabsContent>
           </Tabs>
         </div>
