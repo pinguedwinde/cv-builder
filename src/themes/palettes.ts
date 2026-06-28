@@ -435,6 +435,60 @@ export const modelPalettes: Record<string, ColorPalette[]> = {
       colors: { yellow: "#32CD32", black: "#0A0A0A" },
     },
   ],
+  lumiere: [
+    {
+      id: "default",
+      name: "Marine",
+      swatch: "#2563eb",
+      colors: {
+        headerBg: "#dde8f2",
+        headerBorder: "#b8cfe0",
+        primary: "#1d3557",
+        accent: "#2563eb",
+        muted: "#64748b",
+        border: "#e2e8f0",
+      },
+    },
+    {
+      id: "ardoise",
+      name: "Ardoise",
+      swatch: "#475569",
+      colors: {
+        headerBg: "#e8edf2",
+        headerBorder: "#c5cdd7",
+        primary: "#1e293b",
+        accent: "#475569",
+        muted: "#64748b",
+        border: "#e2e8f0",
+      },
+    },
+    {
+      id: "sauge",
+      name: "Sauge",
+      swatch: "#2d6a4f",
+      colors: {
+        headerBg: "#ddeee6",
+        headerBorder: "#a8d5bc",
+        primary: "#1b4332",
+        accent: "#2d6a4f",
+        muted: "#52796f",
+        border: "#d8eadf",
+      },
+    },
+    {
+      id: "bordeaux",
+      name: "Bordeaux",
+      swatch: "#7f1d1d",
+      colors: {
+        headerBg: "#f2dede",
+        headerBorder: "#d4a5a5",
+        primary: "#450a0a",
+        accent: "#7f1d1d",
+        muted: "#9f5454",
+        border: "#f5e0e0",
+      },
+    },
+  ],
 };
 
 export function getModelPalettes(modelId: string): ColorPalette[] {

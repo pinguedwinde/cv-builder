@@ -11,6 +11,7 @@ import { SwissTheme } from "./swiss";
 import { NeoTheme } from "./neo";
 import { ElegantTheme } from "./elegant";
 import { BoldTheme } from "./bold";
+import { LumiereTheme } from "./lumiere";
 
 export const themes: Record<ThemeId, ThemeConfig> = {
   classic: {
@@ -100,6 +101,14 @@ export const themes: Record<ThemeId, ThemeConfig> = {
     preview: "Bebas Neue · Noir/Jaune · Magazine",
     component: BoldTheme,
     palettes: modelPalettes.bold ?? [],
+  },
+  lumiere: {
+    id: "lumiere",
+    name: "Lumière",
+    description: "Header clair, sidebar blanche, dots colorés, professionnel",
+    preview: "Inter · Bleu marine · 2 colonnes",
+    component: LumiereTheme,
+    palettes: modelPalettes.lumiere ?? [],
   },
 };
 

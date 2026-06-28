@@ -15,6 +15,12 @@ const personas = [
     file: "sample-resume-sore.json",
     theme: "classic",
   },
+  {
+    name: "Zénatou SORÉ",
+    file: "sample-resume-zenatou-sore-pv.json",
+    theme: "lumiere",
+    colorTheme: "default",
+  },
 ];
 
 function seed() {
@@ -45,6 +51,7 @@ function seed() {
         title: persona.name,
         data: sampleData,
         theme: persona.theme,
+        colorTheme: persona.colorTheme ?? "default",
         createdAt: now,
         updatedAt: now,
       })

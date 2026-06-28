@@ -1,0 +1,176 @@
+{
+  "basics": {
+    "name": "Zénatou SORÉ",
+    "label": "Ingénieure Génie Electrique",
+    "image": "",
+    "email": "sorezenatou@gmail.com",
+    "phone": "07 50 03 83 50",
+    "url": "",
+    "summary": "Ingénieure en génie électrique, j'interviens depuis plusieurs années sur des projets photovoltaïques intégrant des infrastructures de recharge pour véhicules électriques (IRVE) et des solutions de stockage d'énergie (BESS). Mon expérience en études techniques, coordination de projets et pilotage d'équipes me permet d'accompagner efficacement le développement de solutions énergétiques performantes et durables.",
+    "location": {
+      "address": "",
+      "postalCode": "93160",
+      "city": "Noisy-le-Grand",
+      "countryCode": "FR",
+      "region": "Île-de-France"
+    },
+    "profiles": [
+      {
+        "network": "LinkedIn",
+        "username": "Zénatou Soré",
+        "url": "https://linkedin.com/in/zenatou-sore"
+      }
+    ]
+  },
+  "work": [
+    {
+      "name": "Actenergy",
+      "location": "Aix-en-Provence, France",
+      "description": "Bureau d'études spécialisé en installations photovoltaïques et IRVE",
+      "position": "Cheffe de projet solaire PV et IRVE",
+      "url": "",
+      "startDate": "2024-09",
+      "endDate": "",
+      "summary": "",
+      "highlights": [
+        "Réalisation de visites de faisabilité sur site et proposition de solutions d'implantation des équipements (PV, IRVE et BESS).",
+        "Dimensionnement des champs solaires PV en fonction des données d'entrée.",
+        "Dimensionnement de l'infrastructure électrique : poste de transformateur, BESS, TGBT, onduleurs.",
+        "Rédaction des documents techniques : notes de calcul, besoins en matériel, chiffrage et planning d'exécution des projets.",
+        "Accompagnement des clients dans la réponse aux appels d'offres en proposant des architectures électriques robustes, optimisées et conformes aux normes.",
+        "Accompagnement des clients dans la rédaction de leurs cahiers des charges, la préparation des dossiers de consultation et le choix des fournisseurs.",
+        "Coordination des interventions des équipes internes et des sous-traitants sur le terrain afin de garantir la qualité et le respect des délais.",
+        "Gestion de la relation avec le client, et les autres parties prenantes.",
+        "Gestion et suivi des démarches administratives avec les services d'urbanisme."
+      ]
+    },
+    {
+      "name": "ATLANTE",
+      "location": "Paris, France",
+      "description": "Développeur et opérateur de solutions de recharge pour véhicules électriques",
+      "position": "Chargée d'études solaire PV, IRVE et stockage",
+      "url": "",
+      "startDate": "2023-08",
+      "endDate": "2024-09",
+      "summary": "",
+      "highlights": [
+        "Réalisation des études des projets d'installation PV et IRVE (avec ou sans système de stockage) : notes de calcul, schémas d'implantation et schémas unifilaires.",
+        "Rédaction des spécifications techniques pour l'acquisition du matériel électrique (postes de transformateurs, TGBT, modules solaires, onduleurs).",
+        "Suivi des projets en cours en validant les études d'exécution.",
+        "Appui technique à l'équipe de développement dans la réponse aux appels d'offres."
+      ]
+    },
+    {
+      "name": "TSG",
+      "location": "Le Plessis-Robinson, France",
+      "description": "Société d'ingénierie spécialisée en énergie solaire et mobilité électrique",
+      "position": "Ingénieure d'Etudes solaire PV et IRVE",
+      "url": "",
+      "startDate": "2021-10",
+      "endDate": "2023-07",
+      "summary": "",
+      "highlights": [
+        "Etude complète de systèmes PV connectés au réseau avec ou sans stockage.",
+        "Etude et dimensionnement d'IRVE (avec PV et ou stockage).",
+        "Réalisation des documents techniques : notes de calcul, plans d'implantation.",
+        "Interface technique avec les fournisseurs (fabricants de postes HTA/BT, TGBT).",
+        "Appui technique au service commercial dans le chiffrage des projets."
+      ]
+    }
+  ],
+  "volunteer": [],
+  "education": [
+    {
+      "institution": "Université Paris Saclay / CentraleSupelec",
+      "url": "",
+      "area": "Réseaux Electriques et Energies Renouvelables",
+      "studyType": "Master 2 (Bac+5)",
+      "startDate": "2020-10",
+      "endDate": "2021-10",
+      "score": "",
+      "courses": []
+    },
+    {
+      "institution": "Institut Supérieur de Génie Électrique du Burkina Faso (ISGE-BF)",
+      "url": "",
+      "area": "Electricité Industrielle et Energies Renouvelables",
+      "studyType": "Diplôme d'ingénieur (Bac+5)",
+      "startDate": "2017-10",
+      "endDate": "2020-09",
+      "score": "",
+      "courses": []
+    }
+  ],
+  "awards": [],
+  "certificates": [],
+  "publications": [],
+  "skills": [
+    {
+      "name": "Leadership et Pilotage",
+      "level": "Avancé",
+      "keywords": [
+        "Coordination d'équipes internes et de sous-traitants",
+        "Gestion multi-projets, planification stratégique, suivi budgétaire",
+        "Relation clients, gestion des parties prenantes, reporting à la direction"
+      ]
+    },
+    {
+      "name": "Expertise technique solaire",
+      "level": "Expert",
+      "keywords": [
+        "Conception et dimensionnement de centrales photovoltaïques",
+        "Intégration PV + IRVE + BESS (Battery Energy Storage System)",
+        "Architecture électrique HTA/BT, TGBT, postes de transformation",
+        "Maîtrise des normes : NF C 15-100, NF C 13-200, NF C 17-200, IEC 60364-1, IEC 60364-7-712"
+      ]
+    },
+    {
+      "name": "Appels d'offres & ingénierie contractuelle",
+      "level": "Avancé",
+      "keywords": [
+        "Montage de dossiers techniques et administratifs",
+        "Rédaction de CCTP, DCE, cahiers des charges",
+        "Analyse et sélection de fournisseurs"
+      ]
+    },
+    {
+      "name": "Outils",
+      "level": "Avancé",
+      "keywords": [
+        "PVsyst",
+        "AutoCAD",
+        "CANECO",
+        "ElecCalc",
+        "SEE-Electrical",
+        "MS Project"
+      ]
+    }
+  ],
+  "languages": [
+    {
+      "language": "Français",
+      "fluency": "Natif"
+    },
+    {
+      "language": "Anglais",
+      "fluency": "Niveau B2"
+    }
+  ],
+  "interests": [
+    {
+      "name": "Sports collectifs et individuels",
+      "keywords": ["Handball", "Football", "Course à pied"]
+    },
+    {
+      "name": "Voyages",
+      "keywords": ["Découverte de nouveaux environnements"]
+    }
+  ],
+  "references": [],
+  "projects": [],
+  "meta": {
+    "canonical": "",
+    "version": "1.0.0",
+    "lastModified": "2026-06-28T10:00:00"
+  }
+}

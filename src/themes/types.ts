@@ -17,4 +17,4 @@ export interface ThemeConfig {
 }
 
 export type ThemeId = "classic" | "modern" | "minimal" | "creative" | "compact"
-  | "executive" | "aurora" | "swiss" | "neo" | "elegant" | "bold";
+  | "executive" | "aurora" | "swiss" | "neo" | "elegant" | "bold" | "lumiere";
