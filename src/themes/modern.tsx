@@ -176,12 +176,14 @@ function makeStyles(colors: typeof defaultColors) { return {
   tag: {
     display: "inline-block",
     fontSize: "10px",
-    backgroundColor: `${colors.accent}20`,
-    color: colors.accent,
+    backgroundColor: `${colors.accent}30`,
+    color: colors.primary,
+    border: `1px solid ${colors.accent}90`,
     padding: "2px 8px",
     borderRadius: "10px",
     marginRight: "4px",
     marginBottom: "4px",
+    fontWeight: 600,
   } as React.CSSProperties,
 }; }
 
@@ -253,7 +255,7 @@ export function ModernTheme({ resume, colors: colorOverrides = {} }: ThemeProps)
                 {sk.keywords && sk.keywords.length > 0 && (
                   <div style={{ marginTop: "4px", display: "flex", flexWrap: "wrap" }}>
                     {sk.keywords.slice(0, 5).map((kw, j) => (
-                      <span key={j} style={{ ...s.tag, backgroundColor: `${colors.accent}15`, color: colors.sidebarMuted }}>
+                      <span key={j} style={{ ...s.tag, backgroundColor: `${colors.accent}25`, color: colors.accent, border: `1px solid ${colors.accent}60` }}>
                         {kw}
                       </span>
                     ))}
