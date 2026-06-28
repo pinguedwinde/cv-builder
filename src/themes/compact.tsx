@@ -164,13 +164,29 @@ export function CompactTheme({ resume }: { resume: Resume }) {
     </header>
   );
 
-  // PDF mode: single-column for reliable multi-page pagination
+  // PDF mode: column-count on the page root so PagedJS never breaks before the columns;
+  // header and summary use column-span:all to stay full-width above both columns.
   if (pdfMode) {
     return (
-      <div style={s.page}>
-        {header}
+      <div style={{ ...s.page, columnCount: 2, columnGap: "16px" } as React.CSSProperties}>
+        <header style={{ ...s.header, columnSpan: "all" } as React.CSSProperties}>
+          <div style={s.headerLeft}>
+            {b.name && <h1 style={s.name}>{b.name}</h1>}
+            {b.label && <div style={s.label}>{b.label}</div>}
+          </div>
+          <div style={s.headerRight}>
+            {b.email && <div>{b.email}</div>}
+            {b.phone && <div>{b.phone}</div>}
+            {b.url && <div>{b.url}</div>}
+            {b.location?.city && <div>{b.location.city}, {b.location.countryCode}</div>}
+            {b.profiles && b.profiles.filter((p) => p.network).map((p, i) => (
+              <div key={i}>{p.network}: {p.username}</div>
+            ))}
+          </div>
+        </header>
+
         {b.summary && (
-          <p style={{ fontSize: "11px", color: colors.text, marginBottom: "12px", lineHeight: 1.5 }}>
+          <p style={{ fontSize: "11px", color: colors.text, marginBottom: "12px", lineHeight: 1.5, columnSpan: "all" } as React.CSSProperties}>
             {b.summary}
           </p>
         )}
@@ -192,6 +208,49 @@ export function CompactTheme({ resume }: { resume: Resume }) {
                     ))}
                   </ul>
                 )}
+              </div>
+            ))}
+          </>
+        )}
+
+        {resume.projects && resume.projects.length > 0 && (
+          <>
+            <div className="cv-section-title" style={s.sectionTitle}>Projets</div>
+            {resume.projects.map((p, i) => (
+              <div key={i} className="cv-entry" style={{ marginBottom: "8px" }}>
+                <div style={s.entryTitle}>{p.name}</div>
+                <div style={s.entryMeta}>{dateRange(p.startDate, p.endDate)}</div>
+                {p.description && <p style={s.entryText}>{p.description}</p>}
+                {p.keywords && p.keywords.length > 0 && (
+                  <p style={{ fontSize: "10px", color: colors.muted }}>{p.keywords.join(", ")}</p>
+                )}
+              </div>
+            ))}
+          </>
+        )}
+
+        {resume.volunteer && resume.volunteer.length > 0 && (
+          <>
+            <div className="cv-section-title" style={s.sectionTitle}>Bénévolat</div>
+            {resume.volunteer.map((v, i) => (
+              <div key={i} className="cv-entry" style={{ marginBottom: "8px" }}>
+                <div style={s.entryTitle}>{v.position} — {v.organization}</div>
+                <div style={s.entryMeta}>{dateRange(v.startDate, v.endDate)}</div>
+                {v.summary && <p style={s.entryText}>{v.summary}</p>}
+              </div>
+            ))}
+          </>
+        )}
+
+        {resume.references && resume.references.length > 0 && (
+          <>
+            <div className="cv-section-title" style={s.sectionTitle}>Références</div>
+            {resume.references.map((r, i) => (
+              <div key={i} className="cv-entry" style={{ marginBottom: "6px" }}>
+                <div style={{ fontSize: "11px", fontWeight: 600 }}>{r.name}</div>
+                <p style={{ fontSize: "10px", color: colors.muted, fontStyle: "italic", margin: 0 }}>
+                  &ldquo;{r.reference}&rdquo;
+                </p>
               </div>
             ))}
           </>
@@ -237,22 +296,6 @@ export function CompactTheme({ resume }: { resume: Resume }) {
           </>
         )}
 
-        {resume.projects && resume.projects.length > 0 && (
-          <>
-            <div className="cv-section-title" style={s.sectionTitle}>Projets</div>
-            {resume.projects.map((p, i) => (
-              <div key={i} className="cv-entry" style={{ marginBottom: "8px" }}>
-                <div style={s.entryTitle}>{p.name}</div>
-                <div style={s.entryMeta}>{dateRange(p.startDate, p.endDate)}</div>
-                {p.description && <p style={s.entryText}>{p.description}</p>}
-                {p.keywords && p.keywords.length > 0 && (
-                  <p style={{ fontSize: "10px", color: colors.muted }}>{p.keywords.join(", ")}</p>
-                )}
-              </div>
-            ))}
-          </>
-        )}
-
         {resume.certificates && resume.certificates.length > 0 && (
           <>
             <div className="cv-section-title" style={s.sectionTitle}>Certifications</div>
@@ -270,19 +313,6 @@ export function CompactTheme({ resume }: { resume: Resume }) {
             {resume.awards.map((a, i) => (
               <div key={i} className="cv-entry" style={s.certItem}>
                 <strong>{a.title}</strong> — {a.awarder} ({formatDate(a.date)})
-              </div>
-            ))}
-          </>
-        )}
-
-        {resume.volunteer && resume.volunteer.length > 0 && (
-          <>
-            <div className="cv-section-title" style={s.sectionTitle}>Bénévolat</div>
-            {resume.volunteer.map((v, i) => (
-              <div key={i} className="cv-entry" style={{ marginBottom: "8px" }}>
-                <div style={s.entryTitle}>{v.position} — {v.organization}</div>
-                <div style={s.entryMeta}>{dateRange(v.startDate, v.endDate)}</div>
-                {v.summary && <p style={s.entryText}>{v.summary}</p>}
               </div>
             ))}
           </>
@@ -308,20 +338,6 @@ export function CompactTheme({ resume }: { resume: Resume }) {
             {resume.publications.map((p, i) => (
               <div key={i} className="cv-entry" style={s.certItem}>
                 <strong>{p.name}</strong> — {p.publisher} ({formatDate(p.releaseDate)})
-              </div>
-            ))}
-          </>
-        )}
-
-        {resume.references && resume.references.length > 0 && (
-          <>
-            <div className="cv-section-title" style={s.sectionTitle}>Références</div>
-            {resume.references.map((r, i) => (
-              <div key={i} className="cv-entry" style={{ marginBottom: "6px" }}>
-                <div style={{ fontSize: "11px", fontWeight: 600 }}>{r.name}</div>
-                <p style={{ fontSize: "10px", color: colors.muted, fontStyle: "italic", margin: 0 }}>
-                  &ldquo;{r.reference}&rdquo;
-                </p>
               </div>
             ))}
           </>
