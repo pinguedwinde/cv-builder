@@ -1,4 +1,4 @@
-import type { Resume } from "@/lib/schemas/resume";
+import type { ThemeProps } from "./types";
 
 function formatDate(date?: string): string {
   if (!date) return "Present";
@@ -19,136 +19,136 @@ function dateRange(start?: string, end?: string): string {
   return `${s} - ${e}`;
 }
 
-const GOLD = "#C9A84C";
-const DARK = "#1C1C1E";
-const MUTED = "#6E6E73";
-const GOLD_LIGHT = "#F5EDD6";
+export function ExecutiveTheme({ resume, colors: colorOverrides = {} }: ThemeProps) {
+  const GOLD = colorOverrides.gold ?? "#C9A84C";
+  const DARK = colorOverrides.dark ?? "#1C1C1E";
+  const MUTED = "#6E6E73";
+  const GOLD_LIGHT = colorOverrides.goldLight ?? "#F5EDD6";
 
-const s = {
-  page: {
-    fontFamily: "'Raleway', 'Gill Sans', 'Gill Sans MT', Calibri, sans-serif",
-    color: DARK,
-    borderLeft: `4px solid ${DARK}`,
-    padding: "22px 36px",
-    maxWidth: "210mm",
-    lineHeight: 1.45,
-    fontSize: "13px",
-    backgroundColor: "#FAFAF8",
-    boxSizing: "border-box" as const,
-  } as React.CSSProperties,
-  name: {
-    fontFamily: "'Playfair Display', Georgia, 'Times New Roman', serif",
-    fontSize: "26px",
-    fontWeight: 700,
-    color: DARK,
-    letterSpacing: "1px",
-    marginBottom: "4px",
-    lineHeight: 1.1,
-  } as React.CSSProperties,
-  label: {
-    fontSize: "14px",
-    color: MUTED,
-    marginBottom: "16px",
-    fontStyle: "italic" as const,
-  } as React.CSSProperties,
-  contactRow: {
-    fontSize: "12px",
-    color: MUTED,
-    display: "flex",
-    flexWrap: "wrap" as const,
-    gap: "0",
-    marginBottom: "14px",
-    borderBottom: `1px solid ${GOLD}`,
-    paddingBottom: "10px",
-  } as React.CSSProperties,
-  contactItem: {
-    marginRight: "12px",
-  } as React.CSSProperties,
-  contactSep: {
-    color: GOLD,
-    marginRight: "12px",
-  } as React.CSSProperties,
-  summary: {
-    fontSize: "13px",
-    color: "#3C3C3E",
-    lineHeight: 1.5,
-    fontStyle: "italic" as const,
-    borderLeft: `3px solid ${GOLD}`,
-    paddingLeft: "16px",
-    marginBottom: "12px",
-  } as React.CSSProperties,
-  sectionTitle: {
-    fontFamily: "'Playfair Display', Georgia, serif",
-    fontSize: "12px",
-    fontWeight: 700,
-    fontVariant: "small-caps" as const,
-    letterSpacing: "3px",
-    color: DARK,
-    textTransform: "uppercase" as const,
-    borderBottom: `1px solid ${GOLD}`,
-    paddingBottom: "6px",
-    marginBottom: "16px",
-    marginTop: "14px",
-  } as React.CSSProperties,
-  entryRow: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "flex-start",
-    marginBottom: "2px",
-  } as React.CSSProperties,
-  entryTitle: {
-    fontSize: "14px",
-    fontWeight: 700,
-    color: DARK,
-  } as React.CSSProperties,
-  entryDate: {
-    fontSize: "12px",
-    color: GOLD,
-    fontWeight: 600,
-    whiteSpace: "nowrap" as const,
-    marginLeft: "16px",
-    flexShrink: 0,
-  } as React.CSSProperties,
-  entryMeta: {
-    fontSize: "12px",
-    color: MUTED,
-    marginBottom: "8px",
-  } as React.CSSProperties,
-  text: {
-    fontSize: "13px",
-    color: "#3C3C3E",
-    marginBottom: "4px",
-  } as React.CSSProperties,
-  bullet: {
-    fontSize: "13px",
-    color: "#3C3C3E",
-    paddingLeft: "16px",
-    marginBottom: "3px",
-    position: "relative" as const,
-  } as React.CSSProperties,
-  bulletMark: {
-    position: "absolute" as const,
-    left: 0,
-    color: GOLD,
-    fontWeight: 700,
-  } as React.CSSProperties,
-  skillRow: {
-    display: "flex",
-    flexWrap: "wrap" as const,
-    gap: "8px",
-    marginBottom: "8px",
-  } as React.CSSProperties,
-  skillBadge: {
-    backgroundColor: GOLD_LIGHT,
-    color: DARK,
-    padding: "2px 6px",
-    borderRadius: "2px",
-    fontSize: "12px",
-    fontWeight: 500,
-  } as React.CSSProperties,
-};
+  const s = {
+    page: {
+      fontFamily: "'Raleway', 'Gill Sans', 'Gill Sans MT', Calibri, sans-serif",
+      color: DARK,
+      borderLeft: `4px solid ${DARK}`,
+      padding: "22px 36px",
+      maxWidth: "210mm",
+      lineHeight: 1.45,
+      fontSize: "13px",
+      backgroundColor: "#FAFAF8",
+      boxSizing: "border-box" as const,
+    } as React.CSSProperties,
+    name: {
+      fontFamily: "'Playfair Display', Georgia, 'Times New Roman', serif",
+      fontSize: "26px",
+      fontWeight: 700,
+      color: DARK,
+      letterSpacing: "1px",
+      marginBottom: "4px",
+      lineHeight: 1.1,
+    } as React.CSSProperties,
+    label: {
+      fontSize: "14px",
+      color: MUTED,
+      marginBottom: "16px",
+      fontStyle: "italic" as const,
+    } as React.CSSProperties,
+    contactRow: {
+      fontSize: "12px",
+      color: MUTED,
+      display: "flex",
+      flexWrap: "wrap" as const,
+      gap: "0",
+      marginBottom: "14px",
+      borderBottom: `1px solid ${GOLD}`,
+      paddingBottom: "10px",
+    } as React.CSSProperties,
+    contactItem: {
+      marginRight: "12px",
+    } as React.CSSProperties,
+    contactSep: {
+      color: GOLD,
+      marginRight: "12px",
+    } as React.CSSProperties,
+    summary: {
+      fontSize: "13px",
+      color: "#3C3C3E",
+      lineHeight: 1.5,
+      fontStyle: "italic" as const,
+      borderLeft: `3px solid ${GOLD}`,
+      paddingLeft: "16px",
+      marginBottom: "12px",
+    } as React.CSSProperties,
+    sectionTitle: {
+      fontFamily: "'Playfair Display', Georgia, serif",
+      fontSize: "12px",
+      fontWeight: 700,
+      fontVariant: "small-caps" as const,
+      letterSpacing: "3px",
+      color: DARK,
+      textTransform: "uppercase" as const,
+      borderBottom: `1px solid ${GOLD}`,
+      paddingBottom: "6px",
+      marginBottom: "16px",
+      marginTop: "14px",
+    } as React.CSSProperties,
+    entryRow: {
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "flex-start",
+      marginBottom: "2px",
+    } as React.CSSProperties,
+    entryTitle: {
+      fontSize: "14px",
+      fontWeight: 700,
+      color: DARK,
+    } as React.CSSProperties,
+    entryDate: {
+      fontSize: "12px",
+      color: GOLD,
+      fontWeight: 600,
+      whiteSpace: "nowrap" as const,
+      marginLeft: "16px",
+      flexShrink: 0,
+    } as React.CSSProperties,
+    entryMeta: {
+      fontSize: "12px",
+      color: MUTED,
+      marginBottom: "8px",
+    } as React.CSSProperties,
+    text: {
+      fontSize: "13px",
+      color: "#3C3C3E",
+      marginBottom: "4px",
+    } as React.CSSProperties,
+    bullet: {
+      fontSize: "13px",
+      color: "#3C3C3E",
+      paddingLeft: "16px",
+      marginBottom: "3px",
+      position: "relative" as const,
+    } as React.CSSProperties,
+    bulletMark: {
+      position: "absolute" as const,
+      left: 0,
+      color: GOLD,
+      fontWeight: 700,
+    } as React.CSSProperties,
+    skillRow: {
+      display: "flex",
+      flexWrap: "wrap" as const,
+      gap: "8px",
+      marginBottom: "8px",
+    } as React.CSSProperties,
+    skillBadge: {
+      backgroundColor: GOLD_LIGHT,
+      color: DARK,
+      padding: "2px 6px",
+      borderRadius: "2px",
+      fontSize: "12px",
+      fontWeight: 500,
+    } as React.CSSProperties,
+  };
 
-export function ExecutiveTheme({ resume }: { resume: Resume }) {
   const b = resume.basics;
   const contactItems = [b.email, b.phone, b.url, b.location?.city].filter(Boolean) as string[];
 

@@ -1,4 +1,4 @@
-import type { Resume } from "@/lib/schemas/resume";
+import type { ThemeProps } from "./types";
 
 function formatDate(date?: string): string {
   if (!date) return "Present";
@@ -19,166 +19,165 @@ function dateRange(start?: string, end?: string): string {
   return `${s} - ${e}`;
 }
 
-const BLACK = "#0A0A0A";
-const YELLOW = "#FFEB3B";
-const MUTED = "#555555";
-const WHITE = "#FFFFFF";
+export function BoldTheme({ resume, colors: colorOverrides = {} }: ThemeProps) {
+  const BLACK = colorOverrides.black ?? "#0A0A0A";
+  const YELLOW = colorOverrides.yellow ?? "#FFEB3B";
+  const MUTED = "#555555";
+  const WHITE = "#FFFFFF";
 
-const s = {
-  page: {
-    fontFamily: "'DM Sans', 'Inter', 'Segoe UI', system-ui, sans-serif",
-    color: BLACK,
-    backgroundColor: WHITE,
-    maxWidth: "210mm",
-    lineHeight: 1.4,
-    fontSize: "13px",
-    boxSizing: "border-box" as const,
-  } as React.CSSProperties,
-  header: {
-    padding: "20px 28px 0",
-    backgroundColor: WHITE,
-  } as React.CSSProperties,
-  name: {
-    fontFamily: "'Bebas Neue', 'Anton', 'Impact', 'Arial Black', sans-serif",
-    fontSize: "52px",
-    fontWeight: 900,
-    color: BLACK,
-    textTransform: "uppercase" as const,
-    letterSpacing: "4px",
-    lineHeight: 0.9,
-    marginBottom: "10px",
-    wordBreak: "break-word" as const,
-  } as React.CSSProperties,
-  labelBand: {
-    backgroundColor: BLACK,
-    color: YELLOW,
-    padding: "6px 28px",
-    fontSize: "13px",
-    fontWeight: 700,
-    letterSpacing: "2px",
-    textTransform: "uppercase" as const,
-    marginBottom: "0",
-  } as React.CSSProperties,
-  yellowRule: {
-    height: "4px",
-    backgroundColor: YELLOW,
-    width: "100%",
-  } as React.CSSProperties,
-  contactRow: {
-    padding: "10px 28px",
-    fontSize: "12px",
-    color: MUTED,
-    display: "flex",
-    flexWrap: "wrap" as const,
-    gap: "0",
-    borderBottom: `1px solid #EEEEEE`,
-    marginBottom: "0",
-  } as React.CSSProperties,
-  contactItem: {
-    marginRight: "16px",
-  } as React.CSSProperties,
-  body: {
-    padding: "0 28px 20px",
-  } as React.CSSProperties,
-  sectionBand: {
-    backgroundColor: BLACK,
-    color: YELLOW,
-    fontFamily: "'Bebas Neue', 'Anton', Impact, 'Arial Black', sans-serif",
-    fontSize: "15px",
-    fontWeight: 700,
-    letterSpacing: "3px",
-    textTransform: "uppercase" as const,
-    padding: "4px 0 4px 0",
-    marginBottom: "10px",
-    marginTop: "10px",
-    paddingLeft: "12px",
-  } as React.CSSProperties,
-  entryRow: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "flex-start",
-    marginBottom: "2px",
-  } as React.CSSProperties,
-  entryCompany: {
-    fontSize: "15px",
-    fontWeight: 900,
-    color: BLACK,
-    textTransform: "uppercase" as const,
-    letterSpacing: "0.5px",
-  } as React.CSSProperties,
-  entryPosition: {
-    fontSize: "13px",
-    color: YELLOW,
-    fontWeight: 700,
-    backgroundColor: BLACK,
-    padding: "1px 8px",
-    display: "inline-block",
-    marginBottom: "6px",
-    letterSpacing: "0.5px",
-  } as React.CSSProperties,
-  entryDate: {
-    fontSize: "11px",
-    fontWeight: 700,
-    color: BLACK,
-    backgroundColor: YELLOW,
-    padding: "2px 8px",
-    borderRadius: "2px",
-    whiteSpace: "nowrap" as const,
-    marginLeft: "12px",
-    flexShrink: 0,
-  } as React.CSSProperties,
-  entryMeta: {
-    fontSize: "12px",
-    color: MUTED,
-    marginBottom: "8px",
-  } as React.CSSProperties,
-  text: {
-    fontSize: "13px",
-    color: "#333333",
-    marginBottom: "4px",
-  } as React.CSSProperties,
-  bullet: {
-    fontSize: "13px",
-    color: "#333333",
-    paddingLeft: "14px",
-    marginBottom: "4px",
-    borderLeft: `4px solid ${YELLOW}`,
-    paddingTop: "1px",
-    paddingBottom: "1px",
-  } as React.CSSProperties,
-  skillGrid: {
-    display: "grid",
-    gridTemplateColumns: "1fr 1fr",
-    gap: "8px",
-    marginBottom: "4px",
-  } as React.CSSProperties,
-  skillItem: {
-    borderBottom: `2px solid ${YELLOW}`,
-    paddingBottom: "6px",
-  } as React.CSSProperties,
-  skillName: {
-    fontSize: "13px",
-    fontWeight: 900,
-    color: BLACK,
-    textTransform: "uppercase" as const,
-  } as React.CSSProperties,
-  skillKw: {
-    fontSize: "11px",
-    color: MUTED,
-    marginTop: "2px",
-  } as React.CSSProperties,
-  summary: {
-    fontSize: "14px",
-    color: "#333333",
-    lineHeight: 1.7,
-    borderLeft: `6px solid ${YELLOW}`,
-    paddingLeft: "14px",
-    marginTop: "16px",
-    marginBottom: "4px",
-  } as React.CSSProperties,
-};
+  const s = {
+    page: {
+      fontFamily: "'DM Sans', 'Inter', 'Segoe UI', system-ui, sans-serif",
+      color: BLACK,
+      backgroundColor: WHITE,
+      maxWidth: "210mm",
+      lineHeight: 1.4,
+      fontSize: "13px",
+      boxSizing: "border-box" as const,
+    } as React.CSSProperties,
+    header: {
+      padding: "20px 28px 0",
+      backgroundColor: WHITE,
+    } as React.CSSProperties,
+    name: {
+      fontFamily: "'Bebas Neue', 'Anton', 'Impact', 'Arial Black', sans-serif",
+      fontSize: "52px",
+      fontWeight: 900,
+      color: BLACK,
+      textTransform: "uppercase" as const,
+      letterSpacing: "4px",
+      lineHeight: 0.9,
+      marginBottom: "10px",
+      wordBreak: "break-word" as const,
+    } as React.CSSProperties,
+    labelBand: {
+      backgroundColor: BLACK,
+      color: YELLOW,
+      padding: "6px 28px",
+      fontSize: "13px",
+      fontWeight: 700,
+      letterSpacing: "2px",
+      textTransform: "uppercase" as const,
+      marginBottom: "0",
+    } as React.CSSProperties,
+    yellowRule: {
+      height: "4px",
+      backgroundColor: YELLOW,
+      width: "100%",
+    } as React.CSSProperties,
+    contactRow: {
+      padding: "10px 28px",
+      fontSize: "12px",
+      color: MUTED,
+      display: "flex",
+      flexWrap: "wrap" as const,
+      gap: "0",
+      borderBottom: "1px solid #EEEEEE",
+      marginBottom: "0",
+    } as React.CSSProperties,
+    contactItem: {
+      marginRight: "16px",
+    } as React.CSSProperties,
+    body: {
+      padding: "0 28px 20px",
+    } as React.CSSProperties,
+    sectionBand: {
+      backgroundColor: BLACK,
+      color: YELLOW,
+      fontFamily: "'Bebas Neue', 'Anton', Impact, 'Arial Black', sans-serif",
+      fontSize: "15px",
+      fontWeight: 700,
+      letterSpacing: "3px",
+      textTransform: "uppercase" as const,
+      padding: "4px 0 4px 12px",
+      marginBottom: "10px",
+      marginTop: "10px",
+    } as React.CSSProperties,
+    entryRow: {
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "flex-start",
+      marginBottom: "2px",
+    } as React.CSSProperties,
+    entryCompany: {
+      fontSize: "15px",
+      fontWeight: 900,
+      color: BLACK,
+      textTransform: "uppercase" as const,
+      letterSpacing: "0.5px",
+    } as React.CSSProperties,
+    entryPosition: {
+      fontSize: "13px",
+      color: YELLOW,
+      fontWeight: 700,
+      backgroundColor: BLACK,
+      padding: "1px 8px",
+      display: "inline-block",
+      marginBottom: "6px",
+      letterSpacing: "0.5px",
+    } as React.CSSProperties,
+    entryDate: {
+      fontSize: "11px",
+      fontWeight: 700,
+      color: BLACK,
+      backgroundColor: YELLOW,
+      padding: "2px 8px",
+      borderRadius: "2px",
+      whiteSpace: "nowrap" as const,
+      marginLeft: "12px",
+      flexShrink: 0,
+    } as React.CSSProperties,
+    entryMeta: {
+      fontSize: "12px",
+      color: MUTED,
+      marginBottom: "8px",
+    } as React.CSSProperties,
+    text: {
+      fontSize: "13px",
+      color: "#333333",
+      marginBottom: "4px",
+    } as React.CSSProperties,
+    bullet: {
+      fontSize: "13px",
+      color: "#333333",
+      paddingLeft: "14px",
+      marginBottom: "4px",
+      borderLeft: `4px solid ${YELLOW}`,
+      paddingTop: "1px",
+      paddingBottom: "1px",
+    } as React.CSSProperties,
+    skillGrid: {
+      display: "grid",
+      gridTemplateColumns: "1fr 1fr",
+      gap: "8px",
+      marginBottom: "4px",
+    } as React.CSSProperties,
+    skillItem: {
+      borderBottom: `2px solid ${YELLOW}`,
+      paddingBottom: "6px",
+    } as React.CSSProperties,
+    skillName: {
+      fontSize: "13px",
+      fontWeight: 900,
+      color: BLACK,
+      textTransform: "uppercase" as const,
+    } as React.CSSProperties,
+    skillKw: {
+      fontSize: "11px",
+      color: MUTED,
+      marginTop: "2px",
+    } as React.CSSProperties,
+    summary: {
+      fontSize: "14px",
+      color: "#333333",
+      lineHeight: 1.7,
+      borderLeft: `6px solid ${YELLOW}`,
+      paddingLeft: "14px",
+      marginTop: "16px",
+      marginBottom: "4px",
+    } as React.CSSProperties,
+  };
 
-export function BoldTheme({ resume }: { resume: Resume }) {
   const b = resume.basics;
   const contactItems = [b.email, b.phone, b.url, b.location?.city].filter(Boolean) as string[];
 

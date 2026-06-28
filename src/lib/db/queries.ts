@@ -17,6 +17,7 @@ export async function createResume(data: {
   title: string;
   data: Resume;
   theme?: string;
+  colorTheme?: string;
 }) {
   const id = nanoid();
   const now = new Date();
@@ -26,6 +27,7 @@ export async function createResume(data: {
       title: data.title,
       data: data.data,
       theme: data.theme ?? "modern",
+      colorTheme: data.colorTheme ?? "default",
       createdAt: now,
       updatedAt: now,
     })
@@ -35,7 +37,7 @@ export async function createResume(data: {
 
 export async function updateResume(
   id: string,
-  data: Partial<{ title: string; data: Resume; theme: string }>
+  data: Partial<{ title: string; data: Resume; theme: string; colorTheme: string }>
 ) {
   db.update(resumes)
     .set({ ...data, updatedAt: new Date() })
@@ -55,5 +57,6 @@ export async function duplicateResume(id: string) {
     title: `${original.title} (copy)`,
     data: original.data as Resume,
     theme: original.theme,
+    colorTheme: original.colorTheme ?? "default",
   });
 }

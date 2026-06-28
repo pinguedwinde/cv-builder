@@ -1,5 +1,5 @@
 import { usePdfMode } from "@/lib/pdf-context";
-import type { Resume } from "@/lib/schemas/resume";
+import type { ThemeProps } from "./types";
 
 function formatDate(date?: string): string {
   if (!date) return "Présent";
@@ -20,7 +20,7 @@ function dateRange(start?: string, end?: string): string {
   return `${s}-${e}`;
 }
 
-const colors = {
+const defaultColors = {
   primary: "#7c2d12",
   primaryLight: "#fef2f2",
   dark: "#1f2937",
@@ -31,7 +31,7 @@ const colors = {
   white: "#ffffff",
 };
 
-const s = {
+function makeStyles(colors: typeof defaultColors) { return {
   page: {
     fontFamily: "'Source Sans 3', 'Source Sans Pro', 'Segoe UI', sans-serif",
     color: colors.text,
@@ -140,10 +140,12 @@ const s = {
     marginBottom: "3px",
     lineHeight: 1.4,
   } as React.CSSProperties,
-};
+}; }
 
-export function CompactTheme({ resume }: { resume: Resume }) {
+export function CompactTheme({ resume, colors: colorOverrides = {} }: ThemeProps) {
   const pdfMode = usePdfMode();
+  const colors = { ...defaultColors, ...colorOverrides };
+  const s = makeStyles(colors);
   const b = resume.basics;
 
   const header = (

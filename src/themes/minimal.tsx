@@ -1,4 +1,4 @@
-import type { Resume } from "@/lib/schemas/resume";
+import type { ThemeProps } from "./types";
 
 function formatDate(date?: string): string {
   if (!date) return "Présent";
@@ -19,81 +19,78 @@ function dateRange(start?: string, end?: string): string {
   return `${s} - ${e}`;
 }
 
-const s = {
-  page: {
-    fontFamily: "'JetBrains Mono', 'Fira Code', 'SF Mono', monospace",
-    color: "#000000",
-    padding: "8px 12px",
-    maxWidth: "700px",
-    margin: "0 auto",
-    lineHeight: 1.5,
-    fontSize: "11px",
-    backgroundColor: "#ffffff",
-    textAlign: "justify" as const,
-  } as React.CSSProperties,
-  name: {
-    fontSize: "18px",
-    fontWeight: 400,
-    letterSpacing: "-0.5px",
-    marginBottom: "0px",
-    textAlign: "left" as const,
-  } as React.CSSProperties,
-  label: {
-    fontSize: "11px",
-    color: "#666",
-    marginBottom: "1px",
-    textAlign: "left" as const,
-  } as React.CSSProperties,
-  contact: {
-    fontSize: "10px",
-    color: "#888",
-    marginBottom: "3px",
-    borderBottom: "1px solid #000",
-    paddingBottom: "2px",
-    textAlign: "left" as const,
-  } as React.CSSProperties,
-  sectionTitle: {
-    fontSize: "10px",
-    fontWeight: 700,
-    textTransform: "uppercase" as const,
-    letterSpacing: "3px",
-    color: "#000",
-    marginBottom: "2px",
-    marginTop: "4px",
-    textAlign: "left" as const,
-  } as React.CSSProperties,
-  entryTitle: {
-    fontSize: "11px",
-    fontWeight: 700,
-    marginBottom: "0px",
-    textAlign: "left" as const,
-  } as React.CSSProperties,
-  entryMeta: {
-    fontSize: "10px",
-    color: "#888",
-    marginBottom: "1px",
-    textAlign: "left" as const,
-  } as React.CSSProperties,
-  text: {
-    fontSize: "11px",
-    color: "#333",
-    marginBottom: "1px",
-  } as React.CSSProperties,
-  bullet: {
-    fontSize: "11px",
-    color: "#333",
-    paddingLeft: "10px",
-    marginBottom: "0px",
-    position: "relative" as const,
-  } as React.CSSProperties,
-  separator: {
-    border: "none",
-    borderTop: "1px solid #e0e0e0",
-    margin: "3px 0",
-  } as React.CSSProperties,
-};
+export function MinimalTheme({ resume, colors: colorOverrides = {} }: ThemeProps) {
+  const ACCENT = colorOverrides.accent ?? "#000000";
 
-export function MinimalTheme({ resume }: { resume: Resume }) {
+  const s = {
+    page: {
+      fontFamily: "'JetBrains Mono', 'Fira Code', 'SF Mono', monospace",
+      color: "#000000",
+      padding: "8px 12px",
+      maxWidth: "700px",
+      margin: "0 auto",
+      lineHeight: 1.5,
+      fontSize: "11px",
+      backgroundColor: "#ffffff",
+      textAlign: "justify" as const,
+    } as React.CSSProperties,
+    name: {
+      fontSize: "18px",
+      fontWeight: 400,
+      letterSpacing: "-0.5px",
+      marginBottom: "0px",
+      textAlign: "left" as const,
+    } as React.CSSProperties,
+    label: {
+      fontSize: "11px",
+      color: "#666",
+      marginBottom: "1px",
+      textAlign: "left" as const,
+    } as React.CSSProperties,
+    contact: {
+      fontSize: "10px",
+      color: "#888",
+      marginBottom: "3px",
+      borderBottom: "1px solid #000",
+      paddingBottom: "2px",
+      textAlign: "left" as const,
+    } as React.CSSProperties,
+    sectionTitle: {
+      fontSize: "10px",
+      fontWeight: 700,
+      textTransform: "uppercase" as const,
+      letterSpacing: "3px",
+      color: ACCENT,
+      marginBottom: "2px",
+      marginTop: "4px",
+      textAlign: "left" as const,
+    } as React.CSSProperties,
+    entryTitle: {
+      fontSize: "11px",
+      fontWeight: 700,
+      marginBottom: "0px",
+      textAlign: "left" as const,
+    } as React.CSSProperties,
+    entryMeta: {
+      fontSize: "10px",
+      color: "#888",
+      marginBottom: "1px",
+      textAlign: "left" as const,
+    } as React.CSSProperties,
+    text: {
+      fontSize: "11px",
+      color: "#333",
+      marginBottom: "1px",
+    } as React.CSSProperties,
+    bullet: {
+      fontSize: "11px",
+      color: "#333",
+      paddingLeft: "10px",
+      marginBottom: "0px",
+      position: "relative" as const,
+    } as React.CSSProperties,
+  };
+
   const b = resume.basics;
   const contactParts = [b.email, b.phone, b.url, b.location?.city].filter(Boolean);
 

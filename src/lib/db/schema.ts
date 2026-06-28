@@ -5,6 +5,7 @@ export const resumes = sqliteTable("resumes", {
   title: text("title").notNull(),
   data: text("data", { mode: "json" }).notNull(),
   theme: text("theme").notNull().default("modern"),
+  colorTheme: text("color_theme").default("default"),
   createdAt: integer("created_at", { mode: "timestamp" })
     .notNull()
     .$defaultFn(() => new Date()),

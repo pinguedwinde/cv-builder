@@ -1,4 +1,4 @@
-import type { Resume } from "@/lib/schemas/resume";
+import type { ThemeProps } from "./types";
 
 function formatDate(date?: string): string {
   if (!date) return "Présent";
@@ -19,99 +19,101 @@ function dateRange(start?: string, end?: string): string {
   return `${s} - ${e}`;
 }
 
-const styles = {
-  page: {
-    fontFamily: "'Georgia', 'Times New Roman', serif",
-    color: "#1a1a2e",
-    padding: "24px 32px",
-    maxWidth: "800px",
-    margin: "0 auto",
-    lineHeight: 1.45,
-    fontSize: "13px",
-  } as React.CSSProperties,
-  header: {
-    textAlign: "center" as const,
-    borderBottom: "3px solid #1a1a2e",
-    paddingBottom: "16px",
-    marginBottom: "14px",
-  } as React.CSSProperties,
-  name: {
-    fontSize: "24px",
-    fontWeight: 700,
-    letterSpacing: "2px",
-    textTransform: "uppercase" as const,
-    marginBottom: "4px",
-    color: "#1a1a2e",
-  } as React.CSSProperties,
-  label: {
-    fontSize: "13px",
-    color: "#4a4a6a",
-    fontStyle: "italic" as const,
-    marginBottom: "12px",
-  } as React.CSSProperties,
-  contact: {
-    fontSize: "12px",
-    color: "#555",
-    display: "flex",
-    justifyContent: "center",
-    flexWrap: "wrap" as const,
-    gap: "16px",
-  } as React.CSSProperties,
-  sectionTitle: {
-    fontSize: "13px",
-    fontWeight: 700,
-    textTransform: "uppercase" as const,
-    letterSpacing: "1.5px",
-    color: "#1a1a2e",
-    borderBottom: "1px solid #ccc",
-    paddingBottom: "6px",
-    marginBottom: "10px",
-    marginTop: "12px",
-  } as React.CSSProperties,
-  entryTitle: {
-    fontSize: "15px",
-    fontWeight: 700,
-    color: "#1a1a2e",
-    marginBottom: "2px",
-  } as React.CSSProperties,
-  entryMeta: {
-    fontSize: "12px",
-    color: "#666",
-    fontStyle: "italic" as const,
-    marginBottom: "6px",
-  } as React.CSSProperties,
-  entrySummary: {
-    fontSize: "13px",
-    color: "#333",
-    marginBottom: "6px",
-  } as React.CSSProperties,
-  highlight: {
-    fontSize: "13px",
-    color: "#333",
-    marginLeft: "16px",
-    marginBottom: "3px",
-    listStyleType: "disc" as const,
-  } as React.CSSProperties,
-  summary: {
-    fontSize: "14px",
-    color: "#333",
-    fontStyle: "italic" as const,
-    lineHeight: 1.5,
-  } as React.CSSProperties,
-  skillGroup: {
-    marginBottom: "8px",
-  } as React.CSSProperties,
-  skillName: {
-    fontWeight: 700,
-    fontSize: "13px",
-  } as React.CSSProperties,
-  skillKeywords: {
-    fontSize: "13px",
-    color: "#555",
-  } as React.CSSProperties,
-};
+export function ClassicTheme({ resume, colors: colorOverrides = {} }: ThemeProps) {
+  const PRIMARY = colorOverrides.primary ?? "#1a1a2e";
 
-export function ClassicTheme({ resume }: { resume: Resume }) {
+  const styles = {
+    page: {
+      fontFamily: "'Georgia', 'Times New Roman', serif",
+      color: PRIMARY,
+      padding: "24px 32px",
+      maxWidth: "800px",
+      margin: "0 auto",
+      lineHeight: 1.45,
+      fontSize: "13px",
+    } as React.CSSProperties,
+    header: {
+      textAlign: "center" as const,
+      borderBottom: `3px solid ${PRIMARY}`,
+      paddingBottom: "16px",
+      marginBottom: "14px",
+    } as React.CSSProperties,
+    name: {
+      fontSize: "24px",
+      fontWeight: 700,
+      letterSpacing: "2px",
+      textTransform: "uppercase" as const,
+      marginBottom: "4px",
+      color: PRIMARY,
+    } as React.CSSProperties,
+    label: {
+      fontSize: "13px",
+      color: "#4a4a6a",
+      fontStyle: "italic" as const,
+      marginBottom: "12px",
+    } as React.CSSProperties,
+    contact: {
+      fontSize: "12px",
+      color: "#555",
+      display: "flex",
+      justifyContent: "center",
+      flexWrap: "wrap" as const,
+      gap: "16px",
+    } as React.CSSProperties,
+    sectionTitle: {
+      fontSize: "13px",
+      fontWeight: 700,
+      textTransform: "uppercase" as const,
+      letterSpacing: "1.5px",
+      color: PRIMARY,
+      borderBottom: "1px solid #ccc",
+      paddingBottom: "6px",
+      marginBottom: "10px",
+      marginTop: "12px",
+    } as React.CSSProperties,
+    entryTitle: {
+      fontSize: "15px",
+      fontWeight: 700,
+      color: PRIMARY,
+      marginBottom: "2px",
+    } as React.CSSProperties,
+    entryMeta: {
+      fontSize: "12px",
+      color: "#666",
+      fontStyle: "italic" as const,
+      marginBottom: "6px",
+    } as React.CSSProperties,
+    entrySummary: {
+      fontSize: "13px",
+      color: "#333",
+      marginBottom: "6px",
+    } as React.CSSProperties,
+    highlight: {
+      fontSize: "13px",
+      color: "#333",
+      marginLeft: "16px",
+      marginBottom: "3px",
+      listStyleType: "disc" as const,
+    } as React.CSSProperties,
+    summary: {
+      fontSize: "14px",
+      color: "#333",
+      fontStyle: "italic" as const,
+      lineHeight: 1.5,
+    } as React.CSSProperties,
+    skillGroup: {
+      marginBottom: "8px",
+    } as React.CSSProperties,
+    skillName: {
+      fontWeight: 700,
+      fontSize: "13px",
+    } as React.CSSProperties,
+    skillKeywords: {
+      fontSize: "13px",
+      color: "#555",
+    } as React.CSSProperties,
+  };
+
   const b = resume.basics;
   const contactItems = [b.email, b.phone, b.url, b.location?.city && `${b.location.city}, ${b.location.countryCode}`].filter(Boolean);
 
@@ -123,7 +125,7 @@ export function ClassicTheme({ resume }: { resume: Resume }) {
             <img
               src={b.image}
               alt={b.name || "photo"}
-              style={{ width: "80px", height: "80px", borderRadius: "50%", objectFit: "cover", border: "3px solid #1a1a2e" }}
+              style={{ width: "80px", height: "80px", borderRadius: "50%", objectFit: "cover", border: `3px solid ${PRIMARY}` }}
             />
           </div>
         )}
@@ -194,12 +196,12 @@ export function ClassicTheme({ resume }: { resume: Resume }) {
       {resume.skills && resume.skills.length > 0 && (
         <>
           <h2 className="cv-section-title" style={styles.sectionTitle}>Compétences</h2>
-          {resume.skills.map((s, i) => (
+          {resume.skills.map((sk, i) => (
             <div key={i} style={styles.skillGroup}>
-              <span style={styles.skillName}>{s.name}</span>
-              {s.level && <span style={{ fontSize: "12px", color: "#888" }}> ({s.level})</span>}
-              {s.keywords && s.keywords.length > 0 && (
-                <span style={styles.skillKeywords}>: {s.keywords.join(", ")}</span>
+              <span style={styles.skillName}>{sk.name}</span>
+              {sk.level && <span style={{ fontSize: "12px", color: "#888" }}> ({sk.level})</span>}
+              {sk.keywords && sk.keywords.length > 0 && (
+                <span style={styles.skillKeywords}>: {sk.keywords.join(", ")}</span>
               )}
             </div>
           ))}

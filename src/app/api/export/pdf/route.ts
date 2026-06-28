@@ -9,6 +9,7 @@ export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const id = searchParams.get("id");
   const theme = searchParams.get("theme") || "modern";
+  const colorTheme = searchParams.get("colorTheme") || "default";
   const format = searchParams.get("format") || "pdf";
 
   if (!id) {
@@ -25,7 +26,7 @@ export async function GET(request: NextRequest) {
 
     if (format === "pdf") {
       const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
-      const pdfBuffer = await generatePdf(resume, theme as ThemeId, baseUrl);
+      const pdfBuffer = await generatePdf(resume, theme as ThemeId, baseUrl, colorTheme);
 
       return new NextResponse(new Uint8Array(pdfBuffer), {
         headers: {

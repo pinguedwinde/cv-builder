@@ -6,6 +6,7 @@ import { ThemeRenderer } from "@/components/themes/ThemeRenderer";
 import { PdfModeProvider } from "@/lib/pdf-context";
 import type { Resume } from "@/lib/schemas/resume";
 import type { ThemeId } from "@/themes";
+import { resolveColorPalette } from "@/themes";
 import { Suspense } from "react";
 
 const SIDEBAR_WIDTHS: Record<string, string> = {
@@ -13,8 +14,8 @@ const SIDEBAR_WIDTHS: Record<string, string> = {
   swiss: "53mm",
 };
 
-const SIDEBAR_BGS: Record<string, string> = {
-  modern: "#1e293b",
+const SIDEBAR_BGS_FALLBACK: Record<string, string> = {
+  modern: "#334155",
   swiss: "#111111",
 };
 
@@ -34,9 +35,13 @@ function buildBodyResetCss(): string {
   `;
 }
 
-function buildPagedCss(themeId: string): string {
+function buildPagedCss(themeId: string, colorTheme: string): string {
   const sidebarWidth = SIDEBAR_WIDTHS[themeId];
-  const sidebarBg = SIDEBAR_BGS[themeId];
+  const resolvedPalette = resolveColorPalette(themeId, colorTheme);
+  const sidebarBg =
+    resolvedPalette?.colors?.sidebarBg ??
+    resolvedPalette?.colors?.black ??
+    SIDEBAR_BGS_FALLBACK[themeId];
 
   const base = `
     *, *::before, *::after {
@@ -95,6 +100,7 @@ function buildPagedCss(themeId: string): string {
 function PdfRenderContent() {
   const searchParams = useSearchParams();
   const themeId = searchParams.get("theme") || "modern";
+  const colorTheme = searchParams.get("colorTheme") || "default";
   const [resume, setResume] = useState<Resume | null>(null);
   const pdfDone = useRef(false);
 
@@ -127,7 +133,7 @@ function PdfRenderContent() {
 
       // Paged media CSS — pagedjs will collect, process, and apply this
       const pagedEl = document.createElement("style");
-      pagedEl.textContent = buildPagedCss(themeId);
+      pagedEl.textContent = buildPagedCss(themeId, colorTheme);
       document.head.appendChild(pagedEl);
 
       const bodyContent = document.body.innerHTML;
@@ -163,13 +169,13 @@ function PdfRenderContent() {
     run().catch(console.error);
 
     return () => { cancelled = true; };
-  }, [resume, themeId]);
+  }, [resume, themeId, colorTheme]);
 
   return (
     <div id="cv-content" style={{ width: "210mm", backgroundColor: "white" }}>
       <PdfModeProvider value={true}>
         {resume ? (
-          <ThemeRenderer resume={resume} themeId={themeId as ThemeId} />
+          <ThemeRenderer resume={resume} themeId={themeId as ThemeId} colorThemeId={colorTheme} />
         ) : (
           <div style={{ padding: "40px", textAlign: "center", color: "#999" }}>
             Loading resume data...

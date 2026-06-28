@@ -30,6 +30,7 @@ export default function EditorPage() {
   const [resume, setResume] = useState<Resume | null>(null);
   const [title, setTitle] = useState("");
   const [themeId, setThemeId] = useState<ThemeId>("modern");
+  const [colorThemeId, setColorThemeId] = useState("default");
   const [saving, setSaving] = useState(false);
   const [loading, setLoading] = useState(true);
   const [exportingPdf, setExportingPdf] = useState(false);
@@ -43,6 +44,7 @@ export default function EditorPage() {
         setResume(data.data as Resume);
         setTitle(data.title);
         setThemeId((data.theme as ThemeId) || "modern");
+        setColorThemeId(data.colorTheme || "default");
       } catch {
         router.push("/");
       } finally {
@@ -59,20 +61,20 @@ export default function EditorPage() {
       await fetch(`/api/resumes/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title, data: resume, theme: themeId }),
+        body: JSON.stringify({ title, data: resume, theme: themeId, colorTheme: colorThemeId }),
       });
     } catch {
       console.error("Save failed");
     } finally {
       setSaving(false);
     }
-  }, [id, resume, title, themeId]);
+  }, [id, resume, title, themeId, colorThemeId]);
 
   useEffect(() => {
     if (!resume) return;
     const timer = setTimeout(save, 2000);
     return () => clearTimeout(timer);
-  }, [resume, title, themeId, save]);
+  }, [resume, title, themeId, colorThemeId, save]);
 
   function updateBasics(field: string, value: string) {
     if (!resume) return;
@@ -149,7 +151,7 @@ export default function EditorPage() {
     if (format === "pdf" && exportingPdf) return;
     if (format === "pdf") setExportingPdf(true);
     try {
-      const res = await fetch(`/api/export/pdf?id=${id}&format=${format}&theme=${themeId}`);
+      const res = await fetch(`/api/export/pdf?id=${id}&format=${format}&theme=${themeId}&colorTheme=${colorThemeId}`);
       if (!res.ok) throw new Error("Export failed");
       const blob = await res.blob();
       const url = URL.createObjectURL(blob);
@@ -711,6 +713,8 @@ export default function EditorPage() {
             resume={resume}
             themeId={themeId}
             onThemeChange={setThemeId}
+            colorThemeId={colorThemeId}
+            onColorThemeChange={setColorThemeId}
             resumeId={id}
           />
         </div>

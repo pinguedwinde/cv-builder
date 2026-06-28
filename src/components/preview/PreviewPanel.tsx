@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ThemeRenderer } from "@/components/themes/ThemeRenderer";
-import { themes, themeIds, type ThemeId } from "@/themes";
+import { themes, themeIds, type ThemeId, getModelPalettes } from "@/themes";
 import type { Resume } from "@/lib/schemas/resume";
 import { ZoomIn, ZoomOut, Maximize2, Minimize2, Download, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -13,6 +13,8 @@ interface PreviewPanelProps {
   resume: Resume;
   themeId: ThemeId | string;
   onThemeChange?: (themeId: ThemeId) => void;
+  colorThemeId?: string;
+  onColorThemeChange?: (id: string) => void;
   resumeId?: string;
 }
 
@@ -32,16 +34,17 @@ const themeAccentDots: Record<string, string> = {
 
 type PdfState = "idle" | "loading" | "done";
 
-export function PreviewPanel({ resume, themeId, onThemeChange, resumeId }: PreviewPanelProps) {
+export function PreviewPanel({ resume, themeId, onThemeChange, colorThemeId = "default", onColorThemeChange, resumeId }: PreviewPanelProps) {
   const [zoom, setZoom] = useState(100);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [pdfState, setPdfState] = useState<PdfState>("idle");
+  const palettes = getModelPalettes(themeId);
 
   const handleExportPdf = async () => {
     if (!resumeId || pdfState !== "idle") return;
     setPdfState("loading");
     try {
-      const res = await fetch(`/api/export/pdf?id=${resumeId}&theme=${themeId}`);
+      const res = await fetch(`/api/export/pdf?id=${resumeId}&theme=${themeId}&colorTheme=${colorThemeId}`);
       if (!res.ok) throw new Error("PDF export failed");
       const blob = await res.blob();
       const url = URL.createObjectURL(blob);
@@ -61,6 +64,29 @@ export function PreviewPanel({ resume, themeId, onThemeChange, resumeId }: Previ
   return (
     <div className={`flex flex-col h-full ${isFullscreen ? "fixed inset-0 z-50 bg-background" : ""}`}>
       <div className="border-b px-3 py-2 bg-card space-y-2">
+        {palettes.length > 1 && (
+          <div className="flex items-center gap-1.5 overflow-x-auto pb-0.5">
+            {palettes.map((palette) => (
+              <button
+                key={palette.id}
+                onClick={() => onColorThemeChange?.(palette.id)}
+                title={palette.name}
+                className={cn(
+                  "relative flex items-center gap-1.5 px-2 py-1 rounded-full text-xs font-medium transition-colors whitespace-nowrap shrink-0",
+                  palette.id === colorThemeId
+                    ? "ring-2 ring-offset-1 ring-primary/60 bg-accent"
+                    : "hover:bg-accent text-muted-foreground hover:text-foreground"
+                )}
+              >
+                <span
+                  className="w-3 h-3 rounded-full shrink-0 border border-black/10"
+                  style={{ backgroundColor: palette.swatch }}
+                />
+                <span className="text-xs">{palette.name}</span>
+              </button>
+            ))}
+          </div>
+        )}
         <div className="flex items-center gap-1 overflow-x-auto pb-0.5">
           {themeIds.map((id) => (
             <button
@@ -199,7 +225,7 @@ export function PreviewPanel({ resume, themeId, onThemeChange, resumeId }: Previ
             transition: "transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1)",
           }}
         >
-          <ThemeRenderer resume={resume} themeId={themeId} />
+          <ThemeRenderer resume={resume} themeId={themeId} colorThemeId={colorThemeId} />
         </div>
       </div>
     </div>

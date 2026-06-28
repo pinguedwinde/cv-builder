@@ -1,4 +1,4 @@
-import type { Resume } from "@/lib/schemas/resume";
+import type { ThemeProps } from "./types";
 
 function formatDate(date?: string): string {
   if (!date) return "Present";
@@ -26,173 +26,170 @@ function languageDots(fluency?: string): string {
   };
   const key = (fluency || "").toLowerCase().normalize("NFD").replace(/\p{Diacritic}/gu, "");
   const level = levels[key] ?? 3;
-  const filled = "◉".repeat(level);
-  const empty = "○".repeat(5 - level);
-  return filled + empty;
+  return "◉".repeat(level) + "○".repeat(5 - level);
 }
 
-const ROSE = "#C7736A";
-const GOLD = "#B8922A";
-const BLUSH = "#F5E6E1";
-const BLUSH_BORDER = "#E8D5CE";
-const TEXT = "#2C2025";
-const MUTED = "#9B7B75";
-const BG = "#FFFBF8";
+export function ElegantTheme({ resume, colors: colorOverrides = {} }: ThemeProps) {
+  const ROSE = colorOverrides.rose ?? "#C7736A";
+  const GOLD = colorOverrides.gold ?? "#B8922A";
+  const BLUSH = colorOverrides.blush ?? "#FFFBF8";
+  const BLUSH_BORDER = colorOverrides.blushBorder ?? "#E8D5CE";
+  const TEXT = "#2C2025";
+  const MUTED = "#9B7B75";
 
-const s = {
-  page: {
-    fontFamily: "'Lato', 'Helvetica Neue', Arial, sans-serif",
-    color: TEXT,
-    backgroundColor: BG,
-    padding: "28px 44px",
-    maxWidth: "210mm",
-    lineHeight: 1.5,
-    fontSize: "13px",
-    boxSizing: "border-box" as const,
-  } as React.CSSProperties,
-  header: {
-    textAlign: "center" as const,
-    marginBottom: "14px",
-  } as React.CSSProperties,
-  name: {
-    fontFamily: "'Cormorant Garamond', 'Garamond', 'Georgia', serif",
-    fontSize: "30px",
-    fontWeight: 300,
-    color: TEXT,
-    letterSpacing: "3px",
-    marginBottom: "6px",
-    lineHeight: 1.1,
-  } as React.CSSProperties,
-  headerLabel: {
-    fontFamily: "'Cormorant Garamond', 'Garamond', Georgia, serif",
-    fontSize: "13px",
-    fontStyle: "italic" as const,
-    color: ROSE,
-    marginBottom: "10px",
-  } as React.CSSProperties,
-  ornament: {
-    color: ROSE,
-    fontSize: "14px",
-    letterSpacing: "2px",
-    marginBottom: "14px",
-  } as React.CSSProperties,
-  contactRow: {
-    display: "flex",
-    justifyContent: "center",
-    flexWrap: "wrap" as const,
-    gap: "16px",
-    fontSize: "12px",
-    color: MUTED,
-  } as React.CSSProperties,
-  sectionTitle: {
-    fontFamily: "'Cormorant Garamond', 'Garamond', Georgia, serif",
-    fontVariant: "small-caps" as const,
-    fontSize: "13px",
-    fontWeight: 600,
-    color: ROSE,
-    letterSpacing: "3px",
-    textTransform: "uppercase" as const,
-    borderBottom: `1px solid ${BLUSH_BORDER}`,
-    paddingBottom: "6px",
-    marginBottom: "10px",
-    marginTop: "12px",
-  } as React.CSSProperties,
-  entryRow: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "flex-start",
-    marginBottom: "2px",
-  } as React.CSSProperties,
-  entryTitle: {
-    fontSize: "14px",
-    fontWeight: 700,
-    color: TEXT,
-    display: "flex",
-    alignItems: "center",
-    gap: "6px",
-  } as React.CSSProperties,
-  entryTitleBullet: {
-    color: ROSE,
-    fontSize: "10px",
-  } as React.CSSProperties,
-  entryDate: {
-    fontSize: "11px",
-    color: MUTED,
-    fontStyle: "italic" as const,
-    flexShrink: 0,
-    marginLeft: "12px",
-  } as React.CSSProperties,
-  entryMeta: {
-    fontSize: "12px",
-    color: MUTED,
-    fontStyle: "italic" as const,
-    marginBottom: "8px",
-  } as React.CSSProperties,
-  summary: {
-    fontSize: "14px",
-    color: "#5C4040",
-    fontStyle: "italic" as const,
-    lineHeight: 1.5,
-    marginBottom: "4px",
-  } as React.CSSProperties,
-  text: {
-    fontSize: "13px",
-    color: TEXT,
-    marginBottom: "4px",
-  } as React.CSSProperties,
-  bullet: {
-    fontSize: "13px",
-    color: TEXT,
-    paddingLeft: "14px",
-    marginBottom: "3px",
-    position: "relative" as const,
-  } as React.CSSProperties,
-  bulletMark: {
-    position: "absolute" as const,
-    left: 0,
-    color: ROSE,
-  } as React.CSSProperties,
-  skillSection: {
-    display: "grid",
-    gridTemplateColumns: "1fr 1fr",
-    gap: "12px",
-    marginBottom: "4px",
-  } as React.CSSProperties,
-  skillGroup: {
-    borderBottom: `1px solid ${BLUSH_BORDER}`,
-    paddingBottom: "10px",
-  } as React.CSSProperties,
-  skillName: {
-    fontFamily: "'Cormorant Garamond', Georgia, serif",
-    fontVariant: "small-caps" as const,
-    fontSize: "13px",
-    fontWeight: 600,
-    color: ROSE,
-    letterSpacing: "1px",
-  } as React.CSSProperties,
-  skillKw: {
-    fontSize: "11px",
-    color: MUTED,
-    fontStyle: "italic" as const,
-    marginTop: "2px",
-  } as React.CSSProperties,
-  langItem: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    borderBottom: `1px solid ${BLUSH_BORDER}`,
-    paddingBottom: "6px",
-    marginBottom: "6px",
-    fontSize: "13px",
-  } as React.CSSProperties,
-  langDots: {
-    color: ROSE,
-    letterSpacing: "3px",
-    fontSize: "14px",
-  } as React.CSSProperties,
-};
+  const s = {
+    page: {
+      fontFamily: "'Lato', 'Helvetica Neue', Arial, sans-serif",
+      color: TEXT,
+      backgroundColor: BLUSH,
+      padding: "28px 44px",
+      maxWidth: "210mm",
+      lineHeight: 1.5,
+      fontSize: "13px",
+      boxSizing: "border-box" as const,
+    } as React.CSSProperties,
+    header: {
+      textAlign: "center" as const,
+      marginBottom: "14px",
+    } as React.CSSProperties,
+    name: {
+      fontFamily: "'Cormorant Garamond', 'Garamond', 'Georgia', serif",
+      fontSize: "30px",
+      fontWeight: 300,
+      color: TEXT,
+      letterSpacing: "3px",
+      marginBottom: "6px",
+      lineHeight: 1.1,
+    } as React.CSSProperties,
+    headerLabel: {
+      fontFamily: "'Cormorant Garamond', 'Garamond', Georgia, serif",
+      fontSize: "13px",
+      fontStyle: "italic" as const,
+      color: ROSE,
+      marginBottom: "10px",
+    } as React.CSSProperties,
+    ornament: {
+      color: GOLD,
+      fontSize: "14px",
+      letterSpacing: "2px",
+      marginBottom: "14px",
+    } as React.CSSProperties,
+    contactRow: {
+      display: "flex",
+      justifyContent: "center",
+      flexWrap: "wrap" as const,
+      gap: "16px",
+      fontSize: "12px",
+      color: MUTED,
+    } as React.CSSProperties,
+    sectionTitle: {
+      fontFamily: "'Cormorant Garamond', 'Garamond', Georgia, serif",
+      fontVariant: "small-caps" as const,
+      fontSize: "13px",
+      fontWeight: 600,
+      color: ROSE,
+      letterSpacing: "3px",
+      textTransform: "uppercase" as const,
+      borderBottom: `1px solid ${BLUSH_BORDER}`,
+      paddingBottom: "6px",
+      marginBottom: "10px",
+      marginTop: "12px",
+    } as React.CSSProperties,
+    entryRow: {
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "flex-start",
+      marginBottom: "2px",
+    } as React.CSSProperties,
+    entryTitle: {
+      fontSize: "14px",
+      fontWeight: 700,
+      color: TEXT,
+      display: "flex",
+      alignItems: "center",
+      gap: "6px",
+    } as React.CSSProperties,
+    entryTitleBullet: {
+      color: ROSE,
+      fontSize: "10px",
+    } as React.CSSProperties,
+    entryDate: {
+      fontSize: "11px",
+      color: MUTED,
+      fontStyle: "italic" as const,
+      flexShrink: 0,
+      marginLeft: "12px",
+    } as React.CSSProperties,
+    entryMeta: {
+      fontSize: "12px",
+      color: MUTED,
+      fontStyle: "italic" as const,
+      marginBottom: "8px",
+    } as React.CSSProperties,
+    summary: {
+      fontSize: "14px",
+      color: "#5C4040",
+      fontStyle: "italic" as const,
+      lineHeight: 1.5,
+      marginBottom: "4px",
+    } as React.CSSProperties,
+    text: {
+      fontSize: "13px",
+      color: TEXT,
+      marginBottom: "4px",
+    } as React.CSSProperties,
+    bullet: {
+      fontSize: "13px",
+      color: TEXT,
+      paddingLeft: "14px",
+      marginBottom: "3px",
+      position: "relative" as const,
+    } as React.CSSProperties,
+    bulletMark: {
+      position: "absolute" as const,
+      left: 0,
+      color: ROSE,
+    } as React.CSSProperties,
+    skillSection: {
+      display: "grid",
+      gridTemplateColumns: "1fr 1fr",
+      gap: "12px",
+      marginBottom: "4px",
+    } as React.CSSProperties,
+    skillGroup: {
+      borderBottom: `1px solid ${BLUSH_BORDER}`,
+      paddingBottom: "10px",
+    } as React.CSSProperties,
+    skillName: {
+      fontFamily: "'Cormorant Garamond', Georgia, serif",
+      fontVariant: "small-caps" as const,
+      fontSize: "13px",
+      fontWeight: 600,
+      color: ROSE,
+      letterSpacing: "1px",
+    } as React.CSSProperties,
+    skillKw: {
+      fontSize: "11px",
+      color: MUTED,
+      fontStyle: "italic" as const,
+      marginTop: "2px",
+    } as React.CSSProperties,
+    langItem: {
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+      borderBottom: `1px solid ${BLUSH_BORDER}`,
+      paddingBottom: "6px",
+      marginBottom: "6px",
+      fontSize: "13px",
+    } as React.CSSProperties,
+    langDots: {
+      color: ROSE,
+      letterSpacing: "3px",
+      fontSize: "14px",
+    } as React.CSSProperties,
+  };
 
-export function ElegantTheme({ resume }: { resume: Resume }) {
   const b = resume.basics;
   const contactItems = [b.email, b.phone, b.url, b.location?.city].filter(Boolean) as string[];
 
@@ -380,7 +377,7 @@ export function ElegantTheme({ resume }: { resume: Resume }) {
 
       {resume.interests && resume.interests.length > 0 && (
         <>
-          <h2 className="cv-section-title" style={s.sectionTitle}>Centres d'interet</h2>
+          <h2 className="cv-section-title" style={s.sectionTitle}>Centres d&apos;interet</h2>
           <p style={{ ...s.text, color: MUTED, fontStyle: "italic" as const }}>
             {resume.interests.map((item) => item.name).join("  ·  ")}
           </p>

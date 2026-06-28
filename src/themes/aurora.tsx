@@ -1,4 +1,4 @@
-import type { Resume } from "@/lib/schemas/resume";
+import type { ThemeProps } from "./types";
 
 function formatDate(date?: string): string {
   if (!date) return "Present";
@@ -19,138 +19,138 @@ function dateRange(start?: string, end?: string): string {
   return `${s} - ${e}`;
 }
 
-const ACCENT = "#6C63FF";
-const ACCENT_LIGHT = "#EDE9FF";
-const TEAL = "#0F9688";
-const PURPLE = "#C026D3";
-const TEXT = "#1E1B3C";
-const MUTED = "#64748B";
-const BORDER = "#E2E0FF";
-const CARD_BG = "#F8F9FF";
+export function AuroraTheme({ resume, colors: colorOverrides = {} }: ThemeProps) {
+  const ACCENT = colorOverrides.accent ?? "#6C63FF";
+  const ACCENT_LIGHT = colorOverrides.accentLight ?? "#EDE9FF";
+  const TEAL = colorOverrides.teal ?? "#0F9688";
+  const PURPLE = colorOverrides.purple ?? "#C026D3";
+  const TEXT = "#1E1B3C";
+  const MUTED = "#64748B";
+  const BORDER = colorOverrides.border ?? "#E2E0FF";
+  const CARD_BG = colorOverrides.cardBg ?? "#F8F9FF";
 
-const s = {
-  page: {
-    fontFamily: "'Outfit', 'Inter', 'Segoe UI', system-ui, sans-serif",
-    color: TEXT,
-    backgroundColor: "#FFFFFF",
-    maxWidth: "210mm",
-    lineHeight: 1.45,
-    fontSize: "13px",
-    boxSizing: "border-box" as const,
-  } as React.CSSProperties,
-  header: {
-    background: `linear-gradient(120deg, ${TEAL}, ${ACCENT}, ${PURPLE})`,
-    padding: "22px 28px 16px",
-    color: "#fff",
-  } as React.CSSProperties,
-  name: {
-    fontSize: "24px",
-    fontWeight: 700,
-    color: "#fff",
-    marginBottom: "4px",
-    lineHeight: 1.1,
-  } as React.CSSProperties,
-  headerLabel: {
-    fontSize: "14px",
-    color: "rgba(255,255,255,0.85)",
-    marginBottom: "16px",
-  } as React.CSSProperties,
-  contactPills: {
-    display: "flex",
-    flexWrap: "wrap" as const,
-    gap: "8px",
-  } as React.CSSProperties,
-  pill: {
-    background: "rgba(255,255,255,0.2)",
-    padding: "2px 6px",
-    borderRadius: "20px",
-    fontSize: "11px",
-    color: "#fff",
-  } as React.CSSProperties,
-  body: {
-    padding: "18px 28px",
-  } as React.CSSProperties,
-  sectionTitle: {
-    fontSize: "13px",
-    fontWeight: 700,
-    color: ACCENT,
-    textTransform: "uppercase" as const,
-    letterSpacing: "2px",
-    borderBottom: `2px solid ${ACCENT}`,
-    paddingBottom: "4px",
-    marginBottom: "8px",
-    marginTop: "10px",
-  } as React.CSSProperties,
-  card: {
-    backgroundColor: CARD_BG,
-    borderRadius: "10px",
-    borderTop: `3px solid ${ACCENT}`,
-    padding: "10px",
-    marginBottom: "8px",
-  } as React.CSSProperties,
-  entryRow: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "flex-start",
-    marginBottom: "2px",
-  } as React.CSSProperties,
-  entryTitle: {
-    fontSize: "14px",
-    fontWeight: 700,
-    color: TEXT,
-  } as React.CSSProperties,
-  entryDate: {
-    fontSize: "11px",
-    color: MUTED,
-    backgroundColor: ACCENT_LIGHT,
-    padding: "2px 8px",
-    borderRadius: "12px",
-    whiteSpace: "nowrap" as const,
-    marginLeft: "8px",
-    flexShrink: 0,
-  } as React.CSSProperties,
-  entryMeta: {
-    fontSize: "12px",
-    color: ACCENT,
-    fontWeight: 600,
-    marginBottom: "8px",
-  } as React.CSSProperties,
-  text: {
-    fontSize: "13px",
-    color: "#4A4A6A",
-    marginBottom: "4px",
-  } as React.CSSProperties,
-  bullet: {
-    fontSize: "13px",
-    color: "#4A4A6A",
-    paddingLeft: "16px",
-    marginBottom: "3px",
-    position: "relative" as const,
-  } as React.CSSProperties,
-  tag: {
-    display: "inline-block",
-    backgroundColor: ACCENT_LIGHT,
-    color: ACCENT,
-    padding: "2px 6px",
-    borderRadius: "16px",
-    fontSize: "12px",
-    fontWeight: 500,
-    marginRight: "6px",
-    marginBottom: "6px",
-  } as React.CSSProperties,
-  summary: {
-    fontSize: "13px",
-    color: "#4A4A6A",
-    lineHeight: 1.5,
-    backgroundColor: CARD_BG,
-    borderLeft: `4px solid ${ACCENT}`,
-    padding: "12px 16px",
-    borderRadius: "0 8px 8px 0",
-    marginBottom: "4px",
-  } as React.CSSProperties,
-};
+  const s = {
+    page: {
+      fontFamily: "'Outfit', 'Inter', 'Segoe UI', system-ui, sans-serif",
+      color: TEXT,
+      backgroundColor: "#FFFFFF",
+      maxWidth: "210mm",
+      lineHeight: 1.45,
+      fontSize: "13px",
+      boxSizing: "border-box" as const,
+    } as React.CSSProperties,
+    header: {
+      background: `linear-gradient(120deg, ${TEAL}, ${ACCENT}, ${PURPLE})`,
+      padding: "22px 28px 16px",
+      color: "#fff",
+    } as React.CSSProperties,
+    name: {
+      fontSize: "24px",
+      fontWeight: 700,
+      color: "#fff",
+      marginBottom: "4px",
+      lineHeight: 1.1,
+    } as React.CSSProperties,
+    headerLabel: {
+      fontSize: "14px",
+      color: "rgba(255,255,255,0.85)",
+      marginBottom: "16px",
+    } as React.CSSProperties,
+    contactPills: {
+      display: "flex",
+      flexWrap: "wrap" as const,
+      gap: "8px",
+    } as React.CSSProperties,
+    pill: {
+      background: "rgba(255,255,255,0.2)",
+      padding: "2px 6px",
+      borderRadius: "20px",
+      fontSize: "11px",
+      color: "#fff",
+    } as React.CSSProperties,
+    body: {
+      padding: "18px 28px",
+    } as React.CSSProperties,
+    sectionTitle: {
+      fontSize: "13px",
+      fontWeight: 700,
+      color: ACCENT,
+      textTransform: "uppercase" as const,
+      letterSpacing: "2px",
+      borderBottom: `2px solid ${ACCENT}`,
+      paddingBottom: "4px",
+      marginBottom: "8px",
+      marginTop: "10px",
+    } as React.CSSProperties,
+    card: {
+      backgroundColor: CARD_BG,
+      borderRadius: "10px",
+      borderTop: `3px solid ${ACCENT}`,
+      padding: "10px",
+      marginBottom: "8px",
+    } as React.CSSProperties,
+    entryRow: {
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "flex-start",
+      marginBottom: "2px",
+    } as React.CSSProperties,
+    entryTitle: {
+      fontSize: "14px",
+      fontWeight: 700,
+      color: TEXT,
+    } as React.CSSProperties,
+    entryDate: {
+      fontSize: "11px",
+      color: MUTED,
+      backgroundColor: ACCENT_LIGHT,
+      padding: "2px 8px",
+      borderRadius: "12px",
+      whiteSpace: "nowrap" as const,
+      marginLeft: "8px",
+      flexShrink: 0,
+    } as React.CSSProperties,
+    entryMeta: {
+      fontSize: "12px",
+      color: ACCENT,
+      fontWeight: 600,
+      marginBottom: "8px",
+    } as React.CSSProperties,
+    text: {
+      fontSize: "13px",
+      color: "#4A4A6A",
+      marginBottom: "4px",
+    } as React.CSSProperties,
+    bullet: {
+      fontSize: "13px",
+      color: "#4A4A6A",
+      paddingLeft: "16px",
+      marginBottom: "3px",
+      position: "relative" as const,
+    } as React.CSSProperties,
+    tag: {
+      display: "inline-block",
+      backgroundColor: ACCENT_LIGHT,
+      color: ACCENT,
+      padding: "2px 6px",
+      borderRadius: "16px",
+      fontSize: "12px",
+      fontWeight: 500,
+      marginRight: "6px",
+      marginBottom: "6px",
+    } as React.CSSProperties,
+    summary: {
+      fontSize: "13px",
+      color: "#4A4A6A",
+      lineHeight: 1.5,
+      backgroundColor: CARD_BG,
+      borderLeft: `4px solid ${ACCENT}`,
+      padding: "12px 16px",
+      borderRadius: "0 8px 8px 0",
+      marginBottom: "4px",
+    } as React.CSSProperties,
+  };
 
-export function AuroraTheme({ resume }: { resume: Resume }) {
   const b = resume.basics;
   const contactItems = [b.email, b.phone, b.url, b.location?.city].filter(Boolean) as string[];
 

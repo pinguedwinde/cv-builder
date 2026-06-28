@@ -1,4 +1,4 @@
-import type { Resume } from "@/lib/schemas/resume";
+import type { ThemeProps } from "./types";
 
 function formatDate(date?: string): string {
   if (!date) return "Présent";
@@ -19,7 +19,7 @@ function dateRange(start?: string, end?: string): string {
   return `${s} - ${e}`;
 }
 
-const colors = {
+const defaultColors = {
   gradientStart: "#7c3aed",
   gradientEnd: "#2563eb",
   accent: "#f97316",
@@ -32,7 +32,7 @@ const colors = {
   badgeText: "#6d28d9",
 };
 
-const s = {
+function makeStyles(colors: typeof defaultColors) { return {
   page: {
     fontFamily: "'Poppins', 'Nunito', system-ui, sans-serif",
     color: colors.text,
@@ -186,9 +186,11 @@ const s = {
     borderRadius: "12px",
     borderLeft: `4px solid ${colors.accent}`,
   } as React.CSSProperties,
-};
+}; }
 
-export function CreativeTheme({ resume }: { resume: Resume }) {
+export function CreativeTheme({ resume, colors: colorOverrides = {} }: ThemeProps) {
+  const colors = { ...defaultColors, ...colorOverrides };
+  const s = makeStyles(colors);
   const b = resume.basics;
   const contactItems = [b.email, b.phone, b.url, b.location?.city && `${b.location.city}`].filter(Boolean);
 

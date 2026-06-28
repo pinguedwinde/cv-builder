@@ -2,7 +2,7 @@ import { chromium } from "playwright";
 import type { Resume } from "@/lib/schemas/resume";
 import type { ThemeId } from "@/themes";
 
-export async function generatePdf(resume: Resume, themeId: ThemeId | string, baseUrl: string): Promise<Buffer> {
+export async function generatePdf(resume: Resume, themeId: ThemeId | string, baseUrl: string, colorThemeId?: string): Promise<Buffer> {
   const browser = await chromium.launch({
     headless: true,
     args: [
@@ -19,7 +19,8 @@ export async function generatePdf(resume: Resume, themeId: ThemeId | string, bas
     // A4 at 96 CSS px/inch: 210mm = 794px, 297mm = 1122px
     await page.setViewportSize({ width: 794, height: 1122 });
 
-    const url = `${baseUrl}/pdf-render?theme=${encodeURIComponent(themeId)}`;
+    const colorParam = colorThemeId ? `&colorTheme=${encodeURIComponent(colorThemeId)}` : "";
+    const url = `${baseUrl}/pdf-render?theme=${encodeURIComponent(themeId)}${colorParam}`;
     await page.goto(url, { waitUntil: "networkidle" });
 
     await page.evaluate((data) => {

@@ -1,5 +1,5 @@
 import { usePdfMode } from "@/lib/pdf-context";
-import type { Resume } from "@/lib/schemas/resume";
+import type { ThemeProps } from "./types";
 
 function formatDate(date?: string): string {
   if (!date) return "Présent";
@@ -20,24 +20,24 @@ function dateRange(start?: string, end?: string): string {
   return `${s} - ${e}`;
 }
 
-const colors = {
+const defaultColors = {
   primary: "#2563eb",
   primaryLight: "#dbeafe",
-  sidebarBg: "#1e293b",
-  sidebarText: "#e2e8f0",
+  sidebarBg: "#334155",
+  sidebarText: "#f1f5f9",
   sidebarMuted: "#94a3b8",
   mainBg: "#ffffff",
   text: "#1e293b",
   muted: "#64748b",
   border: "#e2e8f0",
-  accent: "#3b82f6",
+  accent: "#93c5fd",
 };
 
 // Sidebar width: 280px screen = ~74mm on A4
 const SIDEBAR_W_PDF = "74mm";
 const SIDEBAR_W_PX = "280px";
 
-const s = {
+function makeStyles(colors: typeof defaultColors) { return {
   page: {
     fontFamily: "'Inter', 'Segoe UI', system-ui, sans-serif",
     display: "flex",
@@ -183,7 +183,7 @@ const s = {
     marginRight: "4px",
     marginBottom: "4px",
   } as React.CSSProperties,
-};
+}; }
 
 function getSkillLevelPercent(level?: string): number {
   if (!level) return 70;
@@ -195,8 +195,10 @@ function getSkillLevelPercent(level?: string): number {
   return 70;
 }
 
-export function ModernTheme({ resume }: { resume: Resume }) {
+export function ModernTheme({ resume, colors: colorOverrides = {} }: ThemeProps) {
   const pdfMode = usePdfMode();
+  const colors = { ...defaultColors, ...colorOverrides };
+  const s = makeStyles(colors);
   const b = resume.basics;
 
   return (

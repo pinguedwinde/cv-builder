@@ -1,5 +1,5 @@
 import { usePdfMode } from "@/lib/pdf-context";
-import type { Resume } from "@/lib/schemas/resume";
+import type { ThemeProps } from "./types";
 
 function formatDate(date?: string): string {
   if (!date) return "Present";
@@ -20,177 +20,177 @@ function dateRange(start?: string, end?: string): string {
   return `${s} - ${e}`;
 }
 
-const BLACK = "#111111";
-const RED = "#D62828";
-const WHITE = "#FFFFFF";
-const MUTED = "#888888";
-
 // Sidebar width: 200px screen = ~53mm on A4
 const SIDEBAR_W_PDF = "53mm";
 const SIDEBAR_W_PX = "200px";
 
-const s = {
-  page: {
-    fontFamily: "'Barlow', 'Arial', sans-serif",
-    color: BLACK,
-    display: "flex" as const,
-    maxWidth: "210mm",
-    minHeight: "297mm",
-    fontSize: "12px",
-    lineHeight: 1.4,
-    boxSizing: "border-box" as const,
-  } as React.CSSProperties,
-  pagePdf: {
-    fontFamily: "'Barlow', 'Arial', sans-serif",
-    color: BLACK,
-    maxWidth: "210mm",
-    fontSize: "12px",
-    lineHeight: 1.4,
-    boxSizing: "border-box" as const,
-  } as React.CSSProperties,
-  sidebar: {
-    width: SIDEBAR_W_PX,
-    minWidth: SIDEBAR_W_PX,
-    backgroundColor: BLACK,
-    padding: "24px 14px",
-    color: WHITE,
-    flexShrink: 0,
-  } as React.CSSProperties,
-  sidebarPdf: {
-    width: SIDEBAR_W_PDF,
-    backgroundColor: BLACK,
-    padding: "24px 12px",
-    color: WHITE,
-    boxSizing: "border-box" as const,
-    minHeight: "297mm",
-  } as React.CSSProperties,
-  main: {
-    flex: 1,
-    padding: "24px 18px",
-    backgroundColor: WHITE,
-  } as React.CSSProperties,
-  mainPdf: {
-    padding: "24px 18px",
-    backgroundColor: WHITE,
-    boxSizing: "border-box" as const,
-  } as React.CSSProperties,
-  name: {
-    fontFamily: "'Barlow Condensed', 'Arial Narrow', Arial, sans-serif",
-    fontSize: "22px",
-    fontWeight: 800,
-    textTransform: "uppercase" as const,
-    color: WHITE,
-    lineHeight: 1.0,
-    marginBottom: "8px",
-    letterSpacing: "-0.5px",
-  } as React.CSSProperties,
-  sideLabel: {
-    fontSize: "11px",
-    color: "#AAAAAA",
-    marginBottom: "8px",
-    lineHeight: 1.4,
-  } as React.CSSProperties,
-  sideSectionTitle: {
-    fontFamily: "'Barlow Condensed', 'Arial Narrow', Arial, sans-serif",
-    fontSize: "10px",
-    fontWeight: 700,
-    textTransform: "uppercase" as const,
-    letterSpacing: "2px",
-    color: RED,
-    marginBottom: "6px",
-    marginTop: "14px",
-  } as React.CSSProperties,
-  sideContactItem: {
-    fontSize: "11px",
-    color: "#CCCCCC",
-    marginBottom: "4px",
-    wordBreak: "break-all" as const,
-  } as React.CSSProperties,
-  sideDivider: {
-    height: "1px",
-    backgroundColor: "#333333",
-    margin: "16px 0",
-  } as React.CSSProperties,
-  sideSkillName: {
-    fontSize: "12px",
-    fontWeight: 700,
-    color: WHITE,
-    marginBottom: "2px",
-  } as React.CSSProperties,
-  sideSkillKw: {
-    fontSize: "10px",
-    color: "#AAAAAA",
-    marginBottom: "8px",
-  } as React.CSSProperties,
-  sideLang: {
-    display: "flex",
-    justifyContent: "space-between",
-    fontSize: "12px",
-    color: WHITE,
-    marginBottom: "4px",
-  } as React.CSSProperties,
-  sideLangLevel: {
-    color: RED,
-    fontWeight: 600,
-  } as React.CSSProperties,
-  sectionBand: {
-    backgroundColor: RED,
-    color: WHITE,
-    fontFamily: "'Barlow Condensed', 'Arial Narrow', Arial, sans-serif",
-    fontSize: "13px",
-    fontWeight: 700,
-    textTransform: "uppercase" as const,
-    letterSpacing: "3px",
-    padding: "4px 0 4px 12px",
-    marginBottom: "10px",
-    marginTop: "10px",
-  } as React.CSSProperties,
-  entryTitle: {
-    fontFamily: "'Barlow Condensed', 'Arial Narrow', Arial, sans-serif",
-    fontSize: "15px",
-    fontWeight: 700,
-    color: BLACK,
-    textTransform: "uppercase" as const,
-    marginBottom: "1px",
-  } as React.CSSProperties,
-  entryDate: {
-    fontSize: "11px",
-    color: RED,
-    fontWeight: 700,
-    marginBottom: "2px",
-  } as React.CSSProperties,
-  entryMeta: {
-    fontSize: "11px",
-    color: MUTED,
-    marginBottom: "6px",
-    borderLeft: `3px solid ${RED}`,
-    paddingLeft: "8px",
-  } as React.CSSProperties,
-  text: {
-    fontSize: "12px",
-    color: "#333333",
-    marginBottom: "4px",
-  } as React.CSSProperties,
-  bullet: {
-    fontSize: "12px",
-    color: "#333333",
-    paddingLeft: "14px",
-    marginBottom: "2px",
-    position: "relative" as const,
-  } as React.CSSProperties,
-  summary: {
-    fontSize: "12px",
-    color: "#333333",
-    lineHeight: 1.7,
-    borderLeft: `4px solid ${BLACK}`,
-    paddingLeft: "12px",
-    marginBottom: "4px",
-    fontStyle: "italic" as const,
-  } as React.CSSProperties,
-};
-
-export function SwissTheme({ resume }: { resume: Resume }) {
+export function SwissTheme({ resume, colors: colorOverrides = {} }: ThemeProps) {
   const pdfMode = usePdfMode();
+  const BLACK = colorOverrides.black ?? "#111111";
+  const RED = colorOverrides.red ?? "#D62828";
+  const WHITE = "#FFFFFF";
+  const MUTED = "#888888";
+
+  const s = {
+    page: {
+      fontFamily: "'Barlow', 'Arial', sans-serif",
+      color: BLACK,
+      display: "flex" as const,
+      maxWidth: "210mm",
+      minHeight: "297mm",
+      fontSize: "12px",
+      lineHeight: 1.4,
+      boxSizing: "border-box" as const,
+    } as React.CSSProperties,
+    pagePdf: {
+      fontFamily: "'Barlow', 'Arial', sans-serif",
+      color: BLACK,
+      maxWidth: "210mm",
+      fontSize: "12px",
+      lineHeight: 1.4,
+      boxSizing: "border-box" as const,
+    } as React.CSSProperties,
+    sidebar: {
+      width: SIDEBAR_W_PX,
+      minWidth: SIDEBAR_W_PX,
+      backgroundColor: BLACK,
+      padding: "24px 14px",
+      color: WHITE,
+      flexShrink: 0,
+    } as React.CSSProperties,
+    sidebarPdf: {
+      width: SIDEBAR_W_PDF,
+      backgroundColor: BLACK,
+      padding: "24px 12px",
+      color: WHITE,
+      boxSizing: "border-box" as const,
+      minHeight: "297mm",
+    } as React.CSSProperties,
+    main: {
+      flex: 1,
+      padding: "24px 18px",
+      backgroundColor: WHITE,
+    } as React.CSSProperties,
+    mainPdf: {
+      padding: "24px 18px",
+      backgroundColor: WHITE,
+      boxSizing: "border-box" as const,
+    } as React.CSSProperties,
+    name: {
+      fontFamily: "'Barlow Condensed', 'Arial Narrow', Arial, sans-serif",
+      fontSize: "22px",
+      fontWeight: 800,
+      textTransform: "uppercase" as const,
+      color: WHITE,
+      lineHeight: 1.0,
+      marginBottom: "8px",
+      letterSpacing: "-0.5px",
+    } as React.CSSProperties,
+    sideLabel: {
+      fontSize: "11px",
+      color: "#AAAAAA",
+      marginBottom: "8px",
+      lineHeight: 1.4,
+    } as React.CSSProperties,
+    sideSectionTitle: {
+      fontFamily: "'Barlow Condensed', 'Arial Narrow', Arial, sans-serif",
+      fontSize: "10px",
+      fontWeight: 700,
+      textTransform: "uppercase" as const,
+      letterSpacing: "2px",
+      color: RED,
+      marginBottom: "6px",
+      marginTop: "14px",
+    } as React.CSSProperties,
+    sideContactItem: {
+      fontSize: "11px",
+      color: "#CCCCCC",
+      marginBottom: "4px",
+      wordBreak: "break-all" as const,
+    } as React.CSSProperties,
+    sideDivider: {
+      height: "1px",
+      backgroundColor: "#333333",
+      margin: "16px 0",
+    } as React.CSSProperties,
+    sideSkillName: {
+      fontSize: "12px",
+      fontWeight: 700,
+      color: WHITE,
+      marginBottom: "2px",
+    } as React.CSSProperties,
+    sideSkillKw: {
+      fontSize: "10px",
+      color: "#AAAAAA",
+      marginBottom: "8px",
+    } as React.CSSProperties,
+    sideLang: {
+      display: "flex",
+      justifyContent: "space-between",
+      fontSize: "12px",
+      color: WHITE,
+      marginBottom: "4px",
+    } as React.CSSProperties,
+    sideLangLevel: {
+      color: RED,
+      fontWeight: 600,
+    } as React.CSSProperties,
+    sectionBand: {
+      backgroundColor: RED,
+      color: WHITE,
+      fontFamily: "'Barlow Condensed', 'Arial Narrow', Arial, sans-serif",
+      fontSize: "13px",
+      fontWeight: 700,
+      textTransform: "uppercase" as const,
+      letterSpacing: "3px",
+      padding: "4px 0 4px 12px",
+      marginBottom: "10px",
+      marginTop: "10px",
+    } as React.CSSProperties,
+    entryTitle: {
+      fontFamily: "'Barlow Condensed', 'Arial Narrow', Arial, sans-serif",
+      fontSize: "15px",
+      fontWeight: 700,
+      color: BLACK,
+      textTransform: "uppercase" as const,
+      marginBottom: "1px",
+    } as React.CSSProperties,
+    entryDate: {
+      fontSize: "11px",
+      color: RED,
+      fontWeight: 700,
+      marginBottom: "2px",
+    } as React.CSSProperties,
+    entryMeta: {
+      fontSize: "11px",
+      color: MUTED,
+      marginBottom: "6px",
+      borderLeft: `3px solid ${RED}`,
+      paddingLeft: "8px",
+    } as React.CSSProperties,
+    text: {
+      fontSize: "12px",
+      color: "#333333",
+      marginBottom: "4px",
+    } as React.CSSProperties,
+    bullet: {
+      fontSize: "12px",
+      color: "#333333",
+      paddingLeft: "14px",
+      marginBottom: "2px",
+      position: "relative" as const,
+    } as React.CSSProperties,
+    summary: {
+      fontSize: "12px",
+      color: "#333333",
+      lineHeight: 1.7,
+      borderLeft: `4px solid ${BLACK}`,
+      paddingLeft: "12px",
+      marginBottom: "4px",
+      fontStyle: "italic" as const,
+    } as React.CSSProperties,
+  };
+
   const b = resume.basics;
   const contactItems = [b.email, b.phone, b.url].filter(Boolean) as string[];
 

@@ -1,4 +1,4 @@
-import type { Resume } from "@/lib/schemas/resume";
+import type { ThemeProps } from "./types";
 
 function formatDate(date?: string): string {
   if (!date) return "present";
@@ -16,153 +16,152 @@ function dateRange(start?: string, end?: string): string {
   return `[${s} .. ${e}]`;
 }
 
-const BG = "#0D1117";
-const SURFACE = "#161B22";
-const BORDER_COLOR = "#30363D";
-const TEXT = "#C9D1D9";
-const NEON = "#39D353";
-const CYAN = "#58A6FF";
-const MUTED_COLOR = "#8B949E";
-
-const s = {
-  page: {
-    fontFamily: "'JetBrains Mono', 'Fira Code', 'Cascadia Code', 'Consolas', 'Courier New', monospace",
-    color: TEXT,
-    backgroundColor: BG,
-    padding: "18px",
-    maxWidth: "210mm",
-    // minHeight removed for multi-page PDF support
-    lineHeight: 1.5,
-    fontSize: "12px",
-    boxSizing: "border-box" as const,
-  } as React.CSSProperties,
-  terminal: {
-    backgroundColor: SURFACE,
-    border: `1px solid ${BORDER_COLOR}`,
-    borderRadius: "6px",
-    overflow: "hidden" as const,
-    marginBottom: "16px",
-  } as React.CSSProperties,
-  titleBar: {
-    height: "28px",
-    backgroundColor: "#21262D",
-    display: "flex",
-    alignItems: "center",
-    padding: "0 12px",
-    gap: "6px",
-  } as React.CSSProperties,
-  dot: (color: string) => ({
-    width: "10px",
-    height: "10px",
-    borderRadius: "50%",
-    backgroundColor: color,
-    display: "inline-block",
-  } as React.CSSProperties),
-  terminalBody: {
-    padding: "12px 16px",
-  } as React.CSSProperties,
-  prompt: {
-    color: MUTED_COLOR,
-    fontSize: "11px",
-    marginBottom: "2px",
-  } as React.CSSProperties,
-  name: {
-    color: NEON,
-    fontSize: "24px",
-    fontWeight: 700,
-    marginBottom: "4px",
-  } as React.CSSProperties,
-  label: {
-    color: CYAN,
-    fontSize: "12px",
-    marginBottom: "12px",
-  } as React.CSSProperties,
-  contactLine: {
-    color: MUTED_COLOR,
-    fontSize: "11px",
-    marginBottom: "2px",
-  } as React.CSSProperties,
-  divider: {
-    color: BORDER_COLOR,
-    letterSpacing: "2px",
-    fontSize: "12px",
-    margin: "16px 0",
-    overflow: "hidden" as const,
-  } as React.CSSProperties,
-  sectionTitle: {
-    color: CYAN,
-    fontSize: "12px",
-    fontWeight: 700,
-    marginBottom: "12px",
-    marginTop: "20px",
-  } as React.CSSProperties,
-  commentPrefix: {
-    color: MUTED_COLOR,
-  } as React.CSSProperties,
-  entry: {
-    marginBottom: "20px",
-    paddingLeft: "8px",
-    borderLeft: `2px solid ${BORDER_COLOR}`,
-  } as React.CSSProperties,
-  entryCompany: {
-    color: NEON,
-    fontWeight: 700,
-    fontSize: "13px",
-    marginBottom: "1px",
-  } as React.CSSProperties,
-  entryPosition: {
-    color: TEXT,
-    fontSize: "12px",
-    marginBottom: "2px",
-  } as React.CSSProperties,
-  entryDate: {
-    color: MUTED_COLOR,
-    fontSize: "11px",
-    marginBottom: "6px",
-  } as React.CSSProperties,
-  text: {
-    color: "#A0A8B4",
-    fontSize: "12px",
-    marginBottom: "3px",
-  } as React.CSSProperties,
-  bullet: {
-    color: "#A0A8B4",
-    fontSize: "12px",
-    paddingLeft: "20px",
-    marginBottom: "2px",
-    position: "relative" as const,
-  } as React.CSSProperties,
-  bulletMark: {
-    position: "absolute" as const,
-    left: 0,
-    color: NEON,
-  } as React.CSSProperties,
-  skillKey: {
-    color: CYAN,
-    marginRight: "2px",
-  } as React.CSSProperties,
-  skillValue: {
-    color: NEON,
-  } as React.CSSProperties,
-  skillMuted: {
-    color: MUTED_COLOR,
-  } as React.CSSProperties,
-  tag: {
-    display: "inline-block",
-    backgroundColor: "#1F2937",
-    color: NEON,
-    border: `1px solid ${BORDER_COLOR}`,
-    padding: "1px 8px",
-    borderRadius: "3px",
-    fontSize: "11px",
-    marginRight: "4px",
-    marginBottom: "4px",
-  } as React.CSSProperties,
-};
-
 const DASHES = "─".repeat(56);
 
-export function NeoTheme({ resume }: { resume: Resume }) {
+export function NeoTheme({ resume, colors: colorOverrides = {} }: ThemeProps) {
+  const NEON = colorOverrides.neon ?? "#39D353";
+  const CYAN = colorOverrides.cyan ?? "#58A6FF";
+  const BG = "#0D1117";
+  const SURFACE = "#161B22";
+  const BORDER_COLOR = "#30363D";
+  const TEXT = "#C9D1D9";
+  const MUTED_COLOR = "#8B949E";
+
+  const s = {
+    page: {
+      fontFamily: "'JetBrains Mono', 'Fira Code', 'Cascadia Code', 'Consolas', 'Courier New', monospace",
+      color: TEXT,
+      backgroundColor: BG,
+      padding: "18px",
+      maxWidth: "210mm",
+      lineHeight: 1.5,
+      fontSize: "12px",
+      boxSizing: "border-box" as const,
+    } as React.CSSProperties,
+    terminal: {
+      backgroundColor: SURFACE,
+      border: `1px solid ${BORDER_COLOR}`,
+      borderRadius: "6px",
+      overflow: "hidden" as const,
+      marginBottom: "16px",
+    } as React.CSSProperties,
+    titleBar: {
+      height: "28px",
+      backgroundColor: "#21262D",
+      display: "flex",
+      alignItems: "center",
+      padding: "0 12px",
+      gap: "6px",
+    } as React.CSSProperties,
+    dot: (color: string) => ({
+      width: "10px",
+      height: "10px",
+      borderRadius: "50%",
+      backgroundColor: color,
+      display: "inline-block",
+    } as React.CSSProperties),
+    terminalBody: {
+      padding: "12px 16px",
+    } as React.CSSProperties,
+    prompt: {
+      color: MUTED_COLOR,
+      fontSize: "11px",
+      marginBottom: "2px",
+    } as React.CSSProperties,
+    name: {
+      color: NEON,
+      fontSize: "24px",
+      fontWeight: 700,
+      marginBottom: "4px",
+    } as React.CSSProperties,
+    label: {
+      color: CYAN,
+      fontSize: "12px",
+      marginBottom: "12px",
+    } as React.CSSProperties,
+    contactLine: {
+      color: MUTED_COLOR,
+      fontSize: "11px",
+      marginBottom: "2px",
+    } as React.CSSProperties,
+    divider: {
+      color: BORDER_COLOR,
+      letterSpacing: "2px",
+      fontSize: "12px",
+      margin: "16px 0",
+      overflow: "hidden" as const,
+    } as React.CSSProperties,
+    sectionTitle: {
+      color: CYAN,
+      fontSize: "12px",
+      fontWeight: 700,
+      marginBottom: "12px",
+      marginTop: "20px",
+    } as React.CSSProperties,
+    commentPrefix: {
+      color: MUTED_COLOR,
+    } as React.CSSProperties,
+    entry: {
+      marginBottom: "20px",
+      paddingLeft: "8px",
+      borderLeft: `2px solid ${BORDER_COLOR}`,
+    } as React.CSSProperties,
+    entryCompany: {
+      color: NEON,
+      fontWeight: 700,
+      fontSize: "13px",
+      marginBottom: "1px",
+    } as React.CSSProperties,
+    entryPosition: {
+      color: TEXT,
+      fontSize: "12px",
+      marginBottom: "2px",
+    } as React.CSSProperties,
+    entryDate: {
+      color: MUTED_COLOR,
+      fontSize: "11px",
+      marginBottom: "6px",
+    } as React.CSSProperties,
+    text: {
+      color: "#A0A8B4",
+      fontSize: "12px",
+      marginBottom: "3px",
+    } as React.CSSProperties,
+    bullet: {
+      color: "#A0A8B4",
+      fontSize: "12px",
+      paddingLeft: "20px",
+      marginBottom: "2px",
+      position: "relative" as const,
+    } as React.CSSProperties,
+    bulletMark: {
+      position: "absolute" as const,
+      left: 0,
+      color: NEON,
+    } as React.CSSProperties,
+    skillKey: {
+      color: CYAN,
+      marginRight: "2px",
+    } as React.CSSProperties,
+    skillValue: {
+      color: NEON,
+    } as React.CSSProperties,
+    skillMuted: {
+      color: MUTED_COLOR,
+    } as React.CSSProperties,
+    tag: {
+      display: "inline-block",
+      backgroundColor: "#1F2937",
+      color: NEON,
+      border: `1px solid ${BORDER_COLOR}`,
+      padding: "1px 8px",
+      borderRadius: "3px",
+      fontSize: "11px",
+      marginRight: "4px",
+      marginBottom: "4px",
+    } as React.CSSProperties,
+  };
+
   const b = resume.basics;
   const contactItems = [b.email, b.phone, b.url, b.location?.city].filter(Boolean) as string[];
 

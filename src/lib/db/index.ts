@@ -21,9 +21,16 @@ sqlite.exec(`
     title TEXT NOT NULL,
     data TEXT NOT NULL,
     theme TEXT NOT NULL DEFAULT 'modern',
+    color_theme TEXT DEFAULT 'default',
     created_at INTEGER NOT NULL,
     updated_at INTEGER NOT NULL
   )
 `);
+
+try {
+  sqlite.exec(`ALTER TABLE resumes ADD COLUMN color_theme TEXT DEFAULT 'default'`);
+} catch {
+  // column already exists on pre-existing databases
+}
 
 export const db = drizzle(sqlite, { schema });
