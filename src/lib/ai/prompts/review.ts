@@ -1,43 +1,90 @@
-export const REVIEW_SYSTEM_PROMPT = `Tu es un expert en recrutement et en rédaction de CV avec plus de 15 ans d'expérience. Tu analyses des CV de manière rigoureuse et constructive.
+import { dump } from "js-yaml";
+import { REVIEW_CRITERIA, GRADE_SCALE } from "@/lib/ai/criteria/review";
+import type { Resume } from "@/lib/schemas/resume";
 
-Ton rôle est d'évaluer un CV selon 5 critères et de fournir des suggestions d'amélioration actionnables.
+// ─── Prompt système ───────────────────────────────────────────────────────────
 
-Critères d'évaluation (chacun noté sur 20, total sur 100):
-1. **Complétude** (20pts): Toutes les sections importantes sont-elles remplies? (contact, résumé, expériences, formation, compétences)
-2. **Impact** (20pts): Les descriptions utilisent-elles des verbes d'action, des métriques, des résultats quantifiés?
-3. **Clarté** (20pts): Le texte est-il concis, bien structuré, sans jargon inutile? Les phrases sont-elles bien formulées?
-4. **Pertinence** (20pts): Les mots-clés sont-ils adaptés au marché? Les compétences sont-elles à jour? Le contenu est-il pertinent?
-5. **Formatage** (20pts): La structure est-elle cohérente? Les dates sont-elles uniformes? L'organisation est-elle logique?
+function buildSystemPrompt(): string {
+  const criteriaBlock = REVIEW_CRITERIA.map((c) => {
+    const subs = c.subcriteria
+      .map((s) => `    - ${s.label} (${s.points} pts) : ${s.rule}`)
+      .join("\n");
+    return `## ${c.label} — ${c.maxScore} pts\n${c.description}\nSous-critères :\n${subs}`;
+  }).join("\n\n");
 
-Pour chaque suggestion, fournis:
-- La section concernée
-- La sévérité (critical, warning, info)
-- Un message clair expliquant le problème
-- Si applicable, une réécriture améliorée (original vs improved)
+  const gradeBlock = Object.entries(GRADE_SCALE)
+    .sort((a, b) => b[1].min - a[1].min)
+    .map(([g, { min, label }]) => `  ${g} : >= ${min} pts — ${label}`)
+    .join("\n");
 
-Réponds UNIQUEMENT en JSON valide selon ce format exact.`;
+  return `Tu es un expert en recrutement et en rédaction de CV avec 15 ans d'expérience.
+Tu analyses des CV de façon rigoureuse, constructive et actionnable.
 
-export const REVIEW_USER_PROMPT = `Analyse ce CV et fournis une évaluation détaillée.
+# Critères d'évaluation (total : 100 pts)
 
-CV à analyser:
----
-{resume}
----
+${criteriaBlock}
 
-Réponds en JSON avec cette structure exacte:
-{
+# Barème des notes
+
+${gradeBlock}
+
+# Règles
+- Évalue chaque sous-critère indépendamment et attribue les points correspondants.
+- Les suggestions doivent être concrètes : si tu proposes une réécriture, fournis l'original et la version améliorée.
+- Les "strengths" doivent mettre en valeur ce que le candidat fait déjà bien.
+- Réponds UNIQUEMENT en JSON valide, sans markdown, sans texte autour.`;
+}
+
+// ─── Prompt utilisateur ───────────────────────────────────────────────────────
+
+const RETURN_FORMAT = `{
   "overallScore": <number 0-100>,
+  "grade": <"A"|"B"|"C"|"D"|"F">,
   "categories": {
-    "completeness": { "score": <number 0-20>, "details": "<string>" },
-    "impact": { "score": <number 0-20>, "details": "<string>" },
-    "clarity": { "score": <number 0-20>, "details": "<string>" },
-    "relevance": { "score": <number 0-20>, "details": "<string>" },
-    "formatting": { "score": <number 0-20>, "details": "<string>" }
+    "completeness": {
+      "score": <number 0-20>,
+      "maxScore": 20,
+      "label": "Complétude",
+      "details": "<string : explication du score en 1-2 phrases>",
+      "checklist": [
+        { "label": "<string>", "passed": <boolean> }
+      ]
+    },
+    "impact": {
+      "score": <number 0-20>,
+      "maxScore": 20,
+      "label": "Impact",
+      "details": "<string>",
+      "checklist": [{ "label": "<string>", "passed": <boolean> }]
+    },
+    "clarity": {
+      "score": <number 0-20>,
+      "maxScore": 20,
+      "label": "Clarté",
+      "details": "<string>",
+      "checklist": [{ "label": "<string>", "passed": <boolean> }]
+    },
+    "relevance": {
+      "score": <number 0-20>,
+      "maxScore": 20,
+      "label": "Pertinence",
+      "details": "<string>",
+      "checklist": [{ "label": "<string>", "passed": <boolean> }]
+    },
+    "formatting": {
+      "score": <number 0-20>,
+      "maxScore": 20,
+      "label": "Formatage",
+      "details": "<string>",
+      "checklist": [{ "label": "<string>", "passed": <boolean> }]
+    }
   },
+  "strengths": ["<string>"],
   "suggestions": [
     {
-      "section": "<string: basics|work|education|skills|projects|volunteer|awards|certificates|languages>",
-      "severity": "<string: critical|warning|info>",
+      "section": "<string : basics|work|education|skills|projects|certificates|languages>",
+      "criterion": "<string : completeness|impact|clarity|relevance|formatting>",
+      "severity": "<string : critical|warning|info>",
       "message": "<string>",
       "rewrite": {
         "original": "<string>",
@@ -45,8 +92,36 @@ Réponds en JSON avec cette structure exacte:
       }
     }
   ],
-  "summary": "<string: résumé global en 2-3 phrases>"
+  "summary": "<string : synthèse globale en 2-3 phrases>"
+}`;
+
+function buildUserPrompt(resume: Resume): string {
+  const cvYaml = dump(resume, { indent: 2, lineWidth: 120, skipInvalid: true });
+
+  return `Analyse ce CV et retourne une évaluation complète.
+
+## CV du candidat (format YAML)
+
+\`\`\`yaml
+${cvYaml}
+\`\`\`
+
+## Format de retour attendu (JSON strict)
+
+Retourne UNIQUEMENT ce JSON, sans aucun texte avant ou après :
+
+${RETURN_FORMAT}
+
+Notes :
+- Le champ "rewrite" dans suggestions est optionnel : inclus-le uniquement quand tu proposes une réécriture concrète.
+- La checklist de chaque catégorie doit reprendre les sous-critères définis, avec passed=true si le critère est rempli.
+- overallScore = somme des scores des 5 catégories.`;
 }
 
-Le champ "rewrite" est optionnel, inclus-le uniquement quand tu proposes une réécriture concrète.
-Sois précis, constructif et actionnable dans tes suggestions.`;
+// ─── Exports ──────────────────────────────────────────────────────────────────
+
+export const REVIEW_SYSTEM_PROMPT = buildSystemPrompt();
+
+export function buildReviewUserPrompt(resume: Resume): string {
+  return buildUserPrompt(resume);
+}
