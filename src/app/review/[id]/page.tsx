@@ -22,6 +22,7 @@ import {
   LayoutTemplate,
   ThumbsUp,
   Star,
+  History,
 } from "lucide-react";
 import { Navbar } from "@/components/Navbar";
 
@@ -71,20 +72,44 @@ export default function ReviewPage() {
   const router = useRouter();
   const id = params.id as string;
 
+  interface ReviewRecord {
+    id: string;
+    resumeId: string;
+    version: number;
+    score: number;
+    grade: string;
+    data: ReviewResult;
+    createdAt: string;
+  }
+
   const [resume, setResume] = useState<Resume | null>(null);
   const [themeId, setThemeId] = useState<ThemeId>("modern");
   const [review, setReview] = useState<ReviewResult | null>(null);
+  const [reviewHistory, setReviewHistory] = useState<ReviewRecord[]>([]);
+  const [activeVersion, setActiveVersion] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
   const [reviewing, setReviewing] = useState(false);
 
   useEffect(() => {
     async function load() {
       try {
-        const res = await fetch(`/api/resumes/${id}`);
-        if (!res.ok) throw new Error("Not found");
-        const data = await res.json();
-        setResume(data.data as Resume);
-        setThemeId((data.theme as ThemeId) || "modern");
+        const [resumeRes, reviewsRes] = await Promise.all([
+          fetch(`/api/resumes/${id}`),
+          fetch(`/api/reviews/${id}`),
+        ]);
+        if (!resumeRes.ok) throw new Error("Not found");
+        const resumeData = await resumeRes.json();
+        setResume(resumeData.data as Resume);
+        setThemeId((resumeData.theme as ThemeId) || "modern");
+
+        if (reviewsRes.ok) {
+          const { latest, history } = await reviewsRes.json();
+          if (latest) {
+            setReview(latest.data as ReviewResult);
+            setActiveVersion(latest.version);
+          }
+          setReviewHistory(history ?? []);
+        }
       } catch {
         router.push("/");
       } finally {
@@ -104,11 +129,23 @@ export default function ReviewPage() {
       });
       const data = await res.json();
       setReview(data);
+
+      const reviewsRes = await fetch(`/api/reviews/${id}`);
+      if (reviewsRes.ok) {
+        const { history } = await reviewsRes.json();
+        setReviewHistory(history ?? []);
+        if (history?.[0]) setActiveVersion(history[0].version);
+      }
     } catch {
       console.error("Review failed");
     } finally {
       setReviewing(false);
     }
+  }
+
+  function selectVersion(record: ReviewRecord) {
+    setReview(record.data as ReviewResult);
+    setActiveVersion(record.version);
   }
 
   if (loading) {
@@ -145,6 +182,44 @@ export default function ReviewPage() {
         </div>
 
         <div className="flex-1 overflow-auto space-y-3">
+          {reviewHistory.length > 0 && (
+            <Card className="border-muted">
+              <CardContent className="py-2.5 px-4">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <div className="flex items-center gap-1.5 text-xs text-muted-foreground font-medium shrink-0">
+                    <History className="w-3.5 h-3.5" />
+                    Historique
+                  </div>
+                  {[...reviewHistory].reverse().map((r) => {
+                    const isActive = r.version === activeVersion;
+                    const gradeColor =
+                      r.grade === "A" ? "bg-emerald-100 text-emerald-700 border-emerald-200" :
+                      r.grade === "B" ? "bg-blue-100 text-blue-700 border-blue-200" :
+                      r.grade === "C" ? "bg-violet-100 text-violet-700 border-violet-200" :
+                      r.grade === "D" ? "bg-amber-100 text-amber-700 border-amber-200" :
+                      "bg-rose-100 text-rose-700 border-rose-200";
+                    return (
+                      <button
+                        key={r.id}
+                        onClick={() => selectVersion(r)}
+                        className={`flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-full border transition-all ${
+                          isActive
+                            ? `${gradeColor} font-bold ring-2 ring-offset-1 ring-current/30`
+                            : "border-muted-foreground/20 text-muted-foreground hover:border-muted-foreground/50"
+                        }`}
+                        title={new Date(r.createdAt).toLocaleString("fr-FR")}
+                      >
+                        <span className="font-bold">{r.grade}</span>
+                        <span>{r.score}/100</span>
+                        <span className="opacity-60">v{r.version}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
           {!review ? (
             <Card className="border-2 border-dashed border-muted-foreground/20">
               <CardContent className="py-16 text-center">

@@ -13,3 +13,15 @@ export const resumes = sqliteTable("resumes", {
     .notNull()
     .$defaultFn(() => new Date()),
 });
+
+export const reviews = sqliteTable("reviews", {
+  id: text("id").primaryKey(),
+  resumeId: text("resume_id").notNull(),
+  version: integer("version").notNull(),
+  score: integer("score").notNull(),
+  grade: text("grade").notNull(),
+  data: text("data", { mode: "json" }).notNull(),
+  createdAt: integer("created_at", { mode: "timestamp" })
+    .notNull()
+    .$defaultFn(() => new Date()),
+});

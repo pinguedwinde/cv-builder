@@ -27,6 +27,18 @@ sqlite.exec(`
   )
 `);
 
+sqlite.exec(`
+  CREATE TABLE IF NOT EXISTS reviews (
+    id TEXT PRIMARY KEY,
+    resume_id TEXT NOT NULL,
+    version INTEGER NOT NULL,
+    score INTEGER NOT NULL,
+    grade TEXT NOT NULL,
+    data TEXT NOT NULL,
+    created_at INTEGER NOT NULL
+  )
+`);
+
 try {
   sqlite.exec(`ALTER TABLE resumes ADD COLUMN color_theme TEXT DEFAULT 'default'`);
 } catch {

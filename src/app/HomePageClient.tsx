@@ -20,8 +20,16 @@ interface ResumeRecord {
   updatedAt: string;
 }
 
+interface ReviewSummary {
+  score: number;
+  grade: string;
+  version: number;
+  createdAt: string;
+}
+
 interface HomePageClientProps {
   initialResumes: ResumeRecord[];
+  initialReviewsSummary: Record<string, ReviewSummary>;
 }
 
 const themeAccents: Record<string, string> = {
@@ -38,9 +46,18 @@ const themeAccents: Record<string, string> = {
   bold: "border-yellow-400",
 };
 
-export function HomePageClient({ initialResumes }: HomePageClientProps) {
+const gradeStyles: Record<string, string> = {
+  A: "bg-emerald-100 text-emerald-700 border-emerald-200",
+  B: "bg-blue-100 text-blue-700 border-blue-200",
+  C: "bg-violet-100 text-violet-700 border-violet-200",
+  D: "bg-amber-100 text-amber-700 border-amber-200",
+  F: "bg-rose-100 text-rose-700 border-rose-200",
+};
+
+export function HomePageClient({ initialResumes, initialReviewsSummary }: HomePageClientProps) {
   const router = useRouter();
   const [resumes, setResumes] = useState<ResumeRecord[]>(initialResumes);
+  const [reviewsSummary, setReviewsSummary] = useState<Record<string, ReviewSummary>>(initialReviewsSummary);
   const [showImport, setShowImport] = useState(false);
   const [importContent, setImportContent] = useState("");
   const [importTitle, setImportTitle] = useState("");
@@ -228,15 +245,26 @@ export function HomePageClient({ initialResumes }: HomePageClientProps) {
               const theme = themes[resume.theme as keyof typeof themes];
               const basics = resume.data?.basics as { name?: string; label?: string } | undefined;
               const accentBorder = themeAccents[resume.theme] ?? "border-primary";
+              const reviewSummary = reviewsSummary[resume.id];
               return (
                 <motion.div key={resume.id} variants={cardVariants} whileTap={{ scale: 0.98 }}>
                   <Card className={`card-hover border-t-4 ${accentBorder}`}>
                     <CardHeader className="pb-3">
                       <CardTitle className="text-base flex items-center justify-between gap-2">
                         <span className="truncate">{resume.title}</span>
-                        <span className="text-xs font-normal text-muted-foreground bg-muted px-2 py-0.5 rounded-full shrink-0">
-                          {theme?.name || resume.theme}
-                        </span>
+                        <div className="flex items-center gap-1.5 shrink-0">
+                          {reviewSummary && (
+                            <span
+                              className={`text-xs font-bold px-2 py-0.5 rounded-full border ${gradeStyles[reviewSummary.grade] ?? gradeStyles.F}`}
+                              title={`Revue v${reviewSummary.version} — ${reviewSummary.score}/100`}
+                            >
+                              {reviewSummary.grade} {reviewSummary.score}
+                            </span>
+                          )}
+                          <span className="text-xs font-normal text-muted-foreground bg-muted px-2 py-0.5 rounded-full">
+                            {theme?.name || resume.theme}
+                          </span>
+                        </div>
                       </CardTitle>
                       {basics?.label && (
                         <p className="text-xs text-muted-foreground truncate">{basics.label}</p>
@@ -245,6 +273,11 @@ export function HomePageClient({ initialResumes }: HomePageClientProps) {
                     <CardContent className="pt-0">
                       <p className="text-xs text-muted-foreground mb-4">
                         Mis a jour le {new Date(resume.updatedAt).toLocaleDateString("fr-FR")}
+                        {reviewSummary && (
+                          <span className="ml-2 text-muted-foreground/70">
+                            · Revue v{reviewSummary.version}
+                          </span>
+                        )}
                       </p>
                       <Button
                         size="sm"

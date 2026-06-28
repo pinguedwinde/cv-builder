@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getResumeById } from "@/lib/db/queries";
+import { getResumeById, saveReview } from "@/lib/db/queries";
 import { reviewResume } from "@/lib/ai/review";
 import type { Resume } from "@/lib/schemas/resume";
 
@@ -23,6 +23,11 @@ export async function POST(request: NextRequest) {
     }
 
     const result = await reviewResume(resume);
+
+    if (resumeId) {
+      saveReview(resumeId, result);
+    }
+
     return NextResponse.json(result);
   } catch (err) {
     console.error("Review error:", err);
