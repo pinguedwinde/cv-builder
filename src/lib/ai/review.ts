@@ -1,4 +1,6 @@
 import { getOpenAIClient, isAIEnabled } from "./client";
+import { callClaudeCli } from "./claudeCliClient";
+import { parseReviewResult } from "./outputSchemas";
 import { REVIEW_SYSTEM_PROMPT, buildReviewUserPrompt } from "./prompts/review";
 import { scoreToGrade } from "./criteria/review";
 import type { Resume } from "@/lib/schemas/resume";
@@ -145,9 +147,13 @@ export function reviewResumeLocal(resume: Resume): ReviewResult {
 
 export async function reviewResumeAI(resume: Resume): Promise<ReviewResult> {
   const client = getOpenAIClient();
-  if (!client) return reviewResumeLocal(resume);
+  if (!client) {
+    console.log("[review] OpenAI client unavailable → fallback heuristique");
+    return reviewResumeLocal(resume);
+  }
 
   const model = process.env.OPENAI_MODEL || "gpt-4o";
+  console.log(`[review] Appel OpenAI (${model})…`);
 
   try {
     const response = await client.chat.completions.create({
@@ -161,15 +167,47 @@ export async function reviewResumeAI(resume: Resume): Promise<ReviewResult> {
     });
 
     const content = response.choices[0]?.message?.content;
-    if (!content) return reviewResumeLocal(resume);
+    if (!content) {
+      console.warn("[review] OpenAI : réponse vide → fallback heuristique");
+      return reviewResumeLocal(resume);
+    }
 
-    return JSON.parse(content) as ReviewResult;
-  } catch {
+    const parsed = parseReviewResult(content);
+    if (!parsed) {
+      console.warn("[review] OpenAI : validation Zod échouée → fallback heuristique");
+      return reviewResumeLocal(resume);
+    }
+
+    console.log(`[review] OpenAI OK — score ${parsed.overallScore}/100 (${parsed.grade})`);
+    return parsed as ReviewResult;
+  } catch (err) {
+    console.error("[review] OpenAI erreur :", err instanceof Error ? err.message : err);
     return reviewResumeLocal(resume);
   }
 }
 
+async function reviewResumeClaudeCli(resume: Resume): Promise<ReviewResult | null> {
+  console.log("[review] Appel Claude CLI…");
+  const raw = await callClaudeCli(REVIEW_SYSTEM_PROMPT, buildReviewUserPrompt(resume));
+  if (!raw) {
+    console.warn("[review] Claude CLI : pas de réponse");
+    return null;
+  }
+  const parsed = parseReviewResult(raw);
+  if (!parsed) {
+    console.warn("[review] Claude CLI : validation Zod échouée");
+    return null;
+  }
+  console.log(`[review] Claude CLI OK — score ${parsed.overallScore}/100 (${parsed.grade})`);
+  return parsed as ReviewResult;
+}
+
 export async function reviewResume(resume: Resume): Promise<ReviewResult> {
   if (isAIEnabled()) return reviewResumeAI(resume);
+
+  const cliResult = await reviewResumeClaudeCli(resume);
+  if (cliResult) return cliResult;
+
+  console.log("[review] Fallback heuristique");
   return reviewResumeLocal(resume);
 }
