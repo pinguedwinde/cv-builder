@@ -9,8 +9,62 @@ import { ThemeRenderer } from "@/components/themes/ThemeRenderer";
 import type { Resume } from "@/lib/schemas/resume";
 import type { ThemeId } from "@/themes";
 import type { ReviewResult } from "@/lib/ai/review";
-import { RefreshCw, AlertTriangle, AlertCircle, Info, CheckCircle } from "lucide-react";
+import {
+  RefreshCw,
+  AlertTriangle,
+  XCircle,
+  Lightbulb,
+  Sparkles,
+  ClipboardList,
+  Zap,
+  Eye,
+  Target,
+  LayoutTemplate,
+  ThumbsUp,
+  Star,
+} from "lucide-react";
 import { Navbar } from "@/components/Navbar";
+
+function getGrade(score: number) {
+  if (score >= 90) return { grade: "A", label: "Excellent !", gradient: "from-emerald-500 to-teal-400" };
+  if (score >= 80) return { grade: "B", label: "Très bien !", gradient: "from-blue-500 to-cyan-400" };
+  if (score >= 70) return { grade: "C", label: "Bien !", gradient: "from-violet-500 to-purple-400" };
+  if (score >= 60) return { grade: "D", label: "À améliorer", gradient: "from-amber-500 to-orange-400" };
+  return { grade: "F", label: "Besoin de travail", gradient: "from-rose-500 to-red-400" };
+}
+
+function getScoreTextColor(score: number): string {
+  if (score >= 80) return "text-emerald-600";
+  if (score >= 60) return "text-amber-600";
+  if (score >= 40) return "text-orange-500";
+  return "text-rose-600";
+}
+
+function getBarColor(score: number): string {
+  if (score >= 80) return "bg-emerald-500";
+  if (score >= 60) return "bg-amber-500";
+  if (score >= 40) return "bg-orange-500";
+  return "bg-rose-500";
+}
+
+function getSeverityIcon(severity: string) {
+  switch (severity) {
+    case "critical":
+      return <XCircle className="w-4 h-4 text-rose-500 shrink-0 mt-0.5" />;
+    case "warning":
+      return <AlertTriangle className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />;
+    default:
+      return <Lightbulb className="w-4 h-4 text-sky-500 shrink-0 mt-0.5" />;
+  }
+}
+
+const categoryConfig: Record<string, { label: string; icon: React.ReactNode; color: string }> = {
+  completeness: { label: "Complétude", icon: <ClipboardList className="w-4 h-4" />, color: "text-indigo-500" },
+  impact: { label: "Impact", icon: <Zap className="w-4 h-4" />, color: "text-amber-500" },
+  clarity: { label: "Clarté", icon: <Eye className="w-4 h-4" />, color: "text-cyan-500" },
+  relevance: { label: "Pertinence", icon: <Target className="w-4 h-4" />, color: "text-rose-500" },
+  formatting: { label: "Formatage", icon: <LayoutTemplate className="w-4 h-4" />, color: "text-purple-500" },
+};
 
 export default function ReviewPage() {
   const params = useParams();
@@ -57,28 +111,6 @@ export default function ReviewPage() {
     }
   }
 
-  function getScoreColor(score: number): string {
-    if (score >= 80) return "text-green-600";
-    if (score >= 60) return "text-yellow-600";
-    if (score >= 40) return "text-orange-600";
-    return "text-red-600";
-  }
-
-  function getProgressColor(score: number): string {
-    if (score >= 80) return "bg-green-500";
-    if (score >= 60) return "bg-yellow-500";
-    if (score >= 40) return "bg-orange-500";
-    return "bg-red-500";
-  }
-
-  function getSeverityIcon(severity: string) {
-    switch (severity) {
-      case "critical": return <AlertCircle className="w-4 h-4 text-red-500" />;
-      case "warning": return <AlertTriangle className="w-4 h-4 text-yellow-500" />;
-      default: return <Info className="w-4 h-4 text-blue-500" />;
-    }
-  }
-
   if (loading) {
     return <div className="flex items-center justify-center h-screen">Chargement...</div>;
   }
@@ -92,12 +124,14 @@ export default function ReviewPage() {
       <Button variant="outline" size="sm" onClick={() => router.push(`/editor/${id}`)}>
         Editer
       </Button>
-      <Button size="sm" onClick={runReview} disabled={reviewing}>
+      <Button size="sm" onClick={runReview} disabled={reviewing} className="gap-1.5">
         <RefreshCw className={`w-4 h-4 ${reviewing ? "animate-spin" : ""}`} />
-        <span className="hidden sm:inline">{reviewing ? "Analyse..." : "Lancer la revue"}</span>
+        <span className="hidden sm:inline">{reviewing ? "Analyse en cours..." : "Relancer"}</span>
       </Button>
     </div>
   );
+
+  const grade = review ? getGrade(review.overallScore) : null;
 
   return (
     <div className="h-screen flex flex-col bg-background overflow-hidden">
@@ -110,111 +144,163 @@ export default function ReviewPage() {
           </div>
         </div>
 
-        <div className="flex-1 overflow-auto space-y-4">
+        <div className="flex-1 overflow-auto space-y-3">
           {!review ? (
-            <Card>
-              <CardContent className="py-12 text-center">
-                <CheckCircle className="w-12 h-12 text-muted-foreground/40 mx-auto mb-4" />
-                <h3 className="text-lg font-semibold text-foreground mb-2">Prêt pour la revue</h3>
-                <p className="text-sm text-muted-foreground mb-4">
-                  Cliquez sur &quot;Lancer la revue&quot; pour analyser votre CV et obtenir un score détaillé.
+            <Card className="border-2 border-dashed border-muted-foreground/20">
+              <CardContent className="py-16 text-center">
+                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-violet-100 to-indigo-100 flex items-center justify-center mx-auto mb-5">
+                  <Sparkles className="w-8 h-8 text-violet-500" />
+                </div>
+                <h3 className="text-lg font-bold text-foreground mb-2">Analyse IA de votre CV</h3>
+                <p className="text-sm text-muted-foreground mb-6 max-w-xs mx-auto leading-relaxed">
+                  Obtenez un score détaillé, identifiez vos points forts et recevez des suggestions personnalisées.
                 </p>
-                <Button onClick={runReview} disabled={reviewing}>
-                  <RefreshCw className={`w-4 h-4 ${reviewing ? "animate-spin" : ""}`} />
-                  Lancer l&apos;analyse
+                <Button
+                  onClick={runReview}
+                  disabled={reviewing}
+                  className="gap-2 bg-gradient-to-r from-violet-500 to-indigo-600 hover:from-violet-600 hover:to-indigo-700 text-white border-0 shadow-md"
+                >
+                  <Sparkles className="w-4 h-4" />
+                  Analyser mon CV
                 </Button>
               </CardContent>
             </Card>
           ) : (
             <>
+              {/* Score global */}
+              <div className={`rounded-2xl bg-gradient-to-br ${grade!.gradient} p-5 text-white shadow-lg`}>
+                <div className="flex items-center gap-4">
+                  <div className="flex-shrink-0 w-20 h-20 rounded-2xl bg-white/20 backdrop-blur-sm flex flex-col items-center justify-center shadow-inner">
+                    <span className="text-4xl font-black leading-none">{grade!.grade}</span>
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between mb-1">
+                      <p className="text-white/80 text-sm font-semibold">{grade!.label}</p>
+                      <span className="text-2xl font-bold tabular-nums">{review.overallScore}<span className="text-base font-normal opacity-70">/100</span></span>
+                    </div>
+                    <div className="h-2.5 bg-white/25 rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-white rounded-full transition-all duration-700"
+                        style={{ width: `${review.overallScore}%` }}
+                      />
+                    </div>
+                    <p className="text-white/75 text-xs mt-2.5 leading-snug line-clamp-3">{review.summary}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Points forts */}
+              {review.strengths && review.strengths.length > 0 && (
+                <Card className="border-emerald-200 bg-gradient-to-br from-emerald-50 to-teal-50/60">
+                  <CardHeader className="pb-2 pt-4 px-4">
+                    <CardTitle className="text-sm flex items-center gap-2 text-emerald-700">
+                      <ThumbsUp className="w-4 h-4 fill-emerald-200" />
+                      Points forts
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-2 px-4 pb-4">
+                    {review.strengths.map((s, i) => (
+                      <div key={i} className="flex items-start gap-2">
+                        <Star className="w-3.5 h-3.5 text-emerald-500 fill-emerald-400 shrink-0 mt-0.5" />
+                        <p className="text-sm text-emerald-800 leading-snug">{s}</p>
+                      </div>
+                    ))}
+                  </CardContent>
+                </Card>
+              )}
+
+              {/* Catégories */}
               <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-base flex items-center justify-between">
-                    Score Global
-                    <span className={`text-3xl font-bold ${getScoreColor(review.overallScore)}`}>
-                      {review.overallScore}/100
-                    </span>
+                <CardHeader className="pb-2 pt-4 px-4">
+                  <CardTitle className="text-xs uppercase tracking-widest text-muted-foreground font-semibold">
+                    Détail par catégorie
                   </CardTitle>
                 </CardHeader>
-                <CardContent>
-                  <Progress value={review.overallScore} className="h-3" indicatorClassName={getProgressColor(review.overallScore)} />
-                  <p className="text-sm text-muted-foreground mt-3">{review.summary}</p>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-base">Détails par catégorie</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-3">
+                <CardContent className="space-y-4 px-4 pb-4">
                   {Object.entries(review.categories).map(([key, cat]) => {
-                    const labels: Record<string, string> = {
-                      completeness: "Complétude",
-                      impact: "Impact",
-                      clarity: "Clarté",
-                      relevance: "Pertinence",
-                      formatting: "Formatage",
-                    };
+                    const cfg = categoryConfig[key];
                     const score = (cat as { score: number; details: string }).score;
                     const details = (cat as { score: number; details: string }).details;
+                    const pct = score * 5;
                     return (
                       <div key={key}>
-                        <div className="flex justify-between text-sm mb-1">
-                          <span className="font-medium">{labels[key] || key}</span>
-                          <span className={getScoreColor(score * 5)}>{score}/20</span>
+                        <div className="flex items-center justify-between mb-1.5">
+                          <div className={`flex items-center gap-1.5 text-sm font-semibold ${cfg?.color ?? "text-foreground"}`}>
+                            {cfg?.icon}
+                            <span>{cfg?.label ?? key}</span>
+                          </div>
+                          <span className={`text-sm font-bold tabular-nums ${getScoreTextColor(pct)}`}>{score}<span className="font-normal opacity-60">/20</span></span>
                         </div>
-                        <Progress value={score * 5} className="h-2" indicatorClassName={getProgressColor(score * 5)} />
-                        <p className="text-xs text-muted-foreground mt-0.5">{details}</p>
+                        <Progress value={pct} className="h-2" indicatorClassName={getBarColor(pct)} />
+                        <p className="text-xs text-muted-foreground mt-1 leading-snug">{details}</p>
                       </div>
                     );
                   })}
                 </CardContent>
               </Card>
 
+              {/* Suggestions */}
               {review.suggestions.length > 0 && (
                 <Card>
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-base">
-                      Suggestions ({review.suggestions.length})
+                  <CardHeader className="pb-2 pt-4 px-4">
+                    <CardTitle className="text-sm flex items-center gap-2">
+                      <Lightbulb className="w-4 h-4 text-amber-500 fill-amber-100" />
+                      Suggestions
+                      <span className="ml-auto text-xs font-semibold bg-muted text-muted-foreground px-2.5 py-0.5 rounded-full">
+                        {review.suggestions.length}
+                      </span>
                     </CardTitle>
                   </CardHeader>
-                  <CardContent className="space-y-3">
-                    {review.suggestions.map((s, i) => (
-                      <div
-                        key={i}
-                        className={`p-3 rounded-lg border-l-4 ${
-                          s.severity === "critical"
-                            ? "border-red-500 bg-red-50"
-                            : s.severity === "warning"
-                              ? "border-yellow-500 bg-yellow-50"
-                              : "border-blue-500 bg-blue-50"
-                        }`}
-                      >
-                        <div className="flex items-start gap-2">
-                          {getSeverityIcon(s.severity)}
-                          <div className="flex-1">
-                            <div className="flex items-center gap-2 mb-1">
-                              <span className="text-xs font-semibold uppercase text-muted-foreground bg-card px-1.5 py-0.5 rounded">
-                                {s.section}
-                              </span>
-                            </div>
-                            <p className="text-sm">{s.message}</p>
-                            {s.rewrite && (
-                              <div className="mt-2 space-y-1">
-                                <div className="text-xs bg-card p-2 rounded border">
-                                  <span className="font-semibold text-red-600">Avant: </span>
-                                  <span className="text-muted-foreground">{s.rewrite.original}</span>
-                                </div>
-                                <div className="text-xs bg-card p-2 rounded border">
-                                  <span className="font-semibold text-green-600">Après: </span>
-                                  <span className="text-muted-foreground">{s.rewrite.improved}</span>
-                                </div>
+                  <CardContent className="space-y-3 px-4 pb-4">
+                    {review.suggestions.map((s, i) => {
+                      const isC = s.severity === "critical";
+                      const isW = s.severity === "warning";
+                      return (
+                        <div
+                          key={i}
+                          className={`p-3 rounded-xl border ${
+                            isC
+                              ? "bg-rose-50 border-rose-200"
+                              : isW
+                                ? "bg-amber-50 border-amber-200"
+                                : "bg-sky-50 border-sky-200"
+                          }`}
+                        >
+                          <div className="flex items-start gap-2.5">
+                            {getSeverityIcon(s.severity)}
+                            <div className="flex-1 min-w-0">
+                              <div className="flex flex-wrap items-center gap-1.5 mb-1.5">
+                                <span
+                                  className={`text-xs font-bold px-2 py-0.5 rounded-full ${
+                                    isC
+                                      ? "bg-rose-100 text-rose-700"
+                                      : isW
+                                        ? "bg-amber-100 text-amber-700"
+                                        : "bg-sky-100 text-sky-700"
+                                  }`}
+                                >
+                                  {isC ? "Critique" : isW ? "Attention" : "Conseil"}
+                                </span>
+                                <span className="text-xs text-muted-foreground font-medium">{s.section}</span>
                               </div>
-                            )}
+                              <p className="text-sm leading-snug">{s.message}</p>
+                              {s.rewrite && (
+                                <div className="mt-2.5 space-y-1.5">
+                                  <div className="text-xs bg-white/80 p-2.5 rounded-lg border border-rose-200">
+                                    <span className="font-bold text-rose-600 block mb-1">✗ Avant</span>
+                                    <span className="text-muted-foreground leading-snug">{s.rewrite.original}</span>
+                                  </div>
+                                  <div className="text-xs bg-white/80 p-2.5 rounded-lg border border-emerald-200">
+                                    <span className="font-bold text-emerald-600 block mb-1">✓ Après</span>
+                                    <span className="text-muted-foreground leading-snug">{s.rewrite.improved}</span>
+                                  </div>
+                                </div>
+                              )}
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </CardContent>
                 </Card>
               )}
@@ -225,4 +311,3 @@ export default function ReviewPage() {
     </div>
   );
 }
-
