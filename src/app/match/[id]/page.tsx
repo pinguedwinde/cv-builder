@@ -447,21 +447,35 @@ export default function MatchPage() {
                           m.jobUrl ? `URL : ${m.jobUrl}` : null,
                         ].filter(Boolean).join("\n");
                         return (
-                          <button
-                            key={m.id}
-                            onClick={() => selectVersion(m)}
-                            className={`flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-full border transition-all ${
-                              isActive
-                                ? `${badgeStyle} font-bold ring-2 ring-offset-1 ring-current/30`
-                                : "border-muted-foreground/20 text-muted-foreground hover:border-muted-foreground/50"
-                            }`}
-                            title={tooltipLines}
-                          >
-                            <span>{typeIcon}</span>
-                            <span className="font-bold">{m.matchScore}%</span>
-                            <span className="max-w-[80px] truncate opacity-80">{label}</span>
-                            <span className="opacity-60">v{m.version}</span>
-                          </button>
+                          <div key={m.id} className="flex items-center gap-0.5">
+                            <button
+                              onClick={() => selectVersion(m)}
+                              className={`flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-l-full border border-r-0 transition-all ${
+                                isActive
+                                  ? `${badgeStyle} font-bold ring-2 ring-offset-1 ring-current/30`
+                                  : "border-muted-foreground/20 text-muted-foreground hover:border-muted-foreground/50"
+                              }`}
+                              title={tooltipLines}
+                            >
+                              <span>{typeIcon}</span>
+                              <span className="font-bold">{m.matchScore}%</span>
+                              <span className="max-w-[80px] truncate opacity-80">{label}</span>
+                              <span className="opacity-60">v{m.version}</span>
+                            </button>
+                            <a
+                              href={`/api/export/match-pdf?resumeId=${id}&version=${m.version}`}
+                              download
+                              className={`flex items-center justify-center px-1.5 py-1 rounded-r-full border text-xs transition-all ${
+                                isActive
+                                  ? `${badgeStyle} opacity-80 hover:opacity-100`
+                                  : "border-muted-foreground/20 text-muted-foreground hover:border-muted-foreground/50 hover:text-foreground"
+                              }`}
+                              title={`Télécharger v${m.version}`}
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              <Download className="w-3 h-3" />
+                            </a>
+                          </div>
                         );
                       })}
                     </div>

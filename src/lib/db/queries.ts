@@ -96,6 +96,17 @@ export function getLatestReview(resumeId: string) {
   );
 }
 
+export function getReviewByVersion(resumeId: string, version: number) {
+  return (
+    db
+      .select()
+      .from(reviews)
+      .where(eq(reviews.resumeId, resumeId))
+      .all()
+      .find((r) => r.version === version) ?? null
+  );
+}
+
 export function getReviewHistory(resumeId: string) {
   return db
     .select()
@@ -162,6 +173,17 @@ export function getLatestMatch(resumeId: string) {
       .orderBy(desc(matches.version))
       .limit(1)
       .get() ?? null
+  );
+}
+
+export function getMatchByVersion(resumeId: string, version: number) {
+  return (
+    db
+      .select()
+      .from(matches)
+      .where(eq(matches.resumeId, resumeId))
+      .all()
+      .find((m) => m.version === version) ?? null
   );
 }
 

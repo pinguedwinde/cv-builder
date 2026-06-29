@@ -254,20 +254,34 @@ export default function ReviewPage() {
                       r.grade === "D" ? "bg-amber-100 text-amber-700 border-amber-200" :
                       "bg-rose-100 text-rose-700 border-rose-200";
                     return (
-                      <button
-                        key={r.id}
-                        onClick={() => selectVersion(r)}
-                        className={`flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-full border transition-all ${
-                          isActive
-                            ? `${gradeColor} font-bold ring-2 ring-offset-1 ring-current/30`
-                            : "border-muted-foreground/20 text-muted-foreground hover:border-muted-foreground/50"
-                        }`}
-                        title={new Date(r.createdAt).toLocaleString("fr-FR")}
-                      >
-                        <span className="font-bold">{r.grade}</span>
-                        <span>{r.score}/100</span>
-                        <span className="opacity-60">v{r.version}</span>
-                      </button>
+                      <div key={r.id} className="flex items-center gap-0.5">
+                        <button
+                          onClick={() => selectVersion(r)}
+                          className={`flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-l-full border border-r-0 transition-all ${
+                            isActive
+                              ? `${gradeColor} font-bold ring-2 ring-offset-1 ring-current/30`
+                              : "border-muted-foreground/20 text-muted-foreground hover:border-muted-foreground/50"
+                          }`}
+                          title={new Date(r.createdAt).toLocaleString("fr-FR")}
+                        >
+                          <span className="font-bold">{r.grade}</span>
+                          <span>{r.score}/100</span>
+                          <span className="opacity-60">v{r.version}</span>
+                        </button>
+                        <a
+                          href={`/api/export/review-pdf?resumeId=${id}&version=${r.version}`}
+                          download
+                          className={`flex items-center justify-center px-1.5 py-1 rounded-r-full border text-xs transition-all ${
+                            isActive
+                              ? `${gradeColor} opacity-80 hover:opacity-100`
+                              : "border-muted-foreground/20 text-muted-foreground hover:border-muted-foreground/50 hover:text-foreground"
+                          }`}
+                          title={`Télécharger v${r.version}`}
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <Download className="w-3 h-3" />
+                        </a>
+                      </div>
                     );
                   })}
                 </div>
