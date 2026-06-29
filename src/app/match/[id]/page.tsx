@@ -71,6 +71,15 @@ export default function MatchPage() {
             setMatchResult(latest.data as MatchResult);
             setActiveVersion(latest.version);
             setActiveRecord(latest as MatchRecord);
+            // Pre-populate the form from the last match so the user can re-run immediately
+            if (latest.jobTitle) setJobTitle(latest.jobTitle);
+            if (latest.jobType === "url" && latest.jobUrl) {
+              setJobType("url");
+              setJobUrl(latest.jobUrl);
+            } else if (latest.jobDescription) {
+              setJobType("text");
+              setJobContent(latest.jobDescription);
+            }
           }
           setMatchHistory(history ?? []);
         }
@@ -101,6 +110,11 @@ export default function MatchPage() {
         }),
       });
       const data = await res.json();
+      if (!res.ok) {
+        console.error("Match API error:", data);
+        alert(data.details || data.error || "Erreur lors de l'analyse. Vérifiez la console.");
+        return;
+      }
       setMatchResult(data);
       if (data.optimizedResume) {
         setOptimizedResume(data.optimizedResume);
@@ -202,13 +216,13 @@ export default function MatchPage() {
 
       <div className="flex flex-1 gap-4 px-4 pb-4 pt-2 min-h-0">
         <div className="w-1/2 flex flex-col gap-4 min-h-0">
-          <Card className="flex flex-col flex-1 min-h-0">
+          <Card className="flex flex-col flex-shrink-0 min-h-[260px]">
             <CardHeader className="pb-2 shrink-0">
               <CardTitle className="text-base flex items-center gap-2">
                 <Target className="w-4 h-4" /> Offre d&apos;emploi
               </CardTitle>
             </CardHeader>
-            <CardContent className="flex flex-col flex-1 gap-3 min-h-0 overflow-hidden">
+            <CardContent className="flex flex-col gap-3 min-h-0 overflow-hidden">
               <div className="flex gap-2 shrink-0">
                 <Button
                   variant={jobType === "text" ? "default" : "outline"}
@@ -233,7 +247,7 @@ export default function MatchPage() {
                   value={jobContent}
                   onChange={(e) => setJobContent(e.target.value)}
                   placeholder="Collez le texte de l'offre d'emploi ici..."
-                  className="flex-1 resize-none text-xs min-h-0"
+                  className="resize-none text-xs min-h-[80px]"
                 />
               ) : (
                 <Input
@@ -283,7 +297,7 @@ export default function MatchPage() {
             </CardContent>
           </Card>
 
-          <div className="overflow-auto space-y-4 shrink-0">
+          <div className="flex-1 overflow-auto space-y-4 min-h-0">
 
           {matchHistory.length > 0 && (
             <Card className="border-muted">

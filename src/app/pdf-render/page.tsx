@@ -145,7 +145,7 @@ function PdfRenderContent() {
       pdfDone.current = true;
       const previewer = new Previewer();
       // null triggers removeStyles() so pagedjs collects our injected CSS
-      await previewer.preview(bodyContent, null, document.body);
+      await previewer.preview(bodyContent, null as unknown as string[], document.body);
 
       // Propagate the theme's background color to all pagedjs pages so the
       // empty area at the bottom of the last page doesn't show as white.
