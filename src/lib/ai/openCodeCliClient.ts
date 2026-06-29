@@ -1,12 +1,15 @@
 import { spawn } from "child_process";
+import { randomUUID } from "crypto";
+import { mkdir, readFile, unlink } from "fs/promises";
 import { join } from "path";
-import { readFile } from "fs/promises";
 
 // Résoudre le binaire via env (override) ou depuis le PATH système.
 const OPENCODE_BIN = process.env.OPENCODE_BIN || "opencode";
 
 // Même répertoire que le runner claude CLI : CLAUDE.md interdit les outils.
 const RUNNER_DIR = join(process.cwd(), "src/lib/ai/runner");
+// Sous-dossier tmp isolé pour les fichiers par-appel (évite les race conditions).
+const TMP_DIR = join(RUNNER_DIR, "tmp");
 
 function stripMarkdownFences(text: string): string {
   return text.replace(/^```(?:json)?\s*/i, "").replace(/\s*```\s*$/, "").trim();
@@ -25,9 +28,10 @@ export async function callOpenCodeCli(
   userPrompt: string,
   timeoutMs = 300_000
 ): Promise<string | null> {
-  // Fichier dans le runner pour éviter le rejet de permission external_directory.
-  // Nom fixe : écrasé à chaque appel, pas besoin de nettoyage.
-  const tmpFile = join(RUNNER_DIR, "opencode-result.json");
+  // Fichier unique par appel dans tmp/ pour permettre les connexions parallèles
+  // sans race condition sur un fichier partagé.
+  await mkdir(TMP_DIR, { recursive: true });
+  const tmpFile = join(TMP_DIR, `opencode-result-${randomUUID()}.json`);
 
   // Prompt fusionné : system instructions + tâche + instruction fichier.
   const combinedPrompt = [
@@ -81,6 +85,8 @@ export async function callOpenCodeCli(
         const raw = await readFile(tmpFile, "utf-8");
         const result = stripMarkdownFences(raw.trim());
         console.log("[opencode-cli] Résultat extrait :", result.slice(0, 200));
+        // Nettoyage du fichier tmp après lecture.
+        unlink(tmpFile).catch(() => {});
         settle(result);
       } catch (err) {
         console.error(

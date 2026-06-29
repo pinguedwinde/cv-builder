@@ -56,3 +56,5 @@ next-env.d.ts
 
 # Fichier temporaire opencode CLI
 src/lib/ai/runner/opencode-result.json
+# Fichiers tmp par-appel opencode (générés à l'exécution)
+src/lib/ai/runner/tmp/*.json
