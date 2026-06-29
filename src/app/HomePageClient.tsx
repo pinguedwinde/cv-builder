@@ -327,9 +327,16 @@ export function HomePageClient({ initialResumes, initialReviewsSummary, initialM
                               <div className="flex items-baseline gap-1">
                                 <span className="text-2xl font-black leading-none">{matchSummary.matchScore}%</span>
                               </div>
-                              <span className="text-xs opacity-60 truncate">
-                                {matchSummary.jobTitle ?? `v${matchSummary.version}`}
-                              </span>
+                              <div className="flex items-center gap-1.5 flex-wrap">
+                                <span className="text-xs opacity-60 truncate">
+                                  {matchSummary.jobTitle ?? `v${matchSummary.version}`}
+                                </span>
+                                {matchSummary.matchScore >= 75 && (
+                                  <span className="text-xs font-bold bg-emerald-200 text-emerald-800 px-1.5 py-0.5 rounded-full leading-none shrink-0">
+                                    Prêt ✓
+                                  </span>
+                                )}
+                              </div>
                             </>
                           ) : (
                             <span className="text-xs mt-1">Analyser →</span>

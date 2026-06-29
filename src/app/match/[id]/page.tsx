@@ -16,6 +16,7 @@ import {
   Link, FileText, Target, CheckCircle,
   AlertTriangle, XCircle, Sparkles, History,
   Download, Check, ExternalLink, BookOpen, BarChart2,
+  PartyPopper, Flame, Ban,
 } from "lucide-react";
 import { Navbar } from "@/components/Navbar";
 import { AIProviderBadge } from "@/components/AIProviderSettings";
@@ -179,6 +180,32 @@ export default function MatchPage() {
     if (score >= 75) return "bg-emerald-100 text-emerald-700 border-emerald-200";
     if (score >= 50) return "bg-amber-100 text-amber-700 border-amber-200";
     return "bg-rose-100 text-rose-700 border-rose-200";
+  }
+
+  function getReadiness(score: number) {
+    if (score >= 75)
+      return {
+        label: "CV prêt pour ce poste",
+        sublabel: "Votre profil correspond bien à cette offre.",
+        icon: <PartyPopper className="w-5 h-5" />,
+        className: "bg-emerald-50 border-emerald-300 text-emerald-800 dark:bg-emerald-950/40 dark:border-emerald-700 dark:text-emerald-300",
+        badgeClass: "bg-emerald-500",
+      };
+    if (score >= 50)
+      return {
+        label: "CV à optimiser",
+        sublabel: "Quelques ajustements renforceront votre candidature.",
+        icon: <Flame className="w-5 h-5" />,
+        className: "bg-amber-50 border-amber-300 text-amber-800 dark:bg-amber-950/40 dark:border-amber-700 dark:text-amber-300",
+        badgeClass: "bg-amber-500",
+      };
+    return {
+      label: "CV peu adapté",
+      sublabel: "Des écarts importants subsistent avec l'offre.",
+      icon: <Ban className="w-5 h-5" />,
+      className: "bg-rose-50 border-rose-300 text-rose-800 dark:bg-rose-950/40 dark:border-rose-700 dark:text-rose-300",
+      badgeClass: "bg-rose-500",
+    };
   }
 
   if (loading) {
@@ -372,6 +399,23 @@ export default function MatchPage() {
                       })}
                     </div>
                   )}
+
+                  {/* Readiness banner */}
+                  {(() => {
+                    const r = getReadiness(matchResult.matchScore);
+                    return (
+                      <div className={`flex items-center gap-3 rounded-xl border px-4 py-3 ${r.className}`}>
+                        <span className="shrink-0">{r.icon}</span>
+                        <div className="flex-1 min-w-0">
+                          <p className="font-bold text-sm leading-tight">{r.label}</p>
+                          <p className="text-xs opacity-75 mt-0.5">{r.sublabel}</p>
+                        </div>
+                        <span className={`shrink-0 text-white text-sm font-black px-2.5 py-1 rounded-lg ${r.badgeClass}`}>
+                          {matchResult.matchScore}%
+                        </span>
+                      </div>
+                    );
+                  })()}
 
                   {/* Score */}
                   <Card>
