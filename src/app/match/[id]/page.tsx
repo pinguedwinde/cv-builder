@@ -247,8 +247,24 @@ export default function MatchPage() {
       <Navbar showBack backHref={`/editor/${id}`} title="Matching CV / Poste" actions={navActions} />
 
       <div className="flex flex-1 gap-4 px-4 pb-4 pt-2 min-h-0">
-        {/* Left panel: Tabs Analyser / Résultats */}
-        <div className="w-1/2 flex flex-col min-h-0">
+        {/* Left panel: CV preview(s) */}
+        <div className="flex gap-4 min-h-0 flex-shrink-0">
+          <div className="flex-shrink-0 overflow-auto rounded-lg border bg-card shadow-sm" style={{ width: "210mm" }}>
+            <div style={{ minHeight: "297mm" }}>
+              <ThemeRenderer resume={resume} themeId={themeId} />
+            </div>
+          </div>
+          {optimizedResume && (
+            <div className="flex-shrink-0 overflow-auto rounded-lg border bg-card shadow-sm ring-2 ring-green-200" style={{ width: "210mm" }}>
+              <div style={{ minHeight: "297mm" }}>
+                <ThemeRenderer resume={optimizedResume} themeId={themeId} />
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Right panel: Tabs Analyser / Résultats */}
+        <div className="flex-1 flex flex-col min-h-0">
           <Tabs
             value={activeTab}
             onValueChange={(v) => setActiveTab(v as "analyser" | "resultats")}
@@ -555,29 +571,6 @@ export default function MatchPage() {
               )}
             </TabsContent>
           </Tabs>
-        </div>
-
-        {/* Right panel: CV preview */}
-        <div className="w-1/2 flex gap-4 min-h-0">
-          <div className="flex-1 flex flex-col min-h-0">
-            <h3 className="text-sm font-semibold mb-2 text-center text-muted-foreground shrink-0">CV actuel</h3>
-            <div className="flex-1 bg-card rounded-lg shadow-sm border overflow-auto">
-              <div style={{ width: "210mm", minHeight: "297mm" }}>
-                <ThemeRenderer resume={resume} themeId={themeId} />
-              </div>
-            </div>
-          </div>
-
-          {optimizedResume && (
-            <div className="flex-1 flex flex-col min-h-0">
-              <h3 className="text-sm font-semibold mb-2 text-center text-green-600 shrink-0">CV optimisé</h3>
-              <div className="flex-1 bg-card rounded-lg shadow-sm border overflow-auto ring-2 ring-green-200">
-                <div style={{ width: "210mm", minHeight: "297mm" }}>
-                  <ThemeRenderer resume={optimizedResume} themeId={themeId} />
-                </div>
-              </div>
-            </div>
-          )}
         </div>
       </div>
     </div>
