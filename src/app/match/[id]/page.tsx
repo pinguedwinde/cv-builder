@@ -3,10 +3,11 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { ThemeRenderer } from "@/components/themes/ThemeRenderer";
 import type { Resume } from "@/lib/schemas/resume";
 import type { ThemeId } from "@/themes";
@@ -14,7 +15,7 @@ import type { MatchResult } from "@/lib/ai/matching";
 import {
   Link, FileText, Target, CheckCircle,
   AlertTriangle, XCircle, Sparkles, History,
-  Download, Check, ExternalLink, BookOpen,
+  Download, Check, ExternalLink, BookOpen, BarChart2,
 } from "lucide-react";
 import { Navbar } from "@/components/Navbar";
 import { AIProviderBadge } from "@/components/AIProviderSettings";
@@ -52,6 +53,7 @@ export default function MatchPage() {
   const [activeVersion, setActiveVersion] = useState<number | null>(null);
   const [activeRecord, setActiveRecord] = useState<MatchRecord | null>(null);
   const [pdfState, setPdfState] = useState<"idle" | "loading" | "done">("idle");
+  const [activeTab, setActiveTab] = useState<"analyser" | "resultats">("analyser");
 
   useEffect(() => {
     async function load() {
@@ -71,6 +73,7 @@ export default function MatchPage() {
             setMatchResult(latest.data as MatchResult);
             setActiveVersion(latest.version);
             setActiveRecord(latest as MatchRecord);
+            setActiveTab("resultats");
             // Pre-populate the form from the last match so the user can re-run immediately
             if (latest.jobTitle) setJobTitle(latest.jobTitle);
             if (latest.jobType === "url" && latest.jobUrl) {
@@ -116,6 +119,7 @@ export default function MatchPage() {
         return;
       }
       setMatchResult(data);
+      setActiveTab("resultats");
       if (data.optimizedResume) {
         setOptimizedResume(data.optimizedResume);
       }
@@ -141,6 +145,7 @@ export default function MatchPage() {
     setMatchResult(record.data as MatchResult);
     setActiveVersion(record.version);
     setActiveRecord(record);
+    setActiveTab("resultats");
   }
 
   async function exportPdf() {
@@ -215,263 +220,300 @@ export default function MatchPage() {
       <Navbar showBack backHref={`/editor/${id}`} title="Matching CV / Poste" actions={navActions} />
 
       <div className="flex flex-1 gap-4 px-4 pb-4 pt-2 min-h-0">
-        <div className="w-1/2 flex flex-col gap-4 min-h-0">
-          <Card className="flex flex-col flex-shrink-0 min-h-[260px]">
-            <CardHeader className="pb-2 shrink-0">
-              <CardTitle className="text-base flex items-center gap-2">
-                <Target className="w-4 h-4" /> Offre d&apos;emploi
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="flex flex-col gap-3 min-h-0 overflow-hidden">
-              <div className="flex gap-2 shrink-0">
-                <Button
-                  variant={jobType === "text" ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => setJobType("text")}
-                  className="flex-1"
-                >
-                  <FileText className="w-3 h-3" /> Texte
-                </Button>
-                <Button
-                  variant={jobType === "url" ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => setJobType("url")}
-                  className="flex-1"
-                >
-                  <Link className="w-3 h-3" /> URL
-                </Button>
-              </div>
+        {/* Left panel: Tabs Analyser / Résultats */}
+        <div className="w-1/2 flex flex-col min-h-0">
+          <Tabs
+            value={activeTab}
+            onValueChange={(v) => setActiveTab(v as "analyser" | "resultats")}
+            className="flex flex-col flex-1 min-h-0"
+          >
+            <TabsList className="grid w-full grid-cols-2 shrink-0">
+              <TabsTrigger value="analyser" className="gap-2">
+                <Target className="w-3.5 h-3.5" />
+                Analyser
+              </TabsTrigger>
+              <TabsTrigger value="resultats" className="gap-2">
+                <BarChart2 className="w-3.5 h-3.5" />
+                Résultats
+                {matchResult && (
+                  <span className={`ml-0.5 text-xs font-bold ${getScoreColor(matchResult.matchScore)}`}>
+                    {matchResult.matchScore}%
+                  </span>
+                )}
+              </TabsTrigger>
+            </TabsList>
 
-              {jobType === "text" ? (
-                <Textarea
-                  value={jobContent}
-                  onChange={(e) => setJobContent(e.target.value)}
-                  placeholder="Collez le texte de l'offre d'emploi ici..."
-                  className="resize-none text-xs min-h-[80px]"
-                />
-              ) : (
-                <Input
-                  value={jobUrl}
-                  onChange={(e) => setJobUrl(e.target.value)}
-                  placeholder="https://..."
-                  className="shrink-0"
-                />
-              )}
-
-              <div className="shrink-0 space-y-3">
-                <Input
-                  value={jobTitle}
-                  onChange={(e) => setJobTitle(e.target.value)}
-                  placeholder="Titre du poste (optionnel, ex: Chef de Projet)"
-                  className="text-xs"
-                />
-
-                <label className="flex items-center gap-2 text-sm">
-                  <input
-                    type="checkbox"
-                    checked={optimize}
-                    onChange={(e) => setOptimize(e.target.checked)}
-                    className="rounded"
-                  />
-                  <Sparkles className="w-3 h-3" />
-                  Optimiser le CV (IA)
-                </label>
-
-                <Button
-                  onClick={runMatch}
-                  disabled={matching || (jobType === "text" ? !jobContent.trim() : !jobUrl.trim())}
-                  className="w-full"
-                >
-                  {matching ? (
-                    <>
-                      <div className="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full" />
-                      Analyse en cours...
-                    </>
-                  ) : (
-                    <>
-                      <Target className="w-4 h-4" /> Analyser la correspondance
-                    </>
-                  )}
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-
-          <div className="flex-1 overflow-auto space-y-4 min-h-0">
-
-          {matchHistory.length > 0 && (
-            <Card className="border-muted">
-              <CardContent className="py-2.5 px-4">
-                <div className="flex items-center gap-2 flex-wrap">
-                  <div className="flex items-center gap-1.5 text-xs text-muted-foreground font-medium shrink-0">
-                    <History className="w-3.5 h-3.5" />
-                    Historique
+            {/* ── Tab : Analyser ── */}
+            <TabsContent value="analyser" className="flex-1 min-h-0 flex flex-col mt-3">
+              <Card className="flex flex-col flex-1 min-h-0">
+                <CardContent className="flex flex-col flex-1 gap-4 pt-4 min-h-0">
+                  {/* Job type toggle */}
+                  <div className="flex gap-2 shrink-0">
+                    <Button
+                      variant={jobType === "text" ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => setJobType("text")}
+                      className="flex-1"
+                    >
+                      <FileText className="w-3 h-3" /> Texte
+                    </Button>
+                    <Button
+                      variant={jobType === "url" ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => setJobType("url")}
+                      className="flex-1"
+                    >
+                      <Link className="w-3 h-3" /> URL
+                    </Button>
                   </div>
-                  {[...matchHistory].reverse().map((m) => {
-                    const isActive = m.version === activeVersion;
-                    const badgeStyle = getScoreBadgeStyle(m.matchScore);
-                    const label = m.jobTitle || `Analyse #${m.version}`;
-                    const typeIcon = m.jobType === "url" ? "🔗" : m.jobType === "pdf" ? "📄" : "📝";
-                    const tooltipLines = [
-                      new Date(m.createdAt).toLocaleString("fr-FR"),
-                      m.jobTitle ? `Poste : ${m.jobTitle}` : null,
-                      m.jobUrl ? `URL : ${m.jobUrl}` : null,
-                    ].filter(Boolean).join("\n");
-                    return (
-                      <button
-                        key={m.id}
-                        onClick={() => selectVersion(m)}
-                        className={`flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-full border transition-all ${
-                          isActive
-                            ? `${badgeStyle} font-bold ring-2 ring-offset-1 ring-current/30`
-                            : "border-muted-foreground/20 text-muted-foreground hover:border-muted-foreground/50"
-                        }`}
-                        title={tooltipLines}
-                      >
-                        <span>{typeIcon}</span>
-                        <span className="font-bold">{m.matchScore}%</span>
-                        <span className="max-w-[80px] truncate opacity-80">{label}</span>
-                        <span className="opacity-60">v{m.version}</span>
-                      </button>
-                    );
-                  })}
-                </div>
-              </CardContent>
-            </Card>
-          )}
 
-          {matchResult && (
-            <>
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-base flex items-center justify-between gap-2">
-                    <span>Score: <span className={`text-2xl ${getScoreColor(matchResult.matchScore)}`}>{matchResult.matchScore}%</span></span>
-                    <AIProviderBadge provider={matchResult.provider} />
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <Progress value={matchResult.matchScore} className="h-3" />
-                  <p className="text-sm text-muted-foreground mt-3">{matchResult.summary}</p>
+                  {/* Job content input */}
+                  {jobType === "text" ? (
+                    <Textarea
+                      value={jobContent}
+                      onChange={(e) => setJobContent(e.target.value)}
+                      placeholder="Collez le texte de l'offre d'emploi ici..."
+                      className="flex-1 resize-none text-xs min-h-0"
+                    />
+                  ) : (
+                    <Input
+                      value={jobUrl}
+                      onChange={(e) => setJobUrl(e.target.value)}
+                      placeholder="https://..."
+                      className="shrink-0"
+                    />
+                  )}
+
+                  {/* Options + button */}
+                  <div className="shrink-0 space-y-3">
+                    <Input
+                      value={jobTitle}
+                      onChange={(e) => setJobTitle(e.target.value)}
+                      placeholder="Titre du poste (optionnel, ex: Chef de Projet)"
+                      className="text-xs"
+                    />
+                    <label className="flex items-center gap-2 text-sm cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={optimize}
+                        onChange={(e) => setOptimize(e.target.checked)}
+                        className="rounded"
+                      />
+                      <Sparkles className="w-3 h-3" />
+                      Optimiser le CV (IA)
+                    </label>
+                    <Button
+                      onClick={runMatch}
+                      disabled={matching || (jobType === "text" ? !jobContent.trim() : !jobUrl.trim())}
+                      className="w-full"
+                    >
+                      {matching ? (
+                        <>
+                          <div className="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full" />
+                          Analyse en cours...
+                        </>
+                      ) : (
+                        <>
+                          <Target className="w-4 h-4" /> Analyser la correspondance
+                        </>
+                      )}
+                    </Button>
+                  </div>
                 </CardContent>
               </Card>
+            </TabsContent>
 
-              {activeRecord && (activeRecord.jobTitle || activeRecord.jobUrl || activeRecord.jobDescription) && (
-                <Card className="border-muted bg-muted/30">
-                  <CardHeader className="pb-1.5">
-                    <CardTitle className="text-xs flex items-center gap-1.5 text-muted-foreground font-semibold uppercase tracking-wide">
-                      {activeRecord.jobType === "url"
-                        ? <Link className="w-3.5 h-3.5" />
-                        : activeRecord.jobType === "pdf"
-                        ? <FileText className="w-3.5 h-3.5" />
-                        : <BookOpen className="w-3.5 h-3.5" />}
-                      Source du poste
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-1.5">
-                    {activeRecord.jobTitle && (
-                      <p className="text-sm font-medium text-foreground">{activeRecord.jobTitle}</p>
-                    )}
-                    {activeRecord.jobUrl && (
-                      <a
-                        href={activeRecord.jobUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center gap-1 text-xs text-blue-600 hover:underline break-all"
-                      >
-                        <ExternalLink className="w-3 h-3 shrink-0" />
-                        {activeRecord.jobUrl}
-                      </a>
-                    )}
-                    {activeRecord.jobDescription && !activeRecord.jobUrl && (
-                      <details className="group">
-                        <summary className="text-xs text-muted-foreground cursor-pointer hover:text-foreground select-none">
-                          Voir le texte de l&apos;offre ({activeRecord.jobDescription.length} car.)
-                        </summary>
-                        <p className="mt-2 text-xs text-muted-foreground whitespace-pre-wrap max-h-40 overflow-auto bg-background rounded p-2 border">
-                          {activeRecord.jobDescription.slice(0, 1500)}{activeRecord.jobDescription.length > 1500 ? "…" : ""}
-                        </p>
-                      </details>
-                    )}
-                    <p className="text-xs text-muted-foreground">
-                      Analysé le {new Date(activeRecord.createdAt).toLocaleString("fr-FR")}
-                    </p>
-                  </CardContent>
-                </Card>
-              )}
-
-              {matchResult.matchedSkills.length > 0 && (
-                <Card>
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-sm flex items-center gap-2">
-                      <CheckCircle className="w-4 h-4 text-green-500" /> Compétences correspondantes
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="flex flex-wrap gap-1">
-                      {matchResult.matchedSkills.map((s, i) => (
-                        <span key={i} className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full">
-                          {s}
-                        </span>
-                      ))}
+            {/* ── Tab : Résultats ── */}
+            <TabsContent value="resultats" className="flex-1 min-h-0 overflow-auto mt-3">
+              {!matchResult ? (
+                <div className="flex flex-col items-center justify-center h-full text-center gap-3 text-muted-foreground">
+                  <BarChart2 className="w-10 h-10 opacity-20" />
+                  <p className="text-sm">Aucune analyse disponible.</p>
+                  <Button variant="outline" size="sm" onClick={() => setActiveTab("analyser")}>
+                    <Target className="w-3.5 h-3.5 mr-1.5" /> Lancer une analyse
+                  </Button>
+                </div>
+              ) : (
+                <div className="space-y-4 pb-2">
+                  {/* History */}
+                  {matchHistory.length > 0 && (
+                    <div className="flex items-center gap-2 flex-wrap px-1">
+                      <div className="flex items-center gap-1.5 text-xs text-muted-foreground font-medium shrink-0">
+                        <History className="w-3.5 h-3.5" />
+                        Historique
+                      </div>
+                      {[...matchHistory].reverse().map((m) => {
+                        const isActive = m.version === activeVersion;
+                        const badgeStyle = getScoreBadgeStyle(m.matchScore);
+                        const label = m.jobTitle || `Analyse #${m.version}`;
+                        const typeIcon = m.jobType === "url" ? "🔗" : m.jobType === "pdf" ? "📄" : "📝";
+                        const tooltipLines = [
+                          new Date(m.createdAt).toLocaleString("fr-FR"),
+                          m.jobTitle ? `Poste : ${m.jobTitle}` : null,
+                          m.jobUrl ? `URL : ${m.jobUrl}` : null,
+                        ].filter(Boolean).join("\n");
+                        return (
+                          <button
+                            key={m.id}
+                            onClick={() => selectVersion(m)}
+                            className={`flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-full border transition-all ${
+                              isActive
+                                ? `${badgeStyle} font-bold ring-2 ring-offset-1 ring-current/30`
+                                : "border-muted-foreground/20 text-muted-foreground hover:border-muted-foreground/50"
+                            }`}
+                            title={tooltipLines}
+                          >
+                            <span>{typeIcon}</span>
+                            <span className="font-bold">{m.matchScore}%</span>
+                            <span className="max-w-[80px] truncate opacity-80">{label}</span>
+                            <span className="opacity-60">v{m.version}</span>
+                          </button>
+                        );
+                      })}
                     </div>
-                  </CardContent>
-                </Card>
-              )}
+                  )}
 
-              {matchResult.gaps.length > 0 && (
-                <Card>
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-sm flex items-center gap-2">
-                      <AlertTriangle className="w-4 h-4 text-yellow-500" /> Points manquants
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-2">
-                    {matchResult.gaps.map((g, i) => (
-                      <div key={i} className="flex items-start gap-2 text-xs">
-                        {g.importance === "high" ? (
-                          <XCircle className="w-3 h-3 text-red-500 mt-0.5 shrink-0" />
-                        ) : (
-                          <AlertTriangle className="w-3 h-3 text-yellow-500 mt-0.5 shrink-0" />
+                  {/* Score */}
+                  <Card>
+                    <CardContent className="pt-4">
+                      <div className="flex items-center justify-between gap-2 mb-3">
+                        <span className="text-base font-semibold">
+                          Score :{" "}
+                          <span className={`text-2xl font-bold ${getScoreColor(matchResult.matchScore)}`}>
+                            {matchResult.matchScore}%
+                          </span>
+                        </span>
+                        <div className="flex items-center gap-2">
+                          <AIProviderBadge provider={matchResult.provider} />
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="text-xs h-7 px-2 gap-1"
+                            onClick={() => setActiveTab("analyser")}
+                          >
+                            <Target className="w-3 h-3" /> Ré-analyser
+                          </Button>
+                        </div>
+                      </div>
+                      <Progress value={matchResult.matchScore} className="h-3" />
+                      <p className="text-sm text-muted-foreground mt-3">{matchResult.summary}</p>
+                    </CardContent>
+                  </Card>
+
+                  {/* Source du poste */}
+                  {activeRecord && (activeRecord.jobTitle || activeRecord.jobUrl || activeRecord.jobDescription) && (
+                    <Card className="border-muted bg-muted/30">
+                      <CardContent className="pt-3 space-y-1.5">
+                        <p className="text-xs flex items-center gap-1.5 text-muted-foreground font-semibold uppercase tracking-wide mb-1">
+                          {activeRecord.jobType === "url"
+                            ? <Link className="w-3.5 h-3.5" />
+                            : activeRecord.jobType === "pdf"
+                            ? <FileText className="w-3.5 h-3.5" />
+                            : <BookOpen className="w-3.5 h-3.5" />}
+                          Source du poste
+                        </p>
+                        {activeRecord.jobTitle && (
+                          <p className="text-sm font-medium text-foreground">{activeRecord.jobTitle}</p>
                         )}
-                        <span>{g.description}</span>
-                      </div>
-                    ))}
-                  </CardContent>
-                </Card>
-              )}
+                        {activeRecord.jobUrl && (
+                          <a
+                            href={activeRecord.jobUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center gap-1 text-xs text-blue-600 hover:underline break-all"
+                          >
+                            <ExternalLink className="w-3 h-3 shrink-0" />
+                            {activeRecord.jobUrl}
+                          </a>
+                        )}
+                        {activeRecord.jobDescription && !activeRecord.jobUrl && (
+                          <details>
+                            <summary className="text-xs text-muted-foreground cursor-pointer hover:text-foreground select-none">
+                              Voir le texte de l&apos;offre ({activeRecord.jobDescription.length} car.)
+                            </summary>
+                            <p className="mt-2 text-xs text-muted-foreground whitespace-pre-wrap max-h-40 overflow-auto bg-background rounded p-2 border">
+                              {activeRecord.jobDescription.slice(0, 1500)}{activeRecord.jobDescription.length > 1500 ? "…" : ""}
+                            </p>
+                          </details>
+                        )}
+                        <p className="text-xs text-muted-foreground">
+                          Analysé le {new Date(activeRecord.createdAt).toLocaleString("fr-FR")}
+                        </p>
+                      </CardContent>
+                    </Card>
+                  )}
 
-              {matchResult.suggestions.length > 0 && (
-                <Card>
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-sm">Suggestions d&apos;amélioration</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-2">
-                    {matchResult.suggestions.map((s, i) => (
-                      <div key={i} className="p-2 bg-blue-50 rounded text-xs">
-                        <span className="font-semibold uppercase text-blue-600">{s.section}</span>
-                        <p className="mt-0.5">{s.action}</p>
-                        <p className="text-muted-foreground mt-0.5">{s.reason}</p>
-                      </div>
-                    ))}
-                  </CardContent>
-                </Card>
-              )}
+                  {/* Matched skills */}
+                  {matchResult.matchedSkills.length > 0 && (
+                    <Card>
+                      <CardContent className="pt-4">
+                        <p className="text-sm font-semibold flex items-center gap-2 mb-2">
+                          <CheckCircle className="w-4 h-4 text-green-500" /> Compétences correspondantes
+                        </p>
+                        <div className="flex flex-wrap gap-1">
+                          {matchResult.matchedSkills.map((s, i) => (
+                            <span key={i} className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full">
+                              {s}
+                            </span>
+                          ))}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  )}
 
-              {matchResult.optimizedSummary && (
-                <Card>
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-sm">Résumé optimisé proposé</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-xs text-muted-foreground italic">{matchResult.optimizedSummary}</p>
-                  </CardContent>
-                </Card>
+                  {/* Gaps */}
+                  {matchResult.gaps.length > 0 && (
+                    <Card>
+                      <CardContent className="pt-4 space-y-2">
+                        <p className="text-sm font-semibold flex items-center gap-2 mb-2">
+                          <AlertTriangle className="w-4 h-4 text-yellow-500" /> Points manquants
+                        </p>
+                        {matchResult.gaps.map((g, i) => (
+                          <div key={i} className="flex items-start gap-2 text-xs">
+                            {g.importance === "high" ? (
+                              <XCircle className="w-3 h-3 text-red-500 mt-0.5 shrink-0" />
+                            ) : (
+                              <AlertTriangle className="w-3 h-3 text-yellow-500 mt-0.5 shrink-0" />
+                            )}
+                            <span>{g.description}</span>
+                          </div>
+                        ))}
+                      </CardContent>
+                    </Card>
+                  )}
+
+                  {/* Suggestions */}
+                  {matchResult.suggestions.length > 0 && (
+                    <Card>
+                      <CardContent className="pt-4 space-y-2">
+                        <p className="text-sm font-semibold mb-2">Suggestions d&apos;amélioration</p>
+                        {matchResult.suggestions.map((s, i) => (
+                          <div key={i} className="p-2 bg-blue-50 rounded text-xs">
+                            <span className="font-semibold uppercase text-blue-600">{s.section}</span>
+                            <p className="mt-0.5">{s.action}</p>
+                            <p className="text-muted-foreground mt-0.5">{s.reason}</p>
+                          </div>
+                        ))}
+                      </CardContent>
+                    </Card>
+                  )}
+
+                  {/* Optimized summary */}
+                  {matchResult.optimizedSummary && (
+                    <Card>
+                      <CardContent className="pt-4">
+                        <p className="text-sm font-semibold mb-2">Résumé optimisé proposé</p>
+                        <p className="text-xs text-muted-foreground italic">{matchResult.optimizedSummary}</p>
+                      </CardContent>
+                    </Card>
+                  )}
+                </div>
               )}
-            </>
-          )}
-          </div>
+            </TabsContent>
+          </Tabs>
         </div>
 
+        {/* Right panel: CV preview */}
         <div className="w-1/2 flex gap-4 min-h-0">
           <div className="flex-1 flex flex-col min-h-0">
             <h3 className="text-sm font-semibold mb-2 text-center text-muted-foreground shrink-0">CV actuel</h3>
