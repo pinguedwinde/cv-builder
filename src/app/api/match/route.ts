@@ -62,7 +62,11 @@ export async function POST(request: NextRequest) {
 
     let savedVersion: number | null = null;
     if (resumeId) {
-      const saved = saveMatch(resumeId, jobTitle, matchResult);
+      const saved = saveMatch(resumeId, jobTitle, matchResult, {
+        jobType,
+        jobUrl: jobType === "url" ? String(jobContent) : undefined,
+        jobDescription: typeof jobContent === "string" ? jobContent : undefined,
+      });
       savedVersion = saved.version;
     }
 

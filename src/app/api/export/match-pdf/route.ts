@@ -29,7 +29,11 @@ export async function GET(request: NextRequest) {
     const candidateName = resume.basics?.name || "Candidat";
     const jobTitle = matchRecord.jobTitle ?? null;
 
-    const pdfBuffer = await generateMatchPdf(match, candidateName, jobTitle);
+    const pdfBuffer = await generateMatchPdf(match, candidateName, jobTitle, {
+      jobType: matchRecord.jobType,
+      jobUrl: matchRecord.jobUrl,
+      jobDescription: matchRecord.jobDescription,
+    });
 
     const safeName = candidateName.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]/g, "-").replace(/-+/g, "-").replace(/^-|-$/g, "");
     const safeJob = jobTitle

@@ -295,10 +295,36 @@ export function buildMatchHtml(
   match: MatchResult,
   candidateName: string,
   jobTitle: string | null,
-  generatedAt: string
+  generatedAt: string,
+  jobMeta?: { jobType?: string | null; jobUrl?: string | null; jobDescription?: string | null }
 ): string {
   const sc = scoreColor(match.matchScore);
   const scoreLabel = match.matchScore >= 75 ? "Excellent" : match.matchScore >= 50 ? "Moyen" : "Faible";
+
+  // ── Source du poste block ──
+  const jobSourceHtml = (() => {
+    const hasSource = jobTitle || jobMeta?.jobUrl || jobMeta?.jobDescription;
+    if (!hasSource) return "";
+    const typeLabel = jobMeta?.jobType === "url" ? "🔗 URL" : jobMeta?.jobType === "pdf" ? "📄 PDF" : "📝 Texte";
+    const urlPart = jobMeta?.jobUrl
+      ? `<p style="font-size:8pt;color:#2563eb;margin-top:1mm;">${esc(jobMeta.jobUrl)}</p>`
+      : "";
+    const descPreview = !jobMeta?.jobUrl && jobMeta?.jobDescription
+      ? `<p style="font-size:7.5pt;color:#64748b;margin-top:1.5mm;line-height:1.5;font-style:italic;">${esc(jobMeta.jobDescription.slice(0, 400))}${jobMeta.jobDescription.length > 400 ? "…" : ""}</p>`
+      : "";
+    return `<div class="section">
+      <div class="section-head" style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:2mm;padding:3.5mm 4.5mm;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5mm;">
+          <h2 style="margin-bottom:0;">Source du poste</h2>
+          <span style="font-size:7.5pt;color:#94a3b8;">${typeLabel}</span>
+        </div>
+        ${jobTitle ? `<p style="font-size:9pt;font-weight:600;color:#0f172a;">${esc(jobTitle)}</p>` : ""}
+        ${urlPart}
+        ${descPreview}
+        <p style="font-size:7pt;color:#94a3b8;margin-top:1.5mm;">Analysé le ${generatedAt}</p>
+      </div>
+    </div>`;
+  })();
 
   // Skills block — all tags in one card, no breaks needed inside
   const skillsHtml = match.matchedSkills.length > 0
@@ -384,6 +410,7 @@ export function buildMatchHtml(
     </div>
   </div>
 
+  ${jobSourceHtml}
   ${skillsHtml}
   ${gapsHtml}
   ${suggestionsHtml}
@@ -435,10 +462,11 @@ export async function generateMatchPdf(
   match: MatchResult,
   candidateName: string,
   jobTitle: string | null,
+  jobMeta?: { jobType?: string | null; jobUrl?: string | null; jobDescription?: string | null }
 ): Promise<Buffer> {
   const generatedAt = new Date().toLocaleDateString("fr-FR", {
     day: "2-digit", month: "long", year: "numeric",
   });
-  const html = buildMatchHtml(match, candidateName, jobTitle, generatedAt);
+  const html = buildMatchHtml(match, candidateName, jobTitle, generatedAt, jobMeta);
   return renderHtmlToPdf(html);
 }

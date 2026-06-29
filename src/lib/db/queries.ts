@@ -126,7 +126,12 @@ export function getLatestReviewsSummary(
 
 // ─── Match queries ────────────────────────────────────────────────────────────
 
-export function saveMatch(resumeId: string, jobTitle: string | null, result: MatchResult) {
+export function saveMatch(
+  resumeId: string,
+  jobTitle: string | null,
+  result: MatchResult,
+  jobMeta?: { jobType?: string; jobUrl?: string; jobDescription?: string }
+) {
   const history = getMatchHistory(resumeId);
   const version = history.length + 1;
   const id = nanoid();
@@ -136,6 +141,9 @@ export function saveMatch(resumeId: string, jobTitle: string | null, result: Mat
       id,
       resumeId,
       jobTitle: jobTitle || null,
+      jobType: jobMeta?.jobType ?? null,
+      jobUrl: jobMeta?.jobUrl ?? null,
+      jobDescription: jobMeta?.jobDescription ?? null,
       matchScore: result.matchScore,
       version,
       data: result as unknown as Record<string, unknown>,

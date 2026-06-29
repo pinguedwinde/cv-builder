@@ -14,7 +14,7 @@ import type { MatchResult } from "@/lib/ai/matching";
 import {
   Link, FileText, Target, CheckCircle,
   AlertTriangle, XCircle, Sparkles, History,
-  Download, Check,
+  Download, Check, ExternalLink, BookOpen,
 } from "lucide-react";
 import { Navbar } from "@/components/Navbar";
 import { AIProviderBadge } from "@/components/AIProviderSettings";
@@ -23,6 +23,9 @@ interface MatchRecord {
   id: string;
   resumeId: string;
   jobTitle: string | null;
+  jobType: string | null;
+  jobUrl: string | null;
+  jobDescription: string | null;
   matchScore: number;
   version: number;
   data: MatchResult;
@@ -47,6 +50,7 @@ export default function MatchPage() {
   const [optimize, setOptimize] = useState(false);
   const [matchHistory, setMatchHistory] = useState<MatchRecord[]>([]);
   const [activeVersion, setActiveVersion] = useState<number | null>(null);
+  const [activeRecord, setActiveRecord] = useState<MatchRecord | null>(null);
   const [pdfState, setPdfState] = useState<"idle" | "loading" | "done">("idle");
 
   useEffect(() => {
@@ -66,6 +70,7 @@ export default function MatchPage() {
           if (latest) {
             setMatchResult(latest.data as MatchResult);
             setActiveVersion(latest.version);
+            setActiveRecord(latest as MatchRecord);
           }
           setMatchHistory(history ?? []);
         }
@@ -106,7 +111,10 @@ export default function MatchPage() {
       if (matchesRes.ok) {
         const { history } = await matchesRes.json();
         setMatchHistory(history ?? []);
-        if (history?.[0]) setActiveVersion(history[0].version);
+        if (history?.[0]) {
+          setActiveVersion(history[0].version);
+          setActiveRecord(history[0] as MatchRecord);
+        }
       }
     } catch {
       console.error("Match failed");
@@ -118,6 +126,7 @@ export default function MatchPage() {
   function selectVersion(record: MatchRecord) {
     setMatchResult(record.data as MatchResult);
     setActiveVersion(record.version);
+    setActiveRecord(record);
   }
 
   async function exportPdf() {
@@ -288,6 +297,12 @@ export default function MatchPage() {
                     const isActive = m.version === activeVersion;
                     const badgeStyle = getScoreBadgeStyle(m.matchScore);
                     const label = m.jobTitle || `Analyse #${m.version}`;
+                    const typeIcon = m.jobType === "url" ? "🔗" : m.jobType === "pdf" ? "📄" : "📝";
+                    const tooltipLines = [
+                      new Date(m.createdAt).toLocaleString("fr-FR"),
+                      m.jobTitle ? `Poste : ${m.jobTitle}` : null,
+                      m.jobUrl ? `URL : ${m.jobUrl}` : null,
+                    ].filter(Boolean).join("\n");
                     return (
                       <button
                         key={m.id}
@@ -297,8 +312,9 @@ export default function MatchPage() {
                             ? `${badgeStyle} font-bold ring-2 ring-offset-1 ring-current/30`
                             : "border-muted-foreground/20 text-muted-foreground hover:border-muted-foreground/50"
                         }`}
-                        title={`${new Date(m.createdAt).toLocaleString("fr-FR")}${m.jobTitle ? ` — ${m.jobTitle}` : ""}`}
+                        title={tooltipLines}
                       >
+                        <span>{typeIcon}</span>
                         <span className="font-bold">{m.matchScore}%</span>
                         <span className="max-w-[80px] truncate opacity-80">{label}</span>
                         <span className="opacity-60">v{m.version}</span>
@@ -324,6 +340,50 @@ export default function MatchPage() {
                   <p className="text-sm text-muted-foreground mt-3">{matchResult.summary}</p>
                 </CardContent>
               </Card>
+
+              {activeRecord && (activeRecord.jobTitle || activeRecord.jobUrl || activeRecord.jobDescription) && (
+                <Card className="border-muted bg-muted/30">
+                  <CardHeader className="pb-1.5">
+                    <CardTitle className="text-xs flex items-center gap-1.5 text-muted-foreground font-semibold uppercase tracking-wide">
+                      {activeRecord.jobType === "url"
+                        ? <Link className="w-3.5 h-3.5" />
+                        : activeRecord.jobType === "pdf"
+                        ? <FileText className="w-3.5 h-3.5" />
+                        : <BookOpen className="w-3.5 h-3.5" />}
+                      Source du poste
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-1.5">
+                    {activeRecord.jobTitle && (
+                      <p className="text-sm font-medium text-foreground">{activeRecord.jobTitle}</p>
+                    )}
+                    {activeRecord.jobUrl && (
+                      <a
+                        href={activeRecord.jobUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-1 text-xs text-blue-600 hover:underline break-all"
+                      >
+                        <ExternalLink className="w-3 h-3 shrink-0" />
+                        {activeRecord.jobUrl}
+                      </a>
+                    )}
+                    {activeRecord.jobDescription && !activeRecord.jobUrl && (
+                      <details className="group">
+                        <summary className="text-xs text-muted-foreground cursor-pointer hover:text-foreground select-none">
+                          Voir le texte de l&apos;offre ({activeRecord.jobDescription.length} car.)
+                        </summary>
+                        <p className="mt-2 text-xs text-muted-foreground whitespace-pre-wrap max-h-40 overflow-auto bg-background rounded p-2 border">
+                          {activeRecord.jobDescription.slice(0, 1500)}{activeRecord.jobDescription.length > 1500 ? "…" : ""}
+                        </p>
+                      </details>
+                    )}
+                    <p className="text-xs text-muted-foreground">
+                      Analysé le {new Date(activeRecord.createdAt).toLocaleString("fr-FR")}
+                    </p>
+                  </CardContent>
+                </Card>
+              )}
 
               {matchResult.matchedSkills.length > 0 && (
                 <Card>
