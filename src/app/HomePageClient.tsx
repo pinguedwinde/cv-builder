@@ -258,34 +258,40 @@ export function HomePageClient({ initialResumes, initialReviewsSummary, initialM
               const reviewSummary = reviewsSummary[resume.id];
               const matchSummary = matchesSummary[resume.id];
               return (
-                <motion.div key={resume.id} variants={cardVariants} whileTap={{ scale: 0.98 }}>
-                  <Card className={`card-hover border-t-4 ${accentBorder} flex flex-col`}>
-                    <CardHeader className="pb-2">
+                <motion.div key={resume.id} variants={cardVariants} whileTap={{ scale: 0.98 }} className="h-[380px] flex flex-col">
+                  <Card className={`card-hover border-t-4 ${accentBorder} flex flex-col h-full overflow-hidden`}>
+                    <CardHeader className="pb-3 shrink-0">
                       <CardTitle className="text-base flex items-center justify-between gap-2">
                         <span className="truncate font-semibold">{resume.title}</span>
                         <span className="text-xs font-normal text-muted-foreground bg-muted px-2 py-0.5 rounded-full shrink-0">
                           {theme?.name || resume.theme}
                         </span>
                       </CardTitle>
-                      {basics?.label && (
-                        <p className="text-xs text-muted-foreground truncate">{basics.label}</p>
-                      )}
-                      {meta?.target && (
-                        <div className="flex items-center gap-1 mt-1">
-                          <Target className="w-3 h-3 text-orange-500 shrink-0" />
-                          <span className="text-xs font-medium text-orange-600 bg-orange-50 border border-orange-200 px-2 py-0.5 rounded-full truncate dark:bg-orange-950/30 dark:text-orange-400 dark:border-orange-800">
-                            {meta.target}
-                          </span>
-                        </div>
-                      )}
+                      <div className="h-8 flex items-center">
+                        {basics?.label ? (
+                          <p className="text-xs text-muted-foreground truncate">{basics.label}</p>
+                        ) : (
+                          <p className="text-xs text-muted-foreground/40 italic truncate">Pas de titre renseigné</p>
+                        )}
+                      </div>
+                      <div className="h-6 flex items-center">
+                        {meta?.target && (
+                          <div className="flex items-center gap-1">
+                            <Target className="w-3 h-3 text-orange-500 shrink-0" />
+                            <span className="text-xs font-medium text-orange-600 bg-orange-50 border border-orange-200 px-2 py-0.5 rounded-full truncate dark:bg-orange-950/30 dark:text-orange-400 dark:border-orange-800">
+                              {meta.target}
+                            </span>
+                          </div>
+                        )}
+                      </div>
                     </CardHeader>
 
-                    <CardContent className="pt-0 flex flex-col flex-1 gap-4">
+                    <CardContent className="pt-0 flex flex-col flex-1 gap-4 min-h-0">
                       {/* Stats: Review + Match */}
                       <div className="grid grid-cols-2 gap-3">
                         {/* Review stat */}
                         <div
-                          className={`rounded-xl border p-3 flex flex-col gap-1 cursor-pointer transition-colors hover:bg-muted/50 ${reviewSummary ? (gradeStyles[reviewSummary.grade] ?? gradeStyles.F) : "border-dashed border-muted-foreground/30 text-muted-foreground"}`}
+                          className={`rounded-xl border p-3 flex flex-col gap-1 cursor-pointer transition-colors hover:bg-muted/50 h-[88px] ${reviewSummary ? (gradeStyles[reviewSummary.grade] ?? gradeStyles.F) : "border-dashed border-muted-foreground/30 text-muted-foreground"}`}
                           onClick={() => router.push(`/review/${resume.id}`)}
                           title={reviewSummary ? `Revue v${reviewSummary.version} — ${reviewSummary.score}/100` : "Pas encore de revue IA"}
                         >
@@ -307,7 +313,7 @@ export function HomePageClient({ initialResumes, initialReviewsSummary, initialM
 
                         {/* Match stat */}
                         <div
-                          className={`rounded-xl border p-3 flex flex-col gap-1 cursor-pointer transition-colors hover:bg-muted/50 ${
+                          className={`rounded-xl border p-3 flex flex-col gap-1 cursor-pointer transition-colors hover:bg-muted/50 h-[88px] ${
                             matchSummary
                               ? matchSummary.matchScore >= 75
                                 ? "bg-emerald-50 text-emerald-800 border-emerald-200"
@@ -344,13 +350,11 @@ export function HomePageClient({ initialResumes, initialReviewsSummary, initialM
                         </div>
                       </div>
 
-                      {/* Footer info */}
-                      <p className="text-xs text-muted-foreground">
-                        Mis à jour le {new Date(resume.updatedAt).toLocaleDateString("fr-FR")}
-                      </p>
-
-                      {/* Actions */}
+                      {/* Footer info + Actions */}
                       <div className="flex flex-col gap-2 mt-auto">
+                        <p className="text-xs text-muted-foreground">
+                          Mis à jour le {new Date(resume.updatedAt).toLocaleDateString("fr-FR")}
+                        </p>
                         <Button
                           size="sm"
                           className="w-full"
