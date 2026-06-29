@@ -69,6 +69,41 @@ function IconNetwork({ color }: { color: string }) {
   );
 }
 
+// LinkedIn square "in" logo — matches brand shape
+function IconLinkedIn({ color }: { color: string }) {
+  return (
+    <svg width="11" height="11" viewBox="0 0 24 24" fill={color} style={{ flexShrink: 0, marginTop: "1px" }}>
+      <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/>
+      <rect x="2" y="9" width="4" height="12"/>
+      <circle cx="4" cy="4" r="2"/>
+    </svg>
+  );
+}
+
+function IconGitHub({ color }: { color: string }) {
+  return (
+    <svg width="11" height="11" viewBox="0 0 24 24" fill={color} style={{ flexShrink: 0, marginTop: "1px" }}>
+      <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/>
+    </svg>
+  );
+}
+
+function IconTwitter({ color }: { color: string }) {
+  return (
+    <svg width="11" height="11" viewBox="0 0 24 24" fill={color} style={{ flexShrink: 0, marginTop: "1px" }}>
+      <path d="M4 4l16 16M4 20 20 4" stroke={color} strokeWidth="2" strokeLinecap="round" fill="none"/>
+    </svg>
+  );
+}
+
+function getNetworkIcon(network: string, color: string) {
+  const n = network.toLowerCase();
+  if (n.includes("linkedin")) return <IconLinkedIn color={color} />;
+  if (n.includes("github")) return <IconGitHub color={color} />;
+  if (n.includes("twitter") || n.includes("x.com")) return <IconTwitter color={color} />;
+  return <IconNetwork color={color} />;
+}
+
 const SIDEBAR_BG = "#eef3f8";
 
 const defaultColors = {
@@ -347,7 +382,14 @@ export function LumiereTheme({ resume, colors: colorOverrides = {} }: ThemeProps
               {b.url && (
                 <div style={s.contactItem}>
                   <IconLink color={colors.accent} />
-                  <span>{b.url}</span>
+                  <a
+                    href={b.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{ color: colors.accent, textDecoration: "none", wordBreak: "break-all" as const }}
+                  >
+                    {b.url.replace(/^https?:\/\//, "")}
+                  </a>
                 </div>
               )}
             </div>
@@ -357,12 +399,29 @@ export function LumiereTheme({ resume, colors: colorOverrides = {} }: ThemeProps
           {b.profiles && b.profiles.filter((p) => p.network).length > 0 && (
             <div style={s.sidebarSection}>
               <div style={s.sidebarSectionTitle}>Réseaux sociaux</div>
-              {b.profiles.filter((p) => p.network).map((p, i) => (
-                <div key={i} style={s.contactItem}>
-                  <IconNetwork color={colors.accent} />
-                  <span>{p.username || p.url}</span>
-                </div>
-              ))}
+              {b.profiles.filter((p) => p.network).map((p, i) => {
+                const href = p.url || (p.username && p.network?.toLowerCase().includes("linkedin")
+                  ? `https://linkedin.com/in/${p.username}`
+                  : undefined);
+                const label = p.username || p.url || p.network;
+                return (
+                  <div key={i} style={s.contactItem}>
+                    {getNetworkIcon(p.network ?? "", colors.accent)}
+                    {href ? (
+                      <a
+                        href={href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{ color: colors.accent, textDecoration: "none", wordBreak: "break-all" as const }}
+                      >
+                        {label}
+                      </a>
+                    ) : (
+                      <span>{label}</span>
+                    )}
+                  </div>
+                );
+              })}
             </div>
           )}
 
