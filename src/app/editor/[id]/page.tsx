@@ -1060,7 +1060,7 @@ export default function EditorPage() {
         </div>
         )}
 
-        <div className={viewMode ? "flex-1 overflow-hidden" : "flex-shrink-0 overflow-hidden"} style={viewMode ? undefined : { width: "210mm" }}>
+        <div className={viewMode ? "flex-1 overflow-hidden" : "flex-shrink-0 overflow-hidden"} style={viewMode ? undefined : { width: "260mm" }}>
           <PreviewPanel
             resume={resume}
             themeId={themeId}
