@@ -16,6 +16,7 @@ import {
   AlertTriangle, XCircle, Sparkles,
 } from "lucide-react";
 import { Navbar } from "@/components/Navbar";
+import { AIProviderBadge } from "@/components/AIProviderSettings";
 
 export default function MatchPage() {
   const params = useParams();
@@ -184,8 +185,9 @@ export default function MatchPage() {
             <>
               <Card>
                 <CardHeader className="pb-2">
-                  <CardTitle className="text-base">
-                    Score: <span className={`text-2xl ${getScoreColor(matchResult.matchScore)}`}>{matchResult.matchScore}%</span>
+                  <CardTitle className="text-base flex items-center justify-between gap-2">
+                    <span>Score: <span className={`text-2xl ${getScoreColor(matchResult.matchScore)}`}>{matchResult.matchScore}%</span></span>
+                    <AIProviderBadge provider={matchResult.provider} />
                   </CardTitle>
                 </CardHeader>
                 <CardContent>

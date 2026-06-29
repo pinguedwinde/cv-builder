@@ -1,5 +1,6 @@
-import { getOpenAIClient, isAIEnabled } from "./client";
+import { getOpenAIClient } from "./client";
 import { callClaudeCli } from "./claudeCliClient";
+import { callOpenCodeCli } from "./openCodeCliClient";
 import { parseMatchResult } from "./outputSchemas";
 import {
   MATCHING_SYSTEM_PROMPT,
@@ -8,6 +9,8 @@ import {
   OPTIMIZE_USER_PROMPT,
 } from "./prompts/matching";
 import { resumeSchema } from "@/lib/schemas/resume";
+import { getActiveProvider } from "./aiConfig";
+import type { AIProvider } from "./aiConfig";
 import type { Resume } from "@/lib/schemas/resume";
 
 export interface JobRequirements {
@@ -37,12 +40,55 @@ export interface MatchResult {
   suggestions: MatchSuggestion[];
   optimizedSummary: string;
   summary: string;
+  /** Provider ou méthode qui a produit ce résultat. */
+  provider: AIProvider | "heuristic";
 }
 
-async function matchResumeToJobClaudeCli(
-  resume: Resume,
-  jobDescription: string
-): Promise<MatchResult | null> {
+// ─── Helpers par provider ─────────────────────────────────────────────────────
+
+async function matchWithOpenAI(resume: Resume, jobDescription: string): Promise<MatchResult | null> {
+  const client = getOpenAIClient();
+  if (!client) return null;
+
+  const model = process.env.OPENAI_MODEL || "gpt-4o";
+  console.log(`[match] Appel OpenAI (${model})…`);
+  try {
+    const response = await client.chat.completions.create({
+      model,
+      messages: [
+        { role: "system", content: MATCHING_SYSTEM_PROMPT },
+        {
+          role: "user",
+          content: MATCHING_USER_PROMPT
+            .replace("{jobDescription}", jobDescription)
+            .replace("{resume}", JSON.stringify(resume, null, 2)),
+        },
+      ],
+      temperature: 0.3,
+      response_format: { type: "json_object" },
+    });
+
+    const content = response.choices[0]?.message?.content;
+    if (!content) {
+      console.warn("[match] OpenAI : réponse vide");
+      return null;
+    }
+
+    const parsed = parseMatchResult(content);
+    if (!parsed) {
+      console.warn("[match] OpenAI : validation Zod échouée");
+      return null;
+    }
+
+    console.log(`[match] OpenAI OK — score ${parsed.matchScore}%`);
+    return { ...(parsed as MatchResult), provider: "openai" };
+  } catch (err) {
+    console.error("[match] OpenAI erreur :", err instanceof Error ? err.message : err);
+    return null;
+  }
+}
+
+async function matchWithClaudeCli(resume: Resume, jobDescription: string): Promise<MatchResult | null> {
   console.log("[match] Appel Claude CLI…");
   const userPrompt = MATCHING_USER_PROMPT
     .replace("{jobDescription}", jobDescription)
@@ -58,52 +104,48 @@ async function matchResumeToJobClaudeCli(
     return null;
   }
   console.log(`[match] Claude CLI OK — score ${parsed.matchScore}%`);
-  return parsed as MatchResult;
+  return { ...(parsed as MatchResult), provider: "claude-cli" };
 }
+
+async function matchWithOpenCode(resume: Resume, jobDescription: string): Promise<MatchResult | null> {
+  console.log("[match] Appel opencode CLI…");
+  const userPrompt = MATCHING_USER_PROMPT
+    .replace("{jobDescription}", jobDescription)
+    .replace("{resume}", JSON.stringify(resume, null, 2));
+  const raw = await callOpenCodeCli(MATCHING_SYSTEM_PROMPT, userPrompt);
+  if (!raw) {
+    console.warn("[match] opencode CLI : pas de réponse");
+    return null;
+  }
+  const parsed = parseMatchResult(raw);
+  if (!parsed) {
+    console.warn("[match] opencode CLI : validation Zod échouée");
+    return null;
+  }
+  console.log(`[match] opencode CLI OK — score ${parsed.matchScore}%`);
+  return { ...(parsed as MatchResult), provider: "opencode" };
+}
+
+// ─── Entrées publiques ────────────────────────────────────────────────────────
 
 export async function matchResumeToJob(
   resume: Resume,
   jobDescription: string
 ): Promise<MatchResult> {
-  const client = getOpenAIClient();
+  const provider = getActiveProvider();
+  console.log(`[match] Provider actif : ${provider}`);
 
-  if (client && isAIEnabled()) {
-    const model = process.env.OPENAI_MODEL || "gpt-4o";
-    console.log(`[match] Appel OpenAI (${model})…`);
-    try {
-      const response = await client.chat.completions.create({
-        model,
-        messages: [
-          { role: "system", content: MATCHING_SYSTEM_PROMPT },
-          {
-            role: "user",
-            content: MATCHING_USER_PROMPT
-              .replace("{jobDescription}", jobDescription)
-              .replace("{resume}", JSON.stringify(resume, null, 2)),
-          },
-        ],
-        temperature: 0.3,
-        response_format: { type: "json_object" },
-      });
+  let result: MatchResult | null = null;
 
-      const content = response.choices[0]?.message?.content;
-      if (content) {
-        const parsed = parseMatchResult(content);
-        if (parsed) {
-          console.log(`[match] OpenAI OK — score ${parsed.matchScore}%`);
-          return parsed as MatchResult;
-        }
-        console.warn("[match] OpenAI : validation Zod échouée → Claude CLI");
-      } else {
-        console.warn("[match] OpenAI : réponse vide → Claude CLI");
-      }
-    } catch (err) {
-      console.error("[match] OpenAI erreur :", err instanceof Error ? err.message : err, "→ Claude CLI");
-    }
+  if (provider === "openai") {
+    result = await matchWithOpenAI(resume, jobDescription);
+  } else if (provider === "claude-cli") {
+    result = await matchWithClaudeCli(resume, jobDescription);
+  } else if (provider === "opencode") {
+    result = await matchWithOpenCode(resume, jobDescription);
   }
 
-  const cliResult = await matchResumeToJobClaudeCli(resume, jobDescription);
-  if (cliResult) return cliResult;
+  if (result) return result;
 
   console.log("[match] Fallback heuristique");
   return matchResumeToJobLocal(resume, jobDescription);
@@ -118,54 +160,74 @@ export async function optimizeResumeForJob(
     .replace("{jobDescription}", jobDescription)
     .replace("{resume}", resumeText);
 
-  const client = getOpenAIClient();
-  if (client && isAIEnabled()) {
-    const model = process.env.OPENAI_MODEL || "gpt-4o";
-    console.log(`[optimize] Appel OpenAI (${model})…`);
-    try {
-      const response = await client.chat.completions.create({
-        model,
-        messages: [
-          { role: "system", content: OPTIMIZE_SYSTEM_PROMPT },
-          { role: "user", content: userPrompt },
-        ],
-        temperature: 0.3,
-        response_format: { type: "json_object" },
-      });
-      const content = response.choices[0]?.message?.content;
-      if (content) {
-        const r = resumeSchema.safeParse(JSON.parse(content));
+  const provider = getActiveProvider();
+  console.log(`[optimize] Provider actif : ${provider}`);
+
+  if (provider === "openai") {
+    const client = getOpenAIClient();
+    if (client) {
+      const model = process.env.OPENAI_MODEL || "gpt-4o";
+      console.log(`[optimize] Appel OpenAI (${model})…`);
+      try {
+        const response = await client.chat.completions.create({
+          model,
+          messages: [
+            { role: "system", content: OPTIMIZE_SYSTEM_PROMPT },
+            { role: "user", content: userPrompt },
+          ],
+          temperature: 0.3,
+          response_format: { type: "json_object" },
+        });
+        const content = response.choices[0]?.message?.content;
+        if (content) {
+          const r = resumeSchema.safeParse(JSON.parse(content));
+          if (r.success) {
+            console.log("[optimize] OpenAI OK");
+            return r.data;
+          }
+          console.warn("[optimize] OpenAI : validation Zod échouée → CV inchangé");
+        }
+      } catch (err) {
+        console.error("[optimize] OpenAI erreur :", err instanceof Error ? err.message : err);
+      }
+    }
+  } else if (provider === "claude-cli") {
+    console.log("[optimize] Appel Claude CLI…");
+    const raw = await callClaudeCli(OPTIMIZE_SYSTEM_PROMPT, userPrompt);
+    if (raw) {
+      try {
+        const r = resumeSchema.safeParse(JSON.parse(raw));
         if (r.success) {
-          console.log("[optimize] OpenAI OK");
+          console.log("[optimize] Claude CLI OK");
           return r.data;
         }
-        console.warn("[optimize] OpenAI : validation Zod échouée → Claude CLI");
-      } else {
-        console.warn("[optimize] OpenAI : réponse vide → Claude CLI");
+        console.warn("[optimize] Claude CLI : validation Zod échouée → CV inchangé");
+      } catch {
+        console.warn("[optimize] Claude CLI : JSON invalide → CV inchangé");
       }
-    } catch (err) {
-      console.error("[optimize] OpenAI erreur :", err instanceof Error ? err.message : err, "→ Claude CLI");
     }
-  }
-
-  console.log("[optimize] Appel Claude CLI…");
-  const raw = await callClaudeCli(OPTIMIZE_SYSTEM_PROMPT, userPrompt);
-  if (raw) {
-    try {
-      const r = resumeSchema.safeParse(JSON.parse(raw));
-      if (r.success) {
-        console.log("[optimize] Claude CLI OK");
-        return r.data;
+  } else if (provider === "opencode") {
+    console.log("[optimize] Appel opencode CLI…");
+    const raw = await callOpenCodeCli(OPTIMIZE_SYSTEM_PROMPT, userPrompt);
+    if (raw) {
+      try {
+        const r = resumeSchema.safeParse(JSON.parse(raw));
+        if (r.success) {
+          console.log("[optimize] opencode CLI OK");
+          return r.data;
+        }
+        console.warn("[optimize] opencode CLI : validation Zod échouée → CV inchangé");
+      } catch {
+        console.warn("[optimize] opencode CLI : JSON invalide → CV inchangé");
       }
-      console.warn("[optimize] Claude CLI : validation Zod échouée → CV inchangé");
-    } catch {
-      console.warn("[optimize] Claude CLI : JSON invalide → CV inchangé");
     }
   }
 
   console.log("[optimize] Aucun provider disponible — CV retourné inchangé");
   return resume;
 }
+
+// ─── Heuristique locale ───────────────────────────────────────────────────────
 
 function matchResumeToJobLocal(resume: Resume, jobDescription: string): MatchResult {
   const jdLower = jobDescription.toLowerCase();
@@ -238,5 +300,6 @@ function matchResumeToJobLocal(resume: Resume, jobDescription: string): MatchRes
       : [],
     optimizedSummary: resume.basics?.summary || "",
     summary: `Score de correspondance: ${matchScore}%. ${matchedSkills.length} compétences correspondent. ${gapKeywords.length} mots-clés potentiellement manquants. Activez l'IA pour une analyse plus précise.`,
+    provider: "heuristic",
   };
 }

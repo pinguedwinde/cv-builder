@@ -5,6 +5,7 @@ import { ChevronLeft, FileText } from "lucide-react";
 import { motion } from "framer-motion";
 import { ThemeToggle } from "./ThemeToggle";
 import { Button } from "./ui/button";
+import { AIProviderSettings } from "./AIProviderSettings";
 
 interface NavbarProps {
   title?: string;
@@ -46,6 +47,7 @@ export function Navbar({ title, actions, showBack, backHref = "/" }: NavbarProps
 
         <div className="flex items-center gap-2 shrink-0">
           {actions}
+          <AIProviderSettings />
           <ThemeToggle />
         </div>
       </div>

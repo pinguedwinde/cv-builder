@@ -53,3 +53,6 @@ next-env.d.ts
 .idea/
 *.swp
 *.swo
+
+# Fichier temporaire opencode CLI
+src/lib/ai/runner/opencode-result.json

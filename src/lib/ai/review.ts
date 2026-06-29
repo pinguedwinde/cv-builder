@@ -1,8 +1,11 @@
-import { getOpenAIClient, isAIEnabled } from "./client";
+import { getOpenAIClient } from "./client";
 import { callClaudeCli } from "./claudeCliClient";
+import { callOpenCodeCli } from "./openCodeCliClient";
 import { parseReviewResult } from "./outputSchemas";
 import { REVIEW_SYSTEM_PROMPT, buildReviewUserPrompt } from "./prompts/review";
 import { scoreToGrade } from "./criteria/review";
+import { getActiveProvider } from "./aiConfig";
+import type { AIProvider } from "./aiConfig";
 import type { Resume } from "@/lib/schemas/resume";
 
 // ─── Types exportés (consommés par l'UI) ─────────────────────────────────────
@@ -44,6 +47,8 @@ export interface ReviewResult {
   strengths?: string[];
   suggestions: ReviewSuggestion[];
   summary: string;
+  /** Provider ou méthode qui a produit ce résultat. */
+  provider: AIProvider | "heuristic";
 }
 
 // ─── Fallback local (sans IA) ─────────────────────────────────────────────────
@@ -140,17 +145,15 @@ export function reviewResumeLocal(resume: Resume): ReviewResult {
       : overallScore >= 60
         ? "CV avec une base correcte mais nécessitant des améliorations significatives."
         : "CV incomplet. Il manque des sections essentielles et le contenu doit être développé.",
+    provider: "heuristic",
   };
 }
 
 // ─── Analyse IA ───────────────────────────────────────────────────────────────
 
-export async function reviewResumeAI(resume: Resume): Promise<ReviewResult> {
+async function reviewWithOpenAI(resume: Resume): Promise<ReviewResult | null> {
   const client = getOpenAIClient();
-  if (!client) {
-    console.log("[review] OpenAI client unavailable → fallback heuristique");
-    return reviewResumeLocal(resume);
-  }
+  if (!client) return null;
 
   const model = process.env.OPENAI_MODEL || "gpt-4o";
   console.log(`[review] Appel OpenAI (${model})…`);
@@ -168,25 +171,25 @@ export async function reviewResumeAI(resume: Resume): Promise<ReviewResult> {
 
     const content = response.choices[0]?.message?.content;
     if (!content) {
-      console.warn("[review] OpenAI : réponse vide → fallback heuristique");
-      return reviewResumeLocal(resume);
+      console.warn("[review] OpenAI : réponse vide");
+      return null;
     }
 
     const parsed = parseReviewResult(content);
     if (!parsed) {
-      console.warn("[review] OpenAI : validation Zod échouée → fallback heuristique");
-      return reviewResumeLocal(resume);
+      console.warn("[review] OpenAI : validation Zod échouée");
+      return null;
     }
 
     console.log(`[review] OpenAI OK — score ${parsed.overallScore}/100 (${parsed.grade})`);
-    return parsed as ReviewResult;
+    return { ...(parsed as ReviewResult), provider: "openai" };
   } catch (err) {
     console.error("[review] OpenAI erreur :", err instanceof Error ? err.message : err);
-    return reviewResumeLocal(resume);
+    return null;
   }
 }
 
-async function reviewResumeClaudeCli(resume: Resume): Promise<ReviewResult | null> {
+async function reviewWithClaudeCli(resume: Resume): Promise<ReviewResult | null> {
   console.log("[review] Appel Claude CLI…");
   const raw = await callClaudeCli(REVIEW_SYSTEM_PROMPT, buildReviewUserPrompt(resume));
   if (!raw) {
@@ -199,14 +202,40 @@ async function reviewResumeClaudeCli(resume: Resume): Promise<ReviewResult | nul
     return null;
   }
   console.log(`[review] Claude CLI OK — score ${parsed.overallScore}/100 (${parsed.grade})`);
-  return parsed as ReviewResult;
+  return { ...(parsed as ReviewResult), provider: "claude-cli" };
+}
+
+async function reviewWithOpenCode(resume: Resume): Promise<ReviewResult | null> {
+  console.log("[review] Appel opencode CLI…");
+  const raw = await callOpenCodeCli(REVIEW_SYSTEM_PROMPT, buildReviewUserPrompt(resume));
+  if (!raw) {
+    console.warn("[review] opencode CLI : pas de réponse");
+    return null;
+  }
+  const parsed = parseReviewResult(raw);
+  if (!parsed) {
+    console.warn("[review] opencode CLI : validation Zod échouée");
+    return null;
+  }
+  console.log(`[review] opencode CLI OK — score ${parsed.overallScore}/100 (${parsed.grade})`);
+  return { ...(parsed as ReviewResult), provider: "opencode" };
 }
 
 export async function reviewResume(resume: Resume): Promise<ReviewResult> {
-  if (isAIEnabled()) return reviewResumeAI(resume);
+  const provider = getActiveProvider();
+  console.log(`[review] Provider actif : ${provider}`);
 
-  const cliResult = await reviewResumeClaudeCli(resume);
-  if (cliResult) return cliResult;
+  let result: ReviewResult | null = null;
+
+  if (provider === "openai") {
+    result = await reviewWithOpenAI(resume);
+  } else if (provider === "claude-cli") {
+    result = await reviewWithClaudeCli(resume);
+  } else if (provider === "opencode") {
+    result = await reviewWithOpenCode(resume);
+  }
+
+  if (result) return result;
 
   console.log("[review] Fallback heuristique");
   return reviewResumeLocal(resume);

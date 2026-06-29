@@ -25,6 +25,7 @@ import {
   History,
 } from "lucide-react";
 import { Navbar } from "@/components/Navbar";
+import { AIProviderBadge } from "@/components/AIProviderSettings";
 
 function getGrade(score: number) {
   if (score >= 90) return { grade: "A", label: "Excellent !", gradient: "from-emerald-500 to-teal-400" };
@@ -244,7 +245,7 @@ export default function ReviewPage() {
             <>
               {/* Score global */}
               <div className={`rounded-2xl bg-gradient-to-br ${grade!.gradient} p-5 text-white shadow-lg`}>
-                <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-4">
                   <div className="flex-shrink-0 w-20 h-20 rounded-2xl bg-white/20 backdrop-blur-sm flex flex-col items-center justify-center shadow-inner">
                     <span className="text-4xl font-black leading-none">{grade!.grade}</span>
                   </div>
@@ -260,6 +261,9 @@ export default function ReviewPage() {
                       />
                     </div>
                     <p className="text-white/75 text-xs mt-2.5 leading-snug line-clamp-3">{review.summary}</p>
+                    <div className="mt-2">
+                      <AIProviderBadge provider={review.provider} />
+                    </div>
                   </div>
                 </div>
               </div>
