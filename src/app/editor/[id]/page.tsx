@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback, useRef, type ReactNode } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { motion, AnimatePresence, Reorder, useDragControls } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -118,6 +118,7 @@ function DraggableRow({
 export default function EditorPage() {
   const params = useParams();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const id = params.id as string;
 
   const [resume, setResume] = useState<Resume | null>(null);
@@ -131,7 +132,7 @@ export default function EditorPage() {
   const [rawFormat, setRawFormat] = useState<"json" | "yaml" | "markdown">("json");
   const [rawContent, setRawContent] = useState("");
   const [rawError, setRawError] = useState<string | null>(null);
-  const [viewMode, setViewMode] = useState(false);
+  const [viewMode, setViewMode] = useState(() => searchParams.get("view") === "1");
 
   // Refs so save functions always read latest values without extra deps
   const resumeRef = useRef(resume);

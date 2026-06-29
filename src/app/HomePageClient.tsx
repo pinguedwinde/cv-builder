@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Navbar } from "@/components/Navbar";
-import { Plus, Upload, FileText, Trash2, Copy, Star, Target, TrendingUp } from "lucide-react";
+import { Plus, Upload, FileText, Trash2, Copy, Star, Target, TrendingUp, Eye } from "lucide-react";
 import { themes } from "@/themes";
 import { containerVariants, cardVariants } from "@/lib/motion";
 
@@ -338,13 +338,23 @@ export function HomePageClient({ initialResumes, initialReviewsSummary, initialM
                         <p className="text-xs text-muted-foreground">
                           Mis à jour le {new Date(resume.updatedAt).toLocaleDateString("fr-FR")}
                         </p>
-                        <Button
-                          size="sm"
-                          className="w-full"
-                          onClick={() => router.push(`/editor/${resume.id}`)}
-                        >
-                          <FileText className="w-3.5 h-3.5" /> Editer
-                        </Button>
+                        <div className="flex gap-1">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="flex-1"
+                            onClick={() => router.push(`/editor/${resume.id}?view=1`)}
+                          >
+                            <Eye className="w-3.5 h-3.5" /> Aperçu
+                          </Button>
+                          <Button
+                            size="sm"
+                            className="flex-1"
+                            onClick={() => router.push(`/editor/${resume.id}`)}
+                          >
+                            <FileText className="w-3.5 h-3.5" /> Éditer
+                          </Button>
+                        </div>
                         <div className="flex gap-1">
                           <Button
                             variant="outline"
