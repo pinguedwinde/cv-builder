@@ -54,6 +54,7 @@ export default function MatchPage() {
   const [activeVersion, setActiveVersion] = useState<number | null>(null);
   const [activeRecord, setActiveRecord] = useState<MatchRecord | null>(null);
   const [pdfState, setPdfState] = useState<"idle" | "loading" | "done">("idle");
+  const [cvPdfState, setCvPdfState] = useState<"idle" | "loading" | "done">("idle");
   const [activeTab, setActiveTab] = useState<"analyser" | "resultats">("analyser");
 
   useEffect(() => {
@@ -170,6 +171,27 @@ export default function MatchPage() {
     }
   }
 
+  async function exportCvPdf() {
+    if (cvPdfState !== "idle") return;
+    setCvPdfState("loading");
+    try {
+      const res = await fetch(`/api/export/pdf?id=${id}&format=pdf&theme=${themeId}&colorTheme=default`);
+      if (!res.ok) throw new Error("CV PDF export failed");
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${resume?.basics?.name || "cv"}.pdf`;
+      a.click();
+      URL.revokeObjectURL(url);
+      setCvPdfState("done");
+      setTimeout(() => setCvPdfState("idle"), 2500);
+    } catch (err) {
+      console.error("CV PDF export error:", err);
+      setCvPdfState("idle");
+    }
+  }
+
   function getScoreColor(score: number): string {
     if (score >= 75) return "text-green-600";
     if (score >= 50) return "text-yellow-600";
@@ -221,6 +243,24 @@ export default function MatchPage() {
       <Button
         variant="outline"
         size="sm"
+        onClick={exportCvPdf}
+        disabled={cvPdfState !== "idle"}
+        className="gap-1.5"
+      >
+        {cvPdfState === "loading" ? (
+          <div className="animate-spin w-3 h-3 border-2 border-current border-t-transparent rounded-full" />
+        ) : cvPdfState === "done" ? (
+          <Check className="w-3 h-3" />
+        ) : (
+          <Download className="w-3 h-3" />
+        )}
+        <span className="hidden sm:inline">
+          {cvPdfState === "loading" ? "Export..." : cvPdfState === "done" ? "OK" : "Exporter le CV"}
+        </span>
+      </Button>
+      <Button
+        variant="outline"
+        size="sm"
         onClick={exportPdf}
         disabled={pdfState !== "idle" || !matchResult}
         className="gap-1.5"
@@ -233,7 +273,7 @@ export default function MatchPage() {
           <Download className="w-3 h-3" />
         )}
         <span className="hidden sm:inline">
-          {pdfState === "loading" ? "Export..." : pdfState === "done" ? "OK" : "Exporter PDF"}
+          {pdfState === "loading" ? "Export..." : pdfState === "done" ? "OK" : "Exporter l'analyse"}
         </span>
       </Button>
       <Button variant="outline" size="sm" onClick={() => router.push(`/editor/${id}`)}>
