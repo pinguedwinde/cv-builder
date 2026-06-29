@@ -14,6 +14,7 @@ import type { MatchResult } from "@/lib/ai/matching";
 import {
   Link, FileText, Target, CheckCircle,
   AlertTriangle, XCircle, Sparkles, History,
+  Download, Check,
 } from "lucide-react";
 import { Navbar } from "@/components/Navbar";
 import { AIProviderBadge } from "@/components/AIProviderSettings";
@@ -46,6 +47,7 @@ export default function MatchPage() {
   const [optimize, setOptimize] = useState(false);
   const [matchHistory, setMatchHistory] = useState<MatchRecord[]>([]);
   const [activeVersion, setActiveVersion] = useState<number | null>(null);
+  const [pdfState, setPdfState] = useState<"idle" | "loading" | "done">("idle");
 
   useEffect(() => {
     async function load() {
@@ -118,6 +120,27 @@ export default function MatchPage() {
     setActiveVersion(record.version);
   }
 
+  async function exportPdf() {
+    if (pdfState !== "idle") return;
+    setPdfState("loading");
+    try {
+      const res = await fetch(`/api/export/match-pdf?resumeId=${id}`);
+      if (!res.ok) throw new Error("PDF export failed");
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `matching-${resume?.basics?.name || "cv"}.pdf`;
+      a.click();
+      URL.revokeObjectURL(url);
+      setPdfState("done");
+      setTimeout(() => setPdfState("idle"), 2500);
+    } catch (err) {
+      console.error("PDF export error:", err);
+      setPdfState("idle");
+    }
+  }
+
   function getScoreColor(score: number): string {
     if (score >= 75) return "text-green-600";
     if (score >= 50) return "text-yellow-600";
@@ -139,9 +162,29 @@ export default function MatchPage() {
   }
 
   const navActions = (
-    <Button variant="outline" size="sm" onClick={() => router.push(`/editor/${id}`)}>
-      Editer le CV
-    </Button>
+    <div className="flex gap-2">
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={exportPdf}
+        disabled={pdfState !== "idle" || !matchResult}
+        className="gap-1.5"
+      >
+        {pdfState === "loading" ? (
+          <div className="animate-spin w-3 h-3 border-2 border-current border-t-transparent rounded-full" />
+        ) : pdfState === "done" ? (
+          <Check className="w-3 h-3" />
+        ) : (
+          <Download className="w-3 h-3" />
+        )}
+        <span className="hidden sm:inline">
+          {pdfState === "loading" ? "Export..." : pdfState === "done" ? "OK" : "Exporter PDF"}
+        </span>
+      </Button>
+      <Button variant="outline" size="sm" onClick={() => router.push(`/editor/${id}`)}>
+        Editer le CV
+      </Button>
+    </div>
   );
 
   return (

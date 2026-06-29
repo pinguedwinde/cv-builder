@@ -23,6 +23,8 @@ import {
   ThumbsUp,
   Star,
   History,
+  Download,
+  Check,
 } from "lucide-react";
 import { Navbar } from "@/components/Navbar";
 import { AIProviderBadge } from "@/components/AIProviderSettings";
@@ -90,6 +92,7 @@ export default function ReviewPage() {
   const [activeVersion, setActiveVersion] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
   const [reviewing, setReviewing] = useState(false);
+  const [pdfState, setPdfState] = useState<"idle" | "loading" | "done">("idle");
 
   useEffect(() => {
     async function load() {
@@ -149,6 +152,27 @@ export default function ReviewPage() {
     setActiveVersion(record.version);
   }
 
+  async function exportPdf() {
+    if (pdfState !== "idle") return;
+    setPdfState("loading");
+    try {
+      const res = await fetch(`/api/export/review-pdf?resumeId=${id}`);
+      if (!res.ok) throw new Error("PDF export failed");
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `revue-${resume?.basics?.name || "cv"}.pdf`;
+      a.click();
+      URL.revokeObjectURL(url);
+      setPdfState("done");
+      setTimeout(() => setPdfState("idle"), 2500);
+    } catch (err) {
+      console.error("PDF export error:", err);
+      setPdfState("idle");
+    }
+  }
+
   if (loading) {
     return <div className="flex items-center justify-center h-screen">Chargement...</div>;
   }
@@ -161,6 +185,24 @@ export default function ReviewPage() {
     <div className="flex gap-2">
       <Button variant="outline" size="sm" onClick={() => router.push(`/editor/${id}`)}>
         Editer
+      </Button>
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={exportPdf}
+        disabled={pdfState !== "idle" || !review}
+        className="gap-1.5"
+      >
+        {pdfState === "loading" ? (
+          <div className="animate-spin w-3 h-3 border-2 border-current border-t-transparent rounded-full" />
+        ) : pdfState === "done" ? (
+          <Check className="w-3 h-3" />
+        ) : (
+          <Download className="w-3 h-3" />
+        )}
+        <span className="hidden sm:inline">
+          {pdfState === "loading" ? "Export..." : pdfState === "done" ? "OK" : "Exporter PDF"}
+        </span>
       </Button>
       <Button size="sm" onClick={runReview} disabled={reviewing} className="gap-1.5">
         <RefreshCw className={`w-4 h-4 ${reviewing ? "animate-spin" : ""}`} />
