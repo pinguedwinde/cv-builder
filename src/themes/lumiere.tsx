@@ -32,6 +32,45 @@ function getLangPercent(fluency?: string): number {
   return 60;
 }
 
+// Inline SVG icons — PDF-safe (no font dependency)
+function IconLocation({ color }: { color: string }) {
+  return (
+    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, marginTop: "1px" }}>
+      <path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/>
+    </svg>
+  );
+}
+function IconMail({ color }: { color: string }) {
+  return (
+    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, marginTop: "1px" }}>
+      <rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+    </svg>
+  );
+}
+function IconPhone({ color }: { color: string }) {
+  return (
+    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, marginTop: "1px" }}>
+      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.07 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3 2.18h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 21 17z"/>
+    </svg>
+  );
+}
+function IconLink({ color }: { color: string }) {
+  return (
+    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, marginTop: "1px" }}>
+      <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+    </svg>
+  );
+}
+function IconNetwork({ color }: { color: string }) {
+  return (
+    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, marginTop: "1px" }}>
+      <circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+    </svg>
+  );
+}
+
+const SIDEBAR_BG = "#eef3f8";
+
 const defaultColors = {
   headerBg: "#dde8f2",
   headerBorder: "#b8cfe0",
@@ -49,6 +88,7 @@ export function LumiereTheme({ resume, colors: colorOverrides = {} }: ThemeProps
   const pdfMode = usePdfMode();
   const colors = { ...defaultColors, ...colorOverrides };
   const b = resume.basics;
+  const sidebarW = pdfMode ? SIDEBAR_W_PDF : SIDEBAR_W_PX;
 
   const s = {
     page: {
@@ -57,6 +97,8 @@ export function LumiereTheme({ resume, colors: colorOverrides = {} }: ThemeProps
       lineHeight: 1.45,
       color: colors.text,
       backgroundColor: "#ffffff",
+      // Gradient simulates sidebar bg on every PDF page
+      background: `linear-gradient(to right, ${SIDEBAR_BG} ${sidebarW}, #ffffff 0)`,
       ...(pdfMode ? {} : { minHeight: "1120px" }),
     } as React.CSSProperties,
 
@@ -87,19 +129,18 @@ export function LumiereTheme({ resume, colors: colorOverrides = {} }: ThemeProps
     } as React.CSSProperties,
 
     sidebar: {
-      width: pdfMode ? SIDEBAR_W_PDF : SIDEBAR_W_PX,
-      minWidth: pdfMode ? SIDEBAR_W_PDF : SIDEBAR_W_PX,
-      backgroundColor: "#ffffff",
-      borderRight: `1px solid ${colors.border}`,
+      width: sidebarW,
+      minWidth: sidebarW,
+      backgroundColor: SIDEBAR_BG,
+      borderRight: `1px solid ${colors.headerBorder}`,
       padding: "16px 14px",
       boxSizing: "border-box" as const,
-      ...(pdfMode ? { minHeight: "270mm" } : {}),
     } as React.CSSProperties,
 
     main: {
       flex: 1,
       padding: "16px 20px",
-      backgroundColor: "#ffffff",
+      backgroundColor: "transparent",
       boxSizing: "border-box" as const,
     } as React.CSSProperties,
 
@@ -113,13 +154,6 @@ export function LumiereTheme({ resume, colors: colorOverrides = {} }: ThemeProps
       gap: "6px",
     } as React.CSSProperties,
 
-    contactIcon: {
-      color: colors.accent,
-      fontSize: "11px",
-      minWidth: "12px",
-      marginTop: "1px",
-    } as React.CSSProperties,
-
     sidebarSection: {
       marginBottom: "14px",
     } as React.CSSProperties,
@@ -130,7 +164,7 @@ export function LumiereTheme({ resume, colors: colorOverrides = {} }: ThemeProps
       color: colors.primary,
       marginBottom: "8px",
       paddingBottom: "4px",
-      borderBottom: `1px solid ${colors.border}`,
+      borderBottom: `1px solid ${colors.headerBorder}`,
     } as React.CSSProperties,
 
     skillCategory: {
@@ -291,7 +325,7 @@ export function LumiereTheme({ resume, colors: colorOverrides = {} }: ThemeProps
             <div style={s.sidebarSection}>
               {b.location?.city && (
                 <div style={s.contactItem}>
-                  <span style={s.contactIcon}>⌂</span>
+                  <IconLocation color={colors.accent} />
                   <span>
                     {b.location.city}
                     {b.location.postalCode ? ` (${b.location.postalCode})` : ""}
@@ -300,19 +334,19 @@ export function LumiereTheme({ resume, colors: colorOverrides = {} }: ThemeProps
               )}
               {b.email && (
                 <div style={s.contactItem}>
-                  <span style={s.contactIcon}>✉</span>
+                  <IconMail color={colors.accent} />
                   <span>{b.email}</span>
                 </div>
               )}
               {b.phone && (
                 <div style={s.contactItem}>
-                  <span style={s.contactIcon}>☏</span>
+                  <IconPhone color={colors.accent} />
                   <span>{b.phone}</span>
                 </div>
               )}
               {b.url && (
                 <div style={s.contactItem}>
-                  <span style={s.contactIcon}>⊕</span>
+                  <IconLink color={colors.accent} />
                   <span>{b.url}</span>
                 </div>
               )}
@@ -325,10 +359,8 @@ export function LumiereTheme({ resume, colors: colorOverrides = {} }: ThemeProps
               <div style={s.sidebarSectionTitle}>Réseaux sociaux</div>
               {b.profiles.filter((p) => p.network).map((p, i) => (
                 <div key={i} style={s.contactItem}>
-                  <span style={{ ...s.contactIcon, fontWeight: 700, fontSize: "9px" }}>
-                    {p.network?.slice(0, 2).toUpperCase()}
-                  </span>
-                  <span>{p.username}</span>
+                  <IconNetwork color={colors.accent} />
+                  <span>{p.username || p.url}</span>
                 </div>
               ))}
             </div>
@@ -576,3 +608,5 @@ export function LumiereTheme({ resume, colors: colorOverrides = {} }: ThemeProps
     </div>
   );
 }
+
+
