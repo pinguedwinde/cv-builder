@@ -149,9 +149,13 @@ export function HomePageClient({ initialResumes, initialReviewsSummary, initialM
     </div>
   );
 
+  const navSubtitle = resumes.length > 0
+    ? `${resumes.length} CV${resumes.length > 1 ? "s" : ""}`
+    : undefined;
+
   return (
     <div className="min-h-screen bg-background">
-      <Navbar actions={navActions} />
+      <Navbar actions={navActions} subtitle={navSubtitle} />
 
       <AnimatePresence>
         {showImport && (
@@ -195,28 +199,7 @@ export function HomePageClient({ initialResumes, initialReviewsSummary, initialM
         )}
       </AnimatePresence>
 
-      <section className="bg-hero-gradient py-10 px-6 text-center">
-        <motion.h2
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.1 }}
-          className="text-4xl font-bold text-gradient-primary mb-3"
-        >
-          Vos CVs professionnels
-        </motion.h2>
-        <motion.p
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-          className="text-muted-foreground text-base max-w-md mx-auto"
-        >
-          {resumes.length > 0
-            ? `${resumes.length} CV${resumes.length > 1 ? "s" : ""} dans votre espace`
-            : "Creez, evaluez et optimisez vos CVs avec l'IA"}
-        </motion.p>
-      </section>
-
-      <main className="max-w-6xl mx-auto px-6 py-8">
+      <main className="max-w-6xl mx-auto px-6 py-6">
         {resumes.length === 0 ? (
           <motion.div
             className="text-center py-24 flex flex-col items-center"
