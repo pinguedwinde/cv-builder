@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getResumeById, getLatestMatch } from "@/lib/db/queries";
-import { generateAnalysisPdf } from "@/lib/exporters/analysis-pdf";
+import { generateMatchPdf } from "@/lib/exporters/analysis-pdf";
+import type { Resume } from "@/lib/schemas/resume";
+import type { MatchResult } from "@/lib/ai/matching";
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
@@ -10,10 +12,8 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "resumeId is required" }, { status: 400 });
   }
 
-  const [resumeRecord, matchRecord] = await Promise.all([
-    getResumeById(resumeId),
-    Promise.resolve(getLatestMatch(resumeId)),
-  ]);
+  const resumeRecord = await getResumeById(resumeId);
+  const matchRecord = getLatestMatch(resumeId);
 
   if (!resumeRecord) {
     return NextResponse.json({ error: "Resume not found" }, { status: 404 });
@@ -24,12 +24,18 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
-    const pdfBuffer = await generateAnalysisPdf("match", resumeId, baseUrl);
+    const resume = resumeRecord.data as Resume;
+    const match = matchRecord.data as unknown as MatchResult;
+    const candidateName = resume.basics?.name || "Candidat";
+    const jobTitle = matchRecord.jobTitle ?? null;
 
-    const candidateName = (resumeRecord.data as { basics?: { name?: string } }).basics?.name || "cv";
-    const jobTitle = matchRecord.jobTitle ? `-${matchRecord.jobTitle.toLowerCase().replace(/\s+/g, "-")}` : "";
-    const filename = `matching-${candidateName.toLowerCase().replace(/\s+/g, "-")}${jobTitle}.pdf`;
+    const pdfBuffer = await generateMatchPdf(match, candidateName, jobTitle);
+
+    const safeName = candidateName.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]/g, "-").replace(/-+/g, "-").replace(/^-|-$/g, "");
+    const safeJob = jobTitle
+      ? "-" + jobTitle.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]/g, "-").replace(/-+/g, "-").replace(/^-|-$/g, "")
+      : "";
+    const filename = `matching-${safeName}${safeJob}.pdf`;
 
     return new NextResponse(new Uint8Array(pdfBuffer), {
       headers: {

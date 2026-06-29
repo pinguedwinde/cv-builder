@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getResumeById, getLatestReview } from "@/lib/db/queries";
-import { generateAnalysisPdf } from "@/lib/exporters/analysis-pdf";
+import { generateReviewPdf } from "@/lib/exporters/analysis-pdf";
+import type { Resume } from "@/lib/schemas/resume";
+import type { ReviewResult } from "@/lib/ai/review";
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
@@ -10,10 +12,8 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "resumeId is required" }, { status: 400 });
   }
 
-  const [resumeRecord, reviewRecord] = await Promise.all([
-    getResumeById(resumeId),
-    Promise.resolve(getLatestReview(resumeId)),
-  ]);
+  const resumeRecord = await getResumeById(resumeId);
+  const reviewRecord = getLatestReview(resumeId);
 
   if (!resumeRecord) {
     return NextResponse.json({ error: "Resume not found" }, { status: 404 });
@@ -24,11 +24,14 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
-    const pdfBuffer = await generateAnalysisPdf("review", resumeId, baseUrl);
+    const resume = resumeRecord.data as Resume;
+    const review = reviewRecord.data as unknown as ReviewResult;
+    const candidateName = resume.basics?.name || "Candidat";
 
-    const candidateName = (resumeRecord.data as { basics?: { name?: string } }).basics?.name || "cv";
-    const filename = `revue-${candidateName.toLowerCase().replace(/\s+/g, "-")}.pdf`;
+    const pdfBuffer = await generateReviewPdf(review, candidateName);
+
+    const safeName = candidateName.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]/g, "-").replace(/-+/g, "-").replace(/^-|-$/g, "");
+    const filename = `revue-cv-${safeName}.pdf`;
 
     return new NextResponse(new Uint8Array(pdfBuffer), {
       headers: {
