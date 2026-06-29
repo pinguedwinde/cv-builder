@@ -25,3 +25,15 @@ export const reviews = sqliteTable("reviews", {
     .notNull()
     .$defaultFn(() => new Date()),
 });
+
+export const matches = sqliteTable("matches", {
+  id: text("id").primaryKey(),
+  resumeId: text("resume_id").notNull(),
+  jobTitle: text("job_title"),
+  matchScore: integer("match_score").notNull(),
+  version: integer("version").notNull(),
+  data: text("data", { mode: "json" }).notNull(),
+  createdAt: integer("created_at", { mode: "timestamp" })
+    .notNull()
+    .$defaultFn(() => new Date()),
+});

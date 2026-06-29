@@ -1,6 +1,6 @@
 import { db } from "@/lib/db";
 import { resumes } from "@/lib/db/schema";
-import { getLatestReviewsSummary } from "@/lib/db/queries";
+import { getLatestReviewsSummary, getLatestMatchesSummary } from "@/lib/db/queries";
 import { HomePageClient } from "./HomePageClient";
 import { nanoid } from "nanoid";
 import path from "path";
@@ -51,11 +51,14 @@ export default async function HomePage() {
   }> = [];
 
   let reviewsSummary: Record<string, { score: number; grade: string; version: number; createdAt: Date }> = {};
+  let matchesSummary: Record<string, { matchScore: number; jobTitle: string | null; version: number; createdAt: Date }> = {};
 
   try {
     autoSeed();
     initialResumes = db.select().from(resumes).all();
-    reviewsSummary = getLatestReviewsSummary(initialResumes.map((r) => r.id));
+    const ids = initialResumes.map((r) => r.id);
+    reviewsSummary = getLatestReviewsSummary(ids);
+    matchesSummary = getLatestMatchesSummary(ids);
   } catch {
     // DB might not exist yet
   }
@@ -64,6 +67,7 @@ export default async function HomePage() {
     <HomePageClient
       initialResumes={initialResumes as unknown as React.ComponentProps<typeof HomePageClient>["initialResumes"]}
       initialReviewsSummary={reviewsSummary as unknown as React.ComponentProps<typeof HomePageClient>["initialReviewsSummary"]}
+      initialMatchesSummary={matchesSummary as unknown as React.ComponentProps<typeof HomePageClient>["initialMatchesSummary"]}
     />
   );
 }

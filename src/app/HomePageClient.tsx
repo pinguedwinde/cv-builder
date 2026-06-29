@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Navbar } from "@/components/Navbar";
-import { Plus, Upload, FileText, Trash2, Copy, Star, Target } from "lucide-react";
+import { Plus, Upload, FileText, Trash2, Copy, Star, Target, TrendingUp } from "lucide-react";
 import { themes } from "@/themes";
 import { containerVariants, cardVariants } from "@/lib/motion";
 
@@ -27,9 +27,17 @@ interface ReviewSummary {
   createdAt: string;
 }
 
+interface MatchSummary {
+  matchScore: number;
+  jobTitle: string | null;
+  version: number;
+  createdAt: string;
+}
+
 interface HomePageClientProps {
   initialResumes: ResumeRecord[];
   initialReviewsSummary: Record<string, ReviewSummary>;
+  initialMatchesSummary: Record<string, MatchSummary>;
 }
 
 const themeAccents: Record<string, string> = {
@@ -54,10 +62,11 @@ const gradeStyles: Record<string, string> = {
   F: "bg-rose-100 text-rose-700 border-rose-200",
 };
 
-export function HomePageClient({ initialResumes, initialReviewsSummary }: HomePageClientProps) {
+export function HomePageClient({ initialResumes, initialReviewsSummary, initialMatchesSummary }: HomePageClientProps) {
   const router = useRouter();
   const [resumes, setResumes] = useState<ResumeRecord[]>(initialResumes);
   const [reviewsSummary, setReviewsSummary] = useState<Record<string, ReviewSummary>>(initialReviewsSummary);
+  const [matchesSummary] = useState<Record<string, MatchSummary>>(initialMatchesSummary);
   const [showImport, setShowImport] = useState(false);
   const [importContent, setImportContent] = useState("");
   const [importTitle, setImportTitle] = useState("");
@@ -236,7 +245,7 @@ export function HomePageClient({ initialResumes, initialReviewsSummary }: HomePa
           </motion.div>
         ) : (
           <motion.div
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5"
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
             variants={containerVariants()}
             initial="hidden"
             animate="visible"
@@ -247,25 +256,16 @@ export function HomePageClient({ initialResumes, initialReviewsSummary }: HomePa
               const meta = resume.data?.meta as { target?: string } | undefined;
               const accentBorder = themeAccents[resume.theme] ?? "border-primary";
               const reviewSummary = reviewsSummary[resume.id];
+              const matchSummary = matchesSummary[resume.id];
               return (
                 <motion.div key={resume.id} variants={cardVariants} whileTap={{ scale: 0.98 }}>
-                  <Card className={`card-hover border-t-4 ${accentBorder}`}>
-                    <CardHeader className="pb-3">
+                  <Card className={`card-hover border-t-4 ${accentBorder} flex flex-col`}>
+                    <CardHeader className="pb-2">
                       <CardTitle className="text-base flex items-center justify-between gap-2">
-                        <span className="truncate">{resume.title}</span>
-                        <div className="flex items-center gap-1.5 shrink-0">
-                          {reviewSummary && (
-                            <span
-                              className={`text-xs font-bold px-2 py-0.5 rounded-full border ${gradeStyles[reviewSummary.grade] ?? gradeStyles.F}`}
-                              title={`Revue v${reviewSummary.version} — ${reviewSummary.score}/100`}
-                            >
-                              {reviewSummary.grade} {reviewSummary.score}
-                            </span>
-                          )}
-                          <span className="text-xs font-normal text-muted-foreground bg-muted px-2 py-0.5 rounded-full">
-                            {theme?.name || resume.theme}
-                          </span>
-                        </div>
+                        <span className="truncate font-semibold">{resume.title}</span>
+                        <span className="text-xs font-normal text-muted-foreground bg-muted px-2 py-0.5 rounded-full shrink-0">
+                          {theme?.name || resume.theme}
+                        </span>
                       </CardTitle>
                       {basics?.label && (
                         <p className="text-xs text-muted-foreground truncate">{basics.label}</p>
@@ -279,57 +279,114 @@ export function HomePageClient({ initialResumes, initialReviewsSummary }: HomePa
                         </div>
                       )}
                     </CardHeader>
-                    <CardContent className="pt-0">
-                      <p className="text-xs text-muted-foreground mb-4">
-                        Mis a jour le {new Date(resume.updatedAt).toLocaleDateString("fr-FR")}
-                        {reviewSummary && (
-                          <span className="ml-2 text-muted-foreground/70">
-                            · Revue v{reviewSummary.version}
-                          </span>
-                        )}
-                      </p>
-                      <Button
-                        size="sm"
-                        className="w-full mb-2"
-                        onClick={() => router.push(`/editor/${resume.id}`)}
-                      >
-                        <FileText className="w-3.5 h-3.5" /> Editer
-                      </Button>
-                      <div className="flex gap-1">
-                        <Button
-                          variant="outline"
-                          size="sm"
+
+                    <CardContent className="pt-0 flex flex-col flex-1 gap-4">
+                      {/* Stats: Review + Match */}
+                      <div className="grid grid-cols-2 gap-3">
+                        {/* Review stat */}
+                        <div
+                          className={`rounded-xl border p-3 flex flex-col gap-1 cursor-pointer transition-colors hover:bg-muted/50 ${reviewSummary ? (gradeStyles[reviewSummary.grade] ?? gradeStyles.F) : "border-dashed border-muted-foreground/30 text-muted-foreground"}`}
                           onClick={() => router.push(`/review/${resume.id}`)}
-                          className="flex-1 text-xs"
+                          title={reviewSummary ? `Revue v${reviewSummary.version} — ${reviewSummary.score}/100` : "Pas encore de revue IA"}
                         >
-                          <Star className="w-3 h-3" /> Revue IA
-                        </Button>
-                        <Button
-                          variant="outline"
-                          size="sm"
+                          <div className="flex items-center gap-1.5 text-xs font-medium opacity-70">
+                            <Star className="w-3 h-3" /> Revue IA
+                          </div>
+                          {reviewSummary ? (
+                            <>
+                              <div className="flex items-baseline gap-1">
+                                <span className="text-2xl font-black leading-none">{reviewSummary.grade}</span>
+                                <span className="text-sm font-semibold">{reviewSummary.score}<span className="text-xs font-normal opacity-60">/100</span></span>
+                              </div>
+                              <span className="text-xs opacity-60">v{reviewSummary.version}</span>
+                            </>
+                          ) : (
+                            <span className="text-xs mt-1">Analyser →</span>
+                          )}
+                        </div>
+
+                        {/* Match stat */}
+                        <div
+                          className={`rounded-xl border p-3 flex flex-col gap-1 cursor-pointer transition-colors hover:bg-muted/50 ${
+                            matchSummary
+                              ? matchSummary.matchScore >= 75
+                                ? "bg-emerald-50 text-emerald-800 border-emerald-200"
+                                : matchSummary.matchScore >= 50
+                                  ? "bg-amber-50 text-amber-800 border-amber-200"
+                                  : "bg-rose-50 text-rose-800 border-rose-200"
+                              : "border-dashed border-muted-foreground/30 text-muted-foreground"
+                          }`}
                           onClick={() => router.push(`/match/${resume.id}`)}
-                          className="flex-1 text-xs"
+                          title={matchSummary ? `Match v${matchSummary.version}${matchSummary.jobTitle ? ` — ${matchSummary.jobTitle}` : ""}` : "Pas encore de match"}
                         >
-                          <Target className="w-3 h-3" /> Match
-                        </Button>
+                          <div className="flex items-center gap-1.5 text-xs font-medium opacity-70">
+                            <TrendingUp className="w-3 h-3" /> Match
+                          </div>
+                          {matchSummary ? (
+                            <>
+                              <div className="flex items-baseline gap-1">
+                                <span className="text-2xl font-black leading-none">{matchSummary.matchScore}%</span>
+                              </div>
+                              <span className="text-xs opacity-60 truncate">
+                                {matchSummary.jobTitle ?? `v${matchSummary.version}`}
+                              </span>
+                            </>
+                          ) : (
+                            <span className="text-xs mt-1">Analyser →</span>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Footer info */}
+                      <p className="text-xs text-muted-foreground">
+                        Mis à jour le {new Date(resume.updatedAt).toLocaleDateString("fr-FR")}
+                      </p>
+
+                      {/* Actions */}
+                      <div className="flex flex-col gap-2 mt-auto">
                         <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => duplicateResume(resume.id)}
-                          className="h-9 w-9 shrink-0"
-                          title="Dupliquer"
+                          size="sm"
+                          className="w-full"
+                          onClick={() => router.push(`/editor/${resume.id}`)}
                         >
-                          <Copy className="w-3.5 h-3.5" />
+                          <FileText className="w-3.5 h-3.5" /> Editer
                         </Button>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => deleteResume(resume.id)}
-                          className="h-9 w-9 shrink-0 text-muted-foreground hover:text-destructive"
-                          title="Supprimer"
-                        >
-                          <Trash2 className="w-3.5 h-3.5" />
-                        </Button>
+                        <div className="flex gap-1">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => router.push(`/review/${resume.id}`)}
+                            className="flex-1 text-xs"
+                          >
+                            <Star className="w-3 h-3" /> Revue IA
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => router.push(`/match/${resume.id}`)}
+                            className="flex-1 text-xs"
+                          >
+                            <Target className="w-3 h-3" /> Match
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => duplicateResume(resume.id)}
+                            className="h-9 w-9 shrink-0"
+                            title="Dupliquer"
+                          >
+                            <Copy className="w-3.5 h-3.5" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => deleteResume(resume.id)}
+                            className="h-9 w-9 shrink-0 text-muted-foreground hover:text-destructive"
+                            title="Supprimer"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </Button>
+                        </div>
                       </div>
                     </CardContent>
                   </Card>

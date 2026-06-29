@@ -1,9 +1,10 @@
 import { eq, desc, inArray } from "drizzle-orm";
 import { db } from "./index";
-import { resumes, reviews } from "./schema";
+import { resumes, reviews, matches } from "./schema";
 import { nanoid } from "nanoid";
 import type { Resume } from "@/lib/schemas/resume";
 import type { ReviewResult } from "@/lib/ai/review";
+import type { MatchResult } from "@/lib/ai/matching";
 
 export async function getAllResumes() {
   return db.select().from(resumes).orderBy(resumes.updatedAt);
@@ -118,6 +119,67 @@ export function getLatestReviewsSummary(
   for (const r of all) {
     if (!result[r.resumeId]) {
       result[r.resumeId] = { score: r.score, grade: r.grade, version: r.version, createdAt: r.createdAt };
+    }
+  }
+  return result;
+}
+
+// ─── Match queries ────────────────────────────────────────────────────────────
+
+export function saveMatch(resumeId: string, jobTitle: string | null, result: MatchResult) {
+  const history = getMatchHistory(resumeId);
+  const version = history.length + 1;
+  const id = nanoid();
+  const now = new Date();
+  db.insert(matches)
+    .values({
+      id,
+      resumeId,
+      jobTitle: jobTitle || null,
+      matchScore: result.matchScore,
+      version,
+      data: result as unknown as Record<string, unknown>,
+      createdAt: now,
+    })
+    .run();
+  return db.select().from(matches).where(eq(matches.id, id)).get()!;
+}
+
+export function getLatestMatch(resumeId: string) {
+  return (
+    db
+      .select()
+      .from(matches)
+      .where(eq(matches.resumeId, resumeId))
+      .orderBy(desc(matches.version))
+      .limit(1)
+      .get() ?? null
+  );
+}
+
+export function getMatchHistory(resumeId: string) {
+  return db
+    .select()
+    .from(matches)
+    .where(eq(matches.resumeId, resumeId))
+    .orderBy(desc(matches.version))
+    .all();
+}
+
+export function getLatestMatchesSummary(
+  resumeIds: string[]
+): Record<string, { matchScore: number; jobTitle: string | null; version: number; createdAt: Date }> {
+  if (resumeIds.length === 0) return {};
+  const all = db
+    .select()
+    .from(matches)
+    .where(inArray(matches.resumeId, resumeIds))
+    .orderBy(desc(matches.version))
+    .all();
+  const result: Record<string, { matchScore: number; jobTitle: string | null; version: number; createdAt: Date }> = {};
+  for (const m of all) {
+    if (!result[m.resumeId]) {
+      result[m.resumeId] = { matchScore: m.matchScore, jobTitle: m.jobTitle, version: m.version, createdAt: m.createdAt };
     }
   }
   return result;

@@ -39,6 +39,18 @@ sqlite.exec(`
   )
 `);
 
+sqlite.exec(`
+  CREATE TABLE IF NOT EXISTS matches (
+    id TEXT PRIMARY KEY,
+    resume_id TEXT NOT NULL,
+    job_title TEXT,
+    match_score INTEGER NOT NULL,
+    version INTEGER NOT NULL,
+    data TEXT NOT NULL,
+    created_at INTEGER NOT NULL
+  )
+`);
+
 try {
   sqlite.exec(`ALTER TABLE resumes ADD COLUMN color_theme TEXT DEFAULT 'default'`);
 } catch {

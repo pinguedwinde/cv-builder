@@ -13,10 +13,20 @@ import type { ThemeId } from "@/themes";
 import type { MatchResult } from "@/lib/ai/matching";
 import {
   Link, FileText, Target, CheckCircle,
-  AlertTriangle, XCircle, Sparkles,
+  AlertTriangle, XCircle, Sparkles, History,
 } from "lucide-react";
 import { Navbar } from "@/components/Navbar";
 import { AIProviderBadge } from "@/components/AIProviderSettings";
+
+interface MatchRecord {
+  id: string;
+  resumeId: string;
+  jobTitle: string | null;
+  matchScore: number;
+  version: number;
+  data: MatchResult;
+  createdAt: string;
+}
 
 export default function MatchPage() {
   const params = useParams();
@@ -32,16 +42,31 @@ export default function MatchPage() {
   const [jobType, setJobType] = useState<"text" | "url">("text");
   const [jobContent, setJobContent] = useState("");
   const [jobUrl, setJobUrl] = useState("");
+  const [jobTitle, setJobTitle] = useState("");
   const [optimize, setOptimize] = useState(false);
+  const [matchHistory, setMatchHistory] = useState<MatchRecord[]>([]);
+  const [activeVersion, setActiveVersion] = useState<number | null>(null);
 
   useEffect(() => {
     async function load() {
       try {
-        const res = await fetch(`/api/resumes/${id}`);
-        if (!res.ok) throw new Error("Not found");
-        const data = await res.json();
+        const [resumeRes, matchesRes] = await Promise.all([
+          fetch(`/api/resumes/${id}`),
+          fetch(`/api/matches/${id}`),
+        ]);
+        if (!resumeRes.ok) throw new Error("Not found");
+        const data = await resumeRes.json();
         setResume(data.data as Resume);
         setThemeId((data.theme as ThemeId) || "modern");
+
+        if (matchesRes.ok) {
+          const { latest, history } = await matchesRes.json();
+          if (latest) {
+            setMatchResult(latest.data as MatchResult);
+            setActiveVersion(latest.version);
+          }
+          setMatchHistory(history ?? []);
+        }
       } catch {
         router.push("/");
       } finally {
@@ -64,6 +89,7 @@ export default function MatchPage() {
           resumeId: id,
           jobType,
           jobContent: content,
+          jobTitle: jobTitle.trim() || null,
           optimize,
         }),
       });
@@ -72,6 +98,14 @@ export default function MatchPage() {
       if (data.optimizedResume) {
         setOptimizedResume(data.optimizedResume);
       }
+
+      // Reload history
+      const matchesRes = await fetch(`/api/matches/${id}`);
+      if (matchesRes.ok) {
+        const { history } = await matchesRes.json();
+        setMatchHistory(history ?? []);
+        if (history?.[0]) setActiveVersion(history[0].version);
+      }
     } catch {
       console.error("Match failed");
     } finally {
@@ -79,10 +113,21 @@ export default function MatchPage() {
     }
   }
 
+  function selectVersion(record: MatchRecord) {
+    setMatchResult(record.data as MatchResult);
+    setActiveVersion(record.version);
+  }
+
   function getScoreColor(score: number): string {
     if (score >= 75) return "text-green-600";
     if (score >= 50) return "text-yellow-600";
     return "text-red-600";
+  }
+
+  function getScoreBadgeStyle(score: number): string {
+    if (score >= 75) return "bg-emerald-100 text-emerald-700 border-emerald-200";
+    if (score >= 50) return "bg-amber-100 text-amber-700 border-amber-200";
+    return "bg-rose-100 text-rose-700 border-rose-200";
   }
 
   if (loading) {
@@ -148,6 +193,13 @@ export default function MatchPage() {
               )}
 
               <div className="shrink-0 space-y-3">
+                <Input
+                  value={jobTitle}
+                  onChange={(e) => setJobTitle(e.target.value)}
+                  placeholder="Titre du poste (optionnel, ex: Chef de Projet)"
+                  className="text-xs"
+                />
+
                 <label className="flex items-center gap-2 text-sm">
                   <input
                     type="checkbox"
@@ -180,6 +232,40 @@ export default function MatchPage() {
           </Card>
 
           <div className="overflow-auto space-y-4 shrink-0">
+
+          {matchHistory.length > 0 && (
+            <Card className="border-muted">
+              <CardContent className="py-2.5 px-4">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <div className="flex items-center gap-1.5 text-xs text-muted-foreground font-medium shrink-0">
+                    <History className="w-3.5 h-3.5" />
+                    Historique
+                  </div>
+                  {[...matchHistory].reverse().map((m) => {
+                    const isActive = m.version === activeVersion;
+                    const badgeStyle = getScoreBadgeStyle(m.matchScore);
+                    const label = m.jobTitle || `Analyse #${m.version}`;
+                    return (
+                      <button
+                        key={m.id}
+                        onClick={() => selectVersion(m)}
+                        className={`flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-full border transition-all ${
+                          isActive
+                            ? `${badgeStyle} font-bold ring-2 ring-offset-1 ring-current/30`
+                            : "border-muted-foreground/20 text-muted-foreground hover:border-muted-foreground/50"
+                        }`}
+                        title={`${new Date(m.createdAt).toLocaleString("fr-FR")}${m.jobTitle ? ` — ${m.jobTitle}` : ""}`}
+                      >
+                        <span className="font-bold">{m.matchScore}%</span>
+                        <span className="max-w-[80px] truncate opacity-80">{label}</span>
+                        <span className="opacity-60">v{m.version}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </CardContent>
+            </Card>
+          )}
 
           {matchResult && (
             <>
