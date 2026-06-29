@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback, type ReactNode } from "react";
+import { useEffect, useState, useCallback, useRef, type ReactNode } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { motion, AnimatePresence, Reorder, useDragControls } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -20,7 +20,7 @@ import {
   Save, Download, Plus, Trash2, Star, Target, ChevronDown,
   User, Briefcase, GraduationCap, Wrench, Globe, FolderOpen,
   Award, FileCheck, Heart, MessageSquare, Users, Loader2,
-  Code2, AlertCircle, CheckCircle2, GripVertical,
+  Code2, AlertCircle, CheckCircle2, GripVertical, Eye, Pencil,
 } from "lucide-react";
 import { nanoid } from "nanoid";
 import { exportToJson } from "@/lib/exporters/json";
@@ -131,6 +131,17 @@ export default function EditorPage() {
   const [rawFormat, setRawFormat] = useState<"json" | "yaml" | "markdown">("json");
   const [rawContent, setRawContent] = useState("");
   const [rawError, setRawError] = useState<string | null>(null);
+  const [viewMode, setViewMode] = useState(false);
+
+  // Refs so save functions always read latest values without extra deps
+  const resumeRef = useRef(resume);
+  const titleRef = useRef(title);
+  const themeIdRef = useRef(themeId);
+  const colorThemeIdRef = useRef(colorThemeId);
+  useEffect(() => { resumeRef.current = resume; }, [resume]);
+  useEffect(() => { titleRef.current = title; }, [title]);
+  useEffect(() => { themeIdRef.current = themeId; }, [themeId]);
+  useEffect(() => { colorThemeIdRef.current = colorThemeId; }, [colorThemeId]);
 
   useEffect(() => {
     async function load() {
@@ -166,40 +177,77 @@ export default function EditorPage() {
   }, [id, router]);
 
   const save = useCallback(async () => {
-    if (!resume) return;
+    const r = resumeRef.current;
+    if (!r) return;
     setSaving(true);
-    // Strip _id before persisting — it's only used for drag-and-drop key stability.
     const clean = {
-      ...resume,
-      work:         stripIds(resume.work)         as Resume["work"],
-      education:    stripIds(resume.education)    as Resume["education"],
-      skills:       stripIds(resume.skills)       as Resume["skills"],
-      projects:     stripIds(resume.projects)     as Resume["projects"],
-      languages:    stripIds(resume.languages)    as Resume["languages"],
-      certificates: stripIds(resume.certificates) as Resume["certificates"],
-      awards:       stripIds(resume.awards)       as Resume["awards"],
-      volunteer:    stripIds(resume.volunteer)    as Resume["volunteer"],
-      interests:    stripIds(resume.interests)    as Resume["interests"],
-      references:   stripIds(resume.references)   as Resume["references"],
+      ...r,
+      work:         stripIds(r.work)         as Resume["work"],
+      education:    stripIds(r.education)    as Resume["education"],
+      skills:       stripIds(r.skills)       as Resume["skills"],
+      projects:     stripIds(r.projects)     as Resume["projects"],
+      languages:    stripIds(r.languages)    as Resume["languages"],
+      certificates: stripIds(r.certificates) as Resume["certificates"],
+      awards:       stripIds(r.awards)       as Resume["awards"],
+      volunteer:    stripIds(r.volunteer)    as Resume["volunteer"],
+      interests:    stripIds(r.interests)    as Resume["interests"],
+      references:   stripIds(r.references)   as Resume["references"],
     };
     try {
       await fetch(`/api/resumes/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title, data: clean, theme: themeId, colorTheme: colorThemeId }),
+        body: JSON.stringify({ title: titleRef.current, data: clean, theme: themeIdRef.current, colorTheme: colorThemeIdRef.current }),
       });
     } catch {
       console.error("Save failed");
     } finally {
       setSaving(false);
     }
-  }, [id, resume, title, themeId, colorThemeId]);
+  }, [id]);
 
+  // Silent save for appearance changes (theme / color) — no indicator
+  const saveAppearance = useCallback(async () => {
+    const r = resumeRef.current;
+    if (!r) return;
+    const clean = {
+      ...r,
+      work:         stripIds(r.work)         as Resume["work"],
+      education:    stripIds(r.education)    as Resume["education"],
+      skills:       stripIds(r.skills)       as Resume["skills"],
+      projects:     stripIds(r.projects)     as Resume["projects"],
+      languages:    stripIds(r.languages)    as Resume["languages"],
+      certificates: stripIds(r.certificates) as Resume["certificates"],
+      awards:       stripIds(r.awards)       as Resume["awards"],
+      volunteer:    stripIds(r.volunteer)    as Resume["volunteer"],
+      interests:    stripIds(r.interests)    as Resume["interests"],
+      references:   stripIds(r.references)   as Resume["references"],
+    };
+    try {
+      await fetch(`/api/resumes/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ title: titleRef.current, data: clean, theme: themeIdRef.current, colorTheme: colorThemeIdRef.current }),
+      });
+    } catch {
+      console.error("Appearance save failed");
+    }
+  }, [id]);
+
+  // Debounced auto-save for content changes only (resume data + title)
   useEffect(() => {
     if (!resume) return;
     const timer = setTimeout(save, 2000);
     return () => clearTimeout(timer);
-  }, [resume, title, themeId, colorThemeId, save]);
+  }, [resume, title, save]);
+
+  // Immediate silent save for appearance changes (theme / color)
+  const appearanceInitialized = useRef(false);
+  useEffect(() => {
+    if (!appearanceInitialized.current) { appearanceInitialized.current = true; return; }
+    saveAppearance();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [themeId, colorThemeId]);
 
   function updateBasics(field: string, value: string) {
     if (!resume) return;
@@ -353,6 +401,15 @@ export default function EditorPage() {
         className="h-8 w-48 text-sm font-medium hidden md:flex"
         placeholder="Titre du CV"
       />
+      <Button
+        variant={viewMode ? "default" : "outline"}
+        size="sm"
+        onClick={() => setViewMode((v) => !v)}
+        className="gap-1.5"
+      >
+        {viewMode ? <Pencil className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+        <span className="hidden sm:inline">{viewMode ? "Éditer" : "Aperçu"}</span>
+      </Button>
       <Button variant="outline" size="sm" onClick={() => router.push(`/review/${id}`)}>
         <Star className="w-3.5 h-3.5" />
         <span className="hidden sm:inline">Revue</span>
@@ -426,6 +483,7 @@ export default function EditorPage() {
       </AnimatePresence>
 
       <div className="flex-1 flex overflow-hidden">
+        {!viewMode && (
         <div className="flex-1 min-w-0 flex flex-col overflow-hidden border-r bg-background p-4">
           <Tabs value={currentTab} onValueChange={handleTabChange} className="flex flex-col flex-1 min-h-0 w-full">
             <TabsList className="w-full flex flex-wrap h-auto bg-muted/60">
@@ -999,8 +1057,9 @@ export default function EditorPage() {
             </TabsContent>
           </Tabs>
         </div>
+        )}
 
-        <div className="flex-shrink-0 overflow-hidden" style={{ width: "210mm" }}>
+        <div className={viewMode ? "flex-1 overflow-hidden" : "flex-shrink-0 overflow-hidden"} style={viewMode ? undefined : { width: "210mm" }}>
           <PreviewPanel
             resume={resume}
             themeId={themeId}
