@@ -26,30 +26,90 @@ function barColor(pct: number): string {
 }
 
 const BASE_CSS = `
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  @page {
+    size: A4 portrait;
+  }
+
+  *, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0; padding: 0;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
   body {
     font-family: 'Helvetica Neue', Arial, sans-serif;
     font-size: 9pt;
     line-height: 1.5;
     color: #1e293b;
     background: white;
-    padding: 14mm 16mm;
+    /* horizontal padding only — top/bottom handled by Playwright margin */
+    padding: 4mm 16mm;
     width: 210mm;
   }
-  h1 { font-size: 16pt; font-weight: 700; color: #0f172a; margin-bottom: 2mm; }
-  h2 { font-size: 10pt; font-weight: 700; color: #0f172a; margin-bottom: 3mm; }
-  p { margin: 0; }
-  .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10mm; border-bottom: 2px solid #e2e8f0; padding-bottom: 6mm; }
-  .badge { display: inline-flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 3mm; color: white; text-align: center; }
-  .score-bar-track { height: 3mm; background: #e2e8f0; border-radius: 2mm; overflow: hidden; }
-  .score-bar-fill { height: 100%; border-radius: 2mm; }
+
+  h1 {
+    font-size: 16pt; font-weight: 700; color: #0f172a; margin-bottom: 2mm;
+    break-after: avoid; page-break-after: avoid;
+  }
+  h2 {
+    font-size: 10pt; font-weight: 700; color: #0f172a; margin-bottom: 3mm;
+    break-after: avoid; page-break-after: avoid;
+  }
+  p { margin: 0; orphans: 3; widows: 3; }
+
+  /* ── Layout atoms ── */
+  .header {
+    display: flex; justify-content: space-between; align-items: flex-start;
+    margin-bottom: 10mm; border-bottom: 2px solid #e2e8f0; padding-bottom: 6mm;
+    break-inside: avoid; page-break-inside: avoid;
+    break-after: avoid;  page-break-after: avoid;
+  }
+
+  /* A section = h2 + its content. We group the heading with the first block
+     so the heading is never left alone at the bottom of a page.            */
   .section { margin-bottom: 6mm; }
-  .card { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 3mm; padding: 5mm 6mm; }
+  .section-head {
+    break-inside: avoid; page-break-inside: avoid;
+  }
+  .section-body { /* remaining items after the first */ }
+
+  /* Cards and list items never break in the middle */
+  .card {
+    background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 3mm; padding: 5mm 6mm;
+    break-inside: avoid; page-break-inside: avoid;
+  }
+  .item {
+    break-inside: avoid; page-break-inside: avoid;
+    margin-bottom: 2.5mm;
+  }
+  .item:last-child { margin-bottom: 0; }
+
+  /* Grid */
   .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 3mm; }
+  .grid-cell { break-inside: avoid; page-break-inside: avoid; }
+
+  /* Misc */
+  .badge {
+    display: inline-flex; flex-direction: column; align-items: center;
+    justify-content: center; border-radius: 3mm; color: white; text-align: center;
+  }
+  .score-bar-track { height: 3mm; background: #e2e8f0; border-radius: 2mm; overflow: hidden; }
+  .score-bar-fill  { height: 100%; border-radius: 2mm; }
   .tag { display: inline-block; font-size: 7.5pt; padding: 1mm 3mm; border-radius: 5mm; font-weight: 500; }
-  .footer { margin-top: 8mm; border-top: 1px solid #e2e8f0; padding-top: 3mm; display: flex; justify-content: space-between; font-size: 7pt; color: #94a3b8; }
-  .page-break-inside-avoid { page-break-inside: avoid; }
+
+  /* Strength / skill rows */
+  .strength-row { display: flex; gap: 2mm; margin-bottom: 1.5mm; }
+  .strength-row:last-child { margin-bottom: 0; }
 `;
+
+const FOOTER_TEMPLATE = `
+  <div style="font-size:8px;color:#94a3b8;font-family:Helvetica,Arial,sans-serif;
+              width:100%;padding:0 16mm;display:flex;justify-content:space-between;
+              align-items:center;box-sizing:border-box;">
+    <span>CV Builder — Analyse IA</span>
+    <span><span class="pageNumber"></span> / <span class="totalPages"></span></span>
+  </div>`;
 
 // ─── Review HTML ──────────────────────────────────────────────────────────────
 
@@ -69,7 +129,7 @@ function gradeInfo(score: number) {
   return { grade: "F", label: "Besoin de travail", color: "#ef4444" };
 }
 
-function renderSuggestion(s: ReviewSuggestion, i: number): string {
+function renderSuggestion(s: ReviewSuggestion): string {
   const isC = s.severity === "critical";
   const isW = s.severity === "warning";
   const bg = isC ? "#fff1f2" : isW ? "#fffbeb" : "#f0f9ff";
@@ -93,7 +153,7 @@ function renderSuggestion(s: ReviewSuggestion, i: number): string {
     : "";
 
   return `
-    <div style="background:${bg};border:1px solid ${border};border-radius:2mm;padding:3mm 4mm;margin-bottom:2.5mm;" class="page-break-inside-avoid">
+    <div class="item" style="background:${bg};border:1px solid ${border};border-radius:2mm;padding:3mm 4mm;">
       <div style="display:flex;gap:2mm;align-items:flex-start;">
         <span style="color:${labelColor};font-weight:700;flex-shrink:0;font-size:9pt;">${icon}</span>
         <div style="flex:1;">
@@ -115,21 +175,25 @@ export function buildReviewHtml(
 ): string {
   const g = gradeInfo(review.overallScore);
 
-  const strengths = review.strengths && review.strengths.length > 0
+  // Strengths: heading grouped with the first strength
+  const strengthItems = review.strengths ?? [];
+  const strengthsHtml = strengthItems.length > 0
     ? `<div class="section">
-        <h2 style="color:#059669;">✓ Points forts</h2>
-        <div style="background:#f0fdf4;border:1px solid #a7f3d0;border-radius:2mm;padding:4mm 5mm;">
-          ${review.strengths.map(s => `<div style="display:flex;gap:2mm;margin-bottom:1.5mm;"><span style="color:#10b981;flex-shrink:0;">★</span><span style="font-size:8.5pt;color:#065f46;">${esc(s)}</span></div>`).join("")}
+        <div class="section-head" style="background:#f0fdf4;border:1px solid #a7f3d0;border-radius:2mm;padding:4mm 5mm;">
+          <h2 style="color:#059669;margin-bottom:2mm;">✓ Points forts</h2>
+          ${strengthItems.map(s => `<div class="strength-row"><span style="color:#10b981;flex-shrink:0;">★</span><span style="font-size:8.5pt;color:#065f46;">${esc(s)}</span></div>`).join("")}
         </div>
       </div>`
     : "";
 
-  const categories = Object.entries(review.categories).map(([key, cat]) => {
+  // Categories grid — all cells avoid breaking, grid rows may break between rows
+  const categoryItems = Object.entries(review.categories);
+  const categoryCells = categoryItems.map(([key, cat]) => {
     const c = cat as { score: number; details: string };
     const pct = c.score * 5;
     const bc = barColor(pct);
     return `
-      <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:2mm;padding:3.5mm 4mm;">
+      <div class="grid-cell" style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:2mm;padding:3.5mm 4mm;">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5mm;">
           <span style="font-size:8.5pt;font-weight:600;color:#334155;">${CATEGORY_LABELS[key] ?? key}</span>
           <span style="font-size:9pt;font-weight:700;color:${bc};">${c.score}<span style="font-size:7pt;color:#94a3b8;font-weight:400;">/20</span></span>
@@ -141,10 +205,24 @@ export function buildReviewHtml(
       </div>`;
   }).join("");
 
-  const suggestions = review.suggestions.length > 0
+  const categoriesHtml = `<div class="section">
+    <div class="section-head">
+      <h2>Détail par catégorie</h2>
+      <div class="grid-2">${categoryCells}</div>
+    </div>
+  </div>`;
+
+  // Suggestions: heading + first item grouped, rest in section-body
+  const suggItems = review.suggestions;
+  const suggestionsHtml = suggItems.length > 0
     ? `<div class="section">
-        <h2>Suggestions (${review.suggestions.length})</h2>
-        ${review.suggestions.map((s, i) => renderSuggestion(s, i)).join("")}
+        <div class="section-head">
+          <h2>Suggestions (${suggItems.length})</h2>
+          ${renderSuggestion(suggItems[0])}
+        </div>
+        ${suggItems.length > 1
+          ? `<div class="section-body" style="margin-top:0;">${suggItems.slice(1).map(s => renderSuggestion(s)).join("")}</div>`
+          : ""}
       </div>`
     : "";
 
@@ -168,31 +246,23 @@ export function buildReviewHtml(
     </div>
   </div>
 
-  <div class="section card">
-    <div style="display:flex;align-items:center;gap:5mm;margin-bottom:3mm;">
-      <span style="font-size:11pt;font-weight:700;color:#0f172a;">Score global</span>
-      <span style="font-size:18pt;font-weight:900;color:${g.color};">${review.overallScore}<span style="font-size:10pt;color:#94a3b8;font-weight:400;">/100</span></span>
-      <span class="tag" style="background:${g.color}18;color:${g.color};border:1px solid ${g.color}40;">${g.label}</span>
-    </div>
-    <div class="score-bar-track" style="margin-bottom:3mm;">
-      <div class="score-bar-fill" style="width:${review.overallScore}%;background:${g.color};"></div>
-    </div>
-    <p style="font-size:8.5pt;color:#475569;line-height:1.6;">${esc(review.summary)}</p>
-  </div>
-
-  ${strengths}
-
   <div class="section">
-    <h2>Détail par catégorie</h2>
-    <div class="grid-2">${categories}</div>
+    <div class="section-head card">
+      <div style="display:flex;align-items:center;gap:5mm;margin-bottom:3mm;">
+        <span style="font-size:11pt;font-weight:700;color:#0f172a;">Score global</span>
+        <span style="font-size:18pt;font-weight:900;color:${g.color};">${review.overallScore}<span style="font-size:10pt;color:#94a3b8;font-weight:400;">/100</span></span>
+        <span class="tag" style="background:${g.color}18;color:${g.color};border:1px solid ${g.color}40;">${g.label}</span>
+      </div>
+      <div class="score-bar-track" style="margin-bottom:3mm;">
+        <div class="score-bar-fill" style="width:${review.overallScore}%;background:${g.color};"></div>
+      </div>
+      <p style="font-size:8.5pt;color:#475569;line-height:1.6;">${esc(review.summary)}</p>
+    </div>
   </div>
 
-  ${suggestions}
-
-  <div class="footer">
-    <span>CV Builder — Analyse IA</span>
-    <span>${generatedAt}</span>
-  </div>
+  ${strengthsHtml}
+  ${categoriesHtml}
+  ${suggestionsHtml}
 </body>
 </html>`;
 }
@@ -206,7 +276,7 @@ function renderGap(g: MatchGap): string {
   const icon = isHigh ? "✗" : "⚠";
   const color = isHigh ? "#ef4444" : "#f59e0b";
   return `
-    <div style="display:flex;gap:2mm;align-items:flex-start;background:${bg};border:1px solid ${border};border-radius:2mm;padding:2.5mm 3.5mm;margin-bottom:2mm;">
+    <div class="item" style="display:flex;gap:2mm;align-items:flex-start;background:${bg};border:1px solid ${border};border-radius:2mm;padding:2.5mm 3.5mm;">
       <span style="color:${color};font-weight:700;flex-shrink:0;">${icon}</span>
       <span style="font-size:8.5pt;color:#1e293b;">${esc(g.description)}</span>
     </div>`;
@@ -214,7 +284,7 @@ function renderGap(g: MatchGap): string {
 
 function renderMatchSuggestion(s: MatchSuggestion): string {
   return `
-    <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:2mm;padding:3mm 4mm;margin-bottom:2.5mm;" class="page-break-inside-avoid">
+    <div class="item" style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:2mm;padding:3mm 4mm;">
       <span style="font-size:7pt;font-weight:700;color:#1d4ed8;text-transform:uppercase;display:block;margin-bottom:1mm;">${esc(s.section)}</span>
       <p style="font-size:8.5pt;color:#1e293b;font-weight:500;margin-bottom:1mm;">${esc(s.action)}</p>
       <p style="font-size:8pt;color:#64748b;">${esc(s.reason)}</p>
@@ -230,33 +300,50 @@ export function buildMatchHtml(
   const sc = scoreColor(match.matchScore);
   const scoreLabel = match.matchScore >= 75 ? "Excellent" : match.matchScore >= 50 ? "Moyen" : "Faible";
 
-  const skills = match.matchedSkills.length > 0
+  // Skills block — all tags in one card, no breaks needed inside
+  const skillsHtml = match.matchedSkills.length > 0
     ? `<div class="section">
-        <h2 style="color:#059669;">✓ Compétences correspondantes (${match.matchedSkills.length})</h2>
-        <div style="background:#f0fdf4;border:1px solid #a7f3d0;border-radius:2mm;padding:4mm 5mm;display:flex;flex-wrap:wrap;gap:2mm;">
-          ${match.matchedSkills.map(s => `<span class="tag" style="background:#dcfce7;color:#166534;border:1px solid #86efac;">${esc(s)}</span>`).join("")}
+        <div class="section-head" style="background:#f0fdf4;border:1px solid #a7f3d0;border-radius:2mm;padding:4mm 5mm;">
+          <h2 style="color:#059669;margin-bottom:3mm;">✓ Compétences correspondantes (${match.matchedSkills.length})</h2>
+          <div style="display:flex;flex-wrap:wrap;gap:2mm;">
+            ${match.matchedSkills.map(s => `<span class="tag" style="background:#dcfce7;color:#166534;border:1px solid #86efac;">${esc(s)}</span>`).join("")}
+          </div>
         </div>
       </div>`
     : "";
 
-  const gaps = match.gaps.length > 0
+  // Gaps: heading + first gap grouped
+  const gapItems = match.gaps;
+  const gapsHtml = gapItems.length > 0
     ? `<div class="section">
-        <h2 style="color:#dc2626;">⚠ Points manquants (${match.gaps.length})</h2>
-        ${match.gaps.map(g => renderGap(g)).join("")}
+        <div class="section-head">
+          <h2 style="color:#dc2626;">⚠ Points manquants (${gapItems.length})</h2>
+          ${renderGap(gapItems[0])}
+        </div>
+        ${gapItems.length > 1
+          ? `<div class="section-body">${gapItems.slice(1).map(g => renderGap(g)).join("")}</div>`
+          : ""}
       </div>`
     : "";
 
-  const suggestions = match.suggestions.length > 0
+  // Suggestions: heading + first suggestion grouped
+  const suggItems = match.suggestions;
+  const suggestionsHtml = suggItems.length > 0
     ? `<div class="section">
-        <h2>Suggestions d'amélioration</h2>
-        ${match.suggestions.map(s => renderMatchSuggestion(s)).join("")}
+        <div class="section-head">
+          <h2>Suggestions d'amélioration</h2>
+          ${renderMatchSuggestion(suggItems[0])}
+        </div>
+        ${suggItems.length > 1
+          ? `<div class="section-body">${suggItems.slice(1).map(s => renderMatchSuggestion(s)).join("")}</div>`
+          : ""}
       </div>`
     : "";
 
-  const optimized = match.optimizedSummary
+  const optimizedHtml = match.optimizedSummary
     ? `<div class="section">
-        <h2>Résumé optimisé proposé</h2>
-        <div style="background:#f5f3ff;border:1px solid #ddd6fe;border-radius:2mm;padding:4mm 5mm;">
+        <div class="section-head" style="background:#f5f3ff;border:1px solid #ddd6fe;border-radius:2mm;padding:4mm 5mm;">
+          <h2 style="margin-bottom:2mm;">Résumé optimisé proposé</h2>
           <p style="font-size:8.5pt;color:#4c1d95;font-style:italic;line-height:1.6;">${esc(match.optimizedSummary)}</p>
         </div>
       </div>`
@@ -284,26 +371,23 @@ export function buildMatchHtml(
     </div>
   </div>
 
-  <div class="section card">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5mm;">
-      <span style="font-size:9pt;font-weight:600;color:#334155;">Score de correspondance</span>
-      <span style="font-size:11pt;font-weight:700;color:${sc};">${match.matchScore}%</span>
+  <div class="section">
+    <div class="section-head card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5mm;">
+        <span style="font-size:9pt;font-weight:600;color:#334155;">Score de correspondance</span>
+        <span style="font-size:11pt;font-weight:700;color:${sc};">${match.matchScore}%</span>
+      </div>
+      <div class="score-bar-track" style="margin-bottom:3mm;">
+        <div class="score-bar-fill" style="width:${match.matchScore}%;background:${sc};"></div>
+      </div>
+      <p style="font-size:8.5pt;color:#475569;line-height:1.6;">${esc(match.summary)}</p>
     </div>
-    <div class="score-bar-track" style="margin-bottom:3mm;">
-      <div class="score-bar-fill" style="width:${match.matchScore}%;background:${sc};"></div>
-    </div>
-    <p style="font-size:8.5pt;color:#475569;line-height:1.6;">${esc(match.summary)}</p>
   </div>
 
-  ${skills}
-  ${gaps}
-  ${suggestions}
-  ${optimized}
-
-  <div class="footer">
-    <span>CV Builder — Analyse IA</span>
-    <span>${generatedAt}</span>
-  </div>
+  ${skillsHtml}
+  ${gapsHtml}
+  ${suggestionsHtml}
+  ${optimizedHtml}
 </body>
 </html>`;
 }
@@ -323,7 +407,12 @@ async function renderHtmlToPdf(html: string): Promise<Buffer> {
     const pdf = await page.pdf({
       format: "A4",
       printBackground: true,
-      margin: { top: "0", right: "0", bottom: "0", left: "0" },
+      displayHeaderFooter: true,
+      // Empty header — we only need a footer
+      headerTemplate: "<span></span>",
+      footerTemplate: FOOTER_TEMPLATE,
+      // Top/bottom margins create space for the header/footer bands
+      margin: { top: "14mm", right: "0", bottom: "14mm", left: "0" },
     });
     return Buffer.from(pdf);
   } finally {
