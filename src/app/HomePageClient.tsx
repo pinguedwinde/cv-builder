@@ -241,7 +241,7 @@ export function HomePageClient({ initialResumes, initialReviewsSummary, initialM
               const reviewSummary = reviewsSummary[resume.id];
               const matchSummary = matchesSummary[resume.id];
               return (
-                <motion.div key={resume.id} variants={cardVariants} whileTap={{ scale: 0.98 }} className="h-[380px] flex flex-col">
+                <motion.div key={resume.id} variants={cardVariants} whileTap={{ scale: 0.98 }} className="h-[400px] flex flex-col">
                   <Card className={`card-hover border-t-4 ${accentBorder} flex flex-col h-full overflow-hidden`}>
                     <CardHeader className="pb-3 shrink-0">
                       <CardTitle className="text-base flex items-center justify-between gap-2">
@@ -355,40 +355,44 @@ export function HomePageClient({ initialResumes, initialReviewsSummary, initialM
                             <FileText className="w-3.5 h-3.5" /> Éditer
                           </Button>
                         </div>
-                        <div className="flex gap-1">
+                        <div className="grid grid-cols-4 gap-1">
                           <Button
                             variant="outline"
                             size="sm"
                             onClick={() => router.push(`/review/${resume.id}`)}
-                            className="flex-1 text-xs"
+                            className="flex-1 text-xs flex-col h-auto py-1.5 gap-0.5"
                           >
-                            <Star className="w-3 h-3" /> Revue IA
+                            <Star className="w-3.5 h-3.5" />
+                            <span>Revue</span>
                           </Button>
                           <Button
                             variant="outline"
                             size="sm"
                             onClick={() => router.push(`/match/${resume.id}`)}
-                            className="flex-1 text-xs"
+                            className="flex-1 text-xs flex-col h-auto py-1.5 gap-0.5"
                           >
-                            <Target className="w-3 h-3" /> Match
+                            <Target className="w-3.5 h-3.5" />
+                            <span>Match</span>
                           </Button>
                           <Button
-                            variant="ghost"
-                            size="icon"
+                            variant="outline"
+                            size="sm"
                             onClick={() => duplicateResume(resume.id)}
-                            className="h-9 w-9 shrink-0"
+                            className="flex-1 text-xs flex-col h-auto py-1.5 gap-0.5"
                             title="Dupliquer"
                           >
                             <Copy className="w-3.5 h-3.5" />
+                            <span>Copier</span>
                           </Button>
                           <Button
-                            variant="ghost"
-                            size="icon"
+                            variant="outline"
+                            size="sm"
                             onClick={() => deleteResume(resume.id)}
-                            className="h-9 w-9 shrink-0 text-muted-foreground hover:text-destructive"
+                            className="flex-1 text-xs flex-col h-auto py-1.5 gap-0.5 text-muted-foreground hover:text-destructive hover:border-destructive"
                             title="Supprimer"
                           >
                             <Trash2 className="w-3.5 h-3.5" />
+                            <span>Suppr.</span>
                           </Button>
                         </div>
                       </div>
