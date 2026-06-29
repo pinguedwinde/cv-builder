@@ -25,6 +25,7 @@ import {
   History,
   Download,
   Check,
+  FileEdit,
 } from "lucide-react";
 import { Navbar } from "@/components/Navbar";
 import { AIProviderBadge } from "@/components/AIProviderSettings";
@@ -215,7 +216,18 @@ export default function ReviewPage() {
 
   return (
     <div className="h-screen flex flex-col bg-background overflow-hidden">
-      <Navbar showBack backHref={`/editor/${id}`} title="Revue du CV" actions={navActions} />
+      <Navbar
+        breadcrumbs={[
+          { label: resume.basics?.name || "CV", href: `/editor/${id}` },
+          { label: "Revue IA" },
+        ]}
+        navLinks={[
+          { label: "Éditeur", href: `/editor/${id}`, icon: <FileEdit className="w-3 h-3" /> },
+          { label: "Revue IA", href: `/review/${id}`, icon: <Star className="w-3 h-3" />, active: true },
+          { label: "Matching", href: `/match/${id}`, icon: <Target className="w-3 h-3" /> },
+        ]}
+        actions={navActions}
+      />
 
       <div className="flex flex-1 gap-4 px-4 pb-4 pt-2 min-h-0">
         <div className="flex-shrink-0 overflow-auto rounded-lg border bg-card shadow-sm" style={{ width: "210mm" }}>

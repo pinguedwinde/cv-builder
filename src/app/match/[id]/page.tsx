@@ -16,7 +16,7 @@ import {
   Link, FileText, Target, CheckCircle,
   AlertTriangle, XCircle, Sparkles, History,
   Download, Check, ExternalLink, BookOpen, BarChart2,
-  PartyPopper, Flame, Ban,
+  PartyPopper, Flame, Ban, Star, FileEdit,
 } from "lucide-react";
 import { Navbar } from "@/components/Navbar";
 import { AIProviderBadge } from "@/components/AIProviderSettings";
@@ -284,7 +284,18 @@ export default function MatchPage() {
 
   return (
     <div className="h-screen flex flex-col bg-background overflow-hidden">
-      <Navbar showBack backHref={`/editor/${id}`} title="Matching CV / Poste" actions={navActions} />
+      <Navbar
+        breadcrumbs={[
+          { label: resume.basics?.name || "CV", href: `/editor/${id}` },
+          { label: "Matching" },
+        ]}
+        navLinks={[
+          { label: "Éditeur", href: `/editor/${id}`, icon: <FileEdit className="w-3 h-3" /> },
+          { label: "Revue IA", href: `/review/${id}`, icon: <Star className="w-3 h-3" /> },
+          { label: "Matching", href: `/match/${id}`, icon: <Target className="w-3 h-3" />, active: true },
+        ]}
+        actions={navActions}
+      />
 
       <div className="flex flex-1 gap-4 px-4 pb-4 pt-2 min-h-0">
         {/* Left panel: CV preview(s) */}

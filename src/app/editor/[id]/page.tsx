@@ -401,7 +401,14 @@ export default function EditorPage() {
 
   return (
     <div className="h-screen flex flex-col">
-      <Navbar showBack backHref="/" title={title} actions={navActions} />
+      <Navbar
+        breadcrumbs={[{ label: title || "Éditeur" }]}
+        navLinks={[
+          { label: "Revue IA", href: `/review/${id}`, icon: <Star className="w-3 h-3" /> },
+          { label: "Matching", href: `/match/${id}`, icon: <Target className="w-3 h-3" /> },
+        ]}
+        actions={navActions}
+      />
 
       <AnimatePresence>
         {saving && (
