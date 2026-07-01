@@ -12,11 +12,13 @@ import { Suspense } from "react";
 const SIDEBAR_WIDTHS: Record<string, string> = {
   modern: "74mm",
   swiss: "53mm",
+  lumiere: "63mm",
 };
 
 const SIDEBAR_BGS_FALLBACK: Record<string, string> = {
   modern: "#334155",
   swiss: "#111111",
+  lumiere: "#eef3f8",
 };
 
 function buildBodyResetCss(): string {
@@ -61,12 +63,16 @@ function buildPagedCss(themeId: string, colorTheme: string): string {
         @left-top {
           content: element(cv-sidebar-bg);
           height: 297mm;
+          text-align: left;
+          vertical-align: top;
         }
       }
       @page :first {
         @left-top {
           content: element(cv-sidebar);
           height: 297mm;
+          text-align: left;
+          vertical-align: top;
         }
       }
       .cv-running-sidebar {

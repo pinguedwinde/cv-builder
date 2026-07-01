@@ -20,6 +20,17 @@ function dateRange(start?: string, end?: string): string {
   return `${s}-${e}`;
 }
 
+function getProfileHref(p: { network?: string; url?: string; username?: string }): string | undefined {
+  if (p.url) return p.url;
+  if (!p.username || !p.network) return undefined;
+  const n = p.network.toLowerCase();
+  if (n.includes("linkedin")) return `https://linkedin.com/in/${p.username}`;
+  if (n.includes("github")) return `https://github.com/${p.username}`;
+  if (n.includes("twitter") || n.includes("x.com")) return `https://x.com/${p.username}`;
+  if (n.includes("instagram")) return `https://instagram.com/${p.username}`;
+  return undefined;
+}
+
 const defaultColors = {
   primary: "#7c2d12",
   primaryLight: "#fef2f2",
@@ -147,6 +158,23 @@ export function CompactTheme({ resume, colors: colorOverrides = {} }: ThemeProps
   const colors = { ...defaultColors, ...colorOverrides };
   const s = makeStyles(colors);
   const b = resume.basics;
+  const profileLinkStyle = { color: colors.primary, textDecoration: "none" } as React.CSSProperties;
+
+  const renderProfileLinks = () =>
+    b.profiles?.filter((p) => p.network).map((p, i) => {
+      const href = getProfileHref(p);
+      return (
+        <div key={i}>
+          {href ? (
+            <a href={href} target="_blank" rel="noopener noreferrer" style={profileLinkStyle}>
+              {p.network}{p.username ? `: ${p.username}` : ""}
+            </a>
+          ) : (
+            `${p.network}${p.username ? `: ${p.username}` : ""}`
+          )}
+        </div>
+      );
+    });
 
   const header = (
     <header style={s.header}>
@@ -157,11 +185,15 @@ export function CompactTheme({ resume, colors: colorOverrides = {} }: ThemeProps
       <div style={s.headerRight}>
         {b.email && <div>{b.email}</div>}
         {b.phone && <div>{b.phone}</div>}
-        {b.url && <div>{b.url}</div>}
+        {b.url && (
+          <div>
+            <a href={b.url} target="_blank" rel="noopener noreferrer" style={profileLinkStyle}>
+              {b.url.replace(/^https?:\/\//, "")}
+            </a>
+          </div>
+        )}
         {b.location?.city && <div>{b.location.city}, {b.location.countryCode}</div>}
-        {b.profiles && b.profiles.filter((p) => p.network).map((p, i) => (
-          <div key={i}>{p.network}: {p.username}</div>
-        ))}
+        {renderProfileLinks()}
       </div>
     </header>
   );
@@ -179,11 +211,15 @@ export function CompactTheme({ resume, colors: colorOverrides = {} }: ThemeProps
           <div style={s.headerRight}>
             {b.email && <div>{b.email}</div>}
             {b.phone && <div>{b.phone}</div>}
-            {b.url && <div>{b.url}</div>}
+            {b.url && (
+              <div>
+                <a href={b.url} target="_blank" rel="noopener noreferrer" style={profileLinkStyle}>
+                  {b.url.replace(/^https?:\/\//, "")}
+                </a>
+              </div>
+            )}
             {b.location?.city && <div>{b.location.city}, {b.location.countryCode}</div>}
-            {b.profiles && b.profiles.filter((p) => p.network).map((p, i) => (
-              <div key={i}>{p.network}: {p.username}</div>
-            ))}
+            {renderProfileLinks()}
           </div>
         </header>
 

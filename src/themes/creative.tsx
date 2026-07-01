@@ -19,6 +19,17 @@ function dateRange(start?: string, end?: string): string {
   return `${s} - ${e}`;
 }
 
+function getProfileHref(p: { network?: string; url?: string; username?: string }): string | undefined {
+  if (p.url) return p.url;
+  if (!p.username || !p.network) return undefined;
+  const n = p.network.toLowerCase();
+  if (n.includes("linkedin")) return `https://linkedin.com/in/${p.username}`;
+  if (n.includes("github")) return `https://github.com/${p.username}`;
+  if (n.includes("twitter") || n.includes("x.com")) return `https://x.com/${p.username}`;
+  if (n.includes("instagram")) return `https://instagram.com/${p.username}`;
+  return undefined;
+}
+
 const defaultColors = {
   gradientStart: "#7c3aed",
   gradientEnd: "#2563eb",
@@ -192,7 +203,10 @@ export function CreativeTheme({ resume, colors: colorOverrides = {} }: ThemeProp
   const colors = { ...defaultColors, ...colorOverrides };
   const s = makeStyles(colors);
   const b = resume.basics;
-  const contactItems = [b.email, b.phone, b.url, b.location?.city && `${b.location.city}`].filter(Boolean);
+  // b.url rendered as a link separately; other contact items stay as plain text
+  const contactItems = [b.email, b.phone, b.location?.city && `${b.location.city}`].filter(Boolean);
+  // Links in the header are on a dark gradient → use white
+  const headerLinkStyle = { color: colors.white, textDecoration: "none" } as React.CSSProperties;
 
   return (
     <div style={s.page}>
@@ -205,9 +219,27 @@ export function CreativeTheme({ resume, colors: colorOverrides = {} }: ThemeProp
           {contactItems.map((item, i) => (
             <span key={i}>{item}</span>
           ))}
-          {b.profiles && b.profiles.filter((p) => p.network).map((p, i) => (
-            <span key={`p-${i}`}>{p.network}: {p.username}</span>
-          ))}
+          {b.url && (
+            <span>
+              <a href={b.url} target="_blank" rel="noopener noreferrer" style={headerLinkStyle}>
+                {b.url.replace(/^https?:\/\//, "")}
+              </a>
+            </span>
+          )}
+          {b.profiles && b.profiles.filter((p) => p.network).map((p, i) => {
+            const href = getProfileHref(p);
+            return (
+              <span key={`p-${i}`}>
+                {href ? (
+                  <a href={href} target="_blank" rel="noopener noreferrer" style={headerLinkStyle}>
+                    {p.network}{p.username ? `: ${p.username}` : ""}
+                  </a>
+                ) : (
+                  `${p.network}${p.username ? `: ${p.username}` : ""}`
+                )}
+              </span>
+            );
+          })}
         </div>
       </header>
 

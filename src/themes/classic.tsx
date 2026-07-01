@@ -1,4 +1,5 @@
 import type { ThemeProps } from "./types";
+import Image from "next/image";
 
 function formatDate(date?: string): string {
   if (!date) return "Présent";
@@ -17,6 +18,17 @@ function dateRange(start?: string, end?: string): string {
   if (!start && !end) return "";
   if (!end) return `${s} - Présent`;
   return `${s} - ${e}`;
+}
+
+function getProfileHref(p: { network?: string; url?: string; username?: string }): string | undefined {
+  if (p.url) return p.url;
+  if (!p.username || !p.network) return undefined;
+  const n = p.network.toLowerCase();
+  if (n.includes("linkedin")) return `https://linkedin.com/in/${p.username}`;
+  if (n.includes("github")) return `https://github.com/${p.username}`;
+  if (n.includes("twitter") || n.includes("x.com")) return `https://x.com/${p.username}`;
+  if (n.includes("instagram")) return `https://instagram.com/${p.username}`;
+  return undefined;
 }
 
 export function ClassicTheme({ resume, colors: colorOverrides = {} }: ThemeProps) {
@@ -115,14 +127,16 @@ export function ClassicTheme({ resume, colors: colorOverrides = {} }: ThemeProps
   };
 
   const b = resume.basics;
-  const contactItems = [b.email, b.phone, b.url, b.location?.city && `${b.location.city}, ${b.location.countryCode}`].filter(Boolean);
+  const contactItems = [b.email, b.phone, b.location?.city && `${b.location.city}, ${b.location.countryCode}`].filter(Boolean);
+
+  const linkStyle = { color: PRIMARY, textDecoration: "none" } as React.CSSProperties;
 
   return (
     <div style={styles.page}>
       <header style={styles.header}>
         {b.image && (
           <div style={{ display: "flex", justifyContent: "center", marginBottom: "16px" }}>
-            <img
+            <Image
               src={b.image}
               alt={b.name || "photo"}
               style={{ width: "80px", height: "80px", borderRadius: "50%", objectFit: "cover", border: `3px solid ${PRIMARY}` }}
@@ -135,12 +149,30 @@ export function ClassicTheme({ resume, colors: colorOverrides = {} }: ThemeProps
           {contactItems.map((item, i) => (
             <span key={i}>{item}</span>
           ))}
+          {b.url && (
+            <span>
+              <a href={b.url} target="_blank" rel="noopener noreferrer" style={linkStyle}>
+                {b.url.replace(/^https?:\/\//, "")}
+              </a>
+            </span>
+          )}
         </div>
         {b.profiles && b.profiles.length > 0 && (
           <div style={{ ...styles.contact, marginTop: "6px" }}>
-            {b.profiles.filter((p) => p.network).map((p, i) => (
-              <span key={i}>{p.network}: {p.username}</span>
-            ))}
+            {b.profiles.filter((p) => p.network).map((p, i) => {
+              const href = getProfileHref(p);
+              return (
+                <span key={i}>
+                  {href ? (
+                    <a href={href} target="_blank" rel="noopener noreferrer" style={linkStyle}>
+                      {p.network}{p.username ? `: ${p.username}` : ""}
+                    </a>
+                  ) : (
+                    `${p.network}${p.username ? `: ${p.username}` : ""}`
+                  )}
+                </span>
+              );
+            })}
           </div>
         )}
       </header>

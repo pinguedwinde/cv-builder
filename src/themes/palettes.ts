@@ -447,6 +447,7 @@ export const modelPalettes: Record<string, ColorPalette[]> = {
         accent: "#2563eb",
         muted: "#64748b",
         border: "#e2e8f0",
+        sidebarBg: "#eef3f8",
       },
     },
     {
@@ -460,6 +461,7 @@ export const modelPalettes: Record<string, ColorPalette[]> = {
         accent: "#475569",
         muted: "#64748b",
         border: "#e2e8f0",
+        sidebarBg: "#edf0f4",
       },
     },
     {
@@ -473,6 +475,7 @@ export const modelPalettes: Record<string, ColorPalette[]> = {
         accent: "#2d6a4f",
         muted: "#52796f",
         border: "#d8eadf",
+        sidebarBg: "#edf5ef",
       },
     },
     {
@@ -486,6 +489,7 @@ export const modelPalettes: Record<string, ColorPalette[]> = {
         accent: "#7f1d1d",
         muted: "#9f5454",
         border: "#f5e0e0",
+        sidebarBg: "#f7eded",
       },
     },
   ],

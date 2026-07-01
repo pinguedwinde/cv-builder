@@ -104,8 +104,6 @@ function getNetworkIcon(network: string, color: string) {
   return <IconNetwork color={color} />;
 }
 
-const SIDEBAR_BG = "#eef3f8";
-
 const defaultColors = {
   headerBg: "#dde8f2",
   headerBorder: "#b8cfe0",
@@ -114,6 +112,7 @@ const defaultColors = {
   text: "#1e293b",
   muted: "#64748b",
   border: "#e2e8f0",
+  sidebarBg: "#eef3f8",
 };
 
 const SIDEBAR_W_PDF = "63mm";
@@ -123,6 +122,7 @@ export function LumiereTheme({ resume, colors: colorOverrides = {} }: ThemeProps
   const pdfMode = usePdfMode();
   const colors = { ...defaultColors, ...colorOverrides };
   const b = resume.basics;
+  const sidebarBg = colors.sidebarBg;
   const sidebarW = pdfMode ? SIDEBAR_W_PDF : SIDEBAR_W_PX;
 
   const s = {
@@ -132,9 +132,13 @@ export function LumiereTheme({ resume, colors: colorOverrides = {} }: ThemeProps
       lineHeight: 1.45,
       color: colors.text,
       backgroundColor: "#ffffff",
-      // Gradient simulates sidebar bg on every PDF page
-      background: `linear-gradient(to right, ${SIDEBAR_BG} ${sidebarW}, #ffffff 0)`,
-      ...(pdfMode ? {} : { minHeight: "1120px" }),
+      // Gradient simulates sidebar bg in screen mode only; PDF uses running element
+      ...(pdfMode
+        ? {}
+        : {
+            background: `linear-gradient(to right, ${sidebarBg} ${SIDEBAR_W_PX}, #ffffff 0)`,
+            minHeight: "1120px",
+          }),
     } as React.CSSProperties,
 
     header: {
@@ -160,20 +164,23 @@ export function LumiereTheme({ resume, colors: colorOverrides = {} }: ThemeProps
     } as React.CSSProperties,
 
     body: {
-      display: "flex" as const,
+      // Flex only in screen mode — in PDF mode the aside is a running element (out of flow)
+      ...(pdfMode ? {} : { display: "flex" as const }),
     } as React.CSSProperties,
 
     sidebar: {
       width: sidebarW,
       minWidth: sidebarW,
-      backgroundColor: SIDEBAR_BG,
+      backgroundColor: sidebarBg,
       borderRight: `1px solid ${colors.headerBorder}`,
       padding: "16px 14px",
       boxSizing: "border-box" as const,
+      ...(pdfMode ? { minHeight: "297mm" } : {}),
     } as React.CSSProperties,
 
     main: {
       flex: 1,
+      minWidth: 0,
       padding: "16px 20px",
       backgroundColor: "transparent",
       boxSizing: "border-box" as const,
@@ -297,6 +304,8 @@ export function LumiereTheme({ resume, colors: colorOverrides = {} }: ThemeProps
 
     entryContent: {
       flex: 1,
+      minWidth: 0,
+      wordBreak: "break-word" as const,
     } as React.CSSProperties,
 
     entryTitle: {
@@ -345,6 +354,7 @@ export function LumiereTheme({ resume, colors: colorOverrides = {} }: ThemeProps
 
   return (
     <div style={s.page}>
+      {pdfMode && <div className="cv-sidebar-bg" />}
       {/* Full-width header */}
       <div style={s.header}>
         {b.name && <div style={s.headerName}>{b.name}</div>}
@@ -353,7 +363,7 @@ export function LumiereTheme({ resume, colors: colorOverrides = {} }: ThemeProps
 
       <div style={s.body}>
         {/* Left sidebar */}
-        <aside style={s.sidebar}>
+        <aside className={pdfMode ? "cv-running-sidebar" : undefined} style={s.sidebar}>
 
           {/* Contact */}
           {(b.location?.city || b.email || b.phone || b.url) && (

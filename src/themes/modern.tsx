@@ -20,6 +20,17 @@ function dateRange(start?: string, end?: string): string {
   return `${s} - ${e}`;
 }
 
+function getProfileHref(p: { network?: string; url?: string; username?: string }): string | undefined {
+  if (p.url) return p.url;
+  if (!p.username || !p.network) return undefined;
+  const n = p.network.toLowerCase();
+  if (n.includes("linkedin")) return `https://linkedin.com/in/${p.username}`;
+  if (n.includes("github")) return `https://github.com/${p.username}`;
+  if (n.includes("twitter") || n.includes("x.com")) return `https://x.com/${p.username}`;
+  if (n.includes("instagram")) return `https://instagram.com/${p.username}`;
+  return undefined;
+}
+
 const defaultColors = {
   primary: "#2563eb",
   primaryLight: "#dbeafe",
@@ -215,7 +226,13 @@ export function ModernTheme({ resume, colors: colorOverrides = {} }: ThemeProps)
             <div style={s.sidebarSectionTitle}>Contact</div>
             {b.email && <div style={s.sidebarItem}>{b.email}</div>}
             {b.phone && <div style={s.sidebarItem}>{b.phone}</div>}
-            {b.url && <div style={s.sidebarItem}>{b.url}</div>}
+            {b.url && (
+              <div style={s.sidebarItem}>
+                <a href={b.url} target="_blank" rel="noopener noreferrer" style={{ color: colors.accent, textDecoration: "none" }}>
+                  {b.url.replace(/^https?:\/\//, "")}
+                </a>
+              </div>
+            )}
             {b.location?.city && (
               <div style={s.sidebarItem}>
                 {b.location.city}{b.location.countryCode ? `, ${b.location.countryCode}` : ""}
@@ -227,12 +244,21 @@ export function ModernTheme({ resume, colors: colorOverrides = {} }: ThemeProps)
         {b.profiles && b.profiles.length > 0 && (
           <div style={s.sidebarSection}>
             <div style={s.sidebarSectionTitle}>Réseaux</div>
-            {b.profiles.filter((p) => p.network).map((p, i) => (
-              <div key={i} style={s.sidebarItem}>
-                <span style={{ fontWeight: 600 }}>{p.network}</span>
-                <div style={s.sidebarMutedText}>{p.username}</div>
-              </div>
-            ))}
+            {b.profiles.filter((p) => p.network).map((p, i) => {
+              const href = getProfileHref(p);
+              return (
+                <div key={i} style={s.sidebarItem}>
+                  {href ? (
+                    <a href={href} target="_blank" rel="noopener noreferrer" style={{ color: colors.accent, textDecoration: "none", fontWeight: 600 }}>
+                      {p.network}
+                    </a>
+                  ) : (
+                    <span style={{ fontWeight: 600 }}>{p.network}</span>
+                  )}
+                  <div style={s.sidebarMutedText}>{p.username}</div>
+                </div>
+              );
+            })}
           </div>
         )}
 
